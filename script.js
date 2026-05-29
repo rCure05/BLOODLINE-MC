@@ -20,8 +20,8 @@ function login(){
     document.getElementById("password").value;
 
   if(
-    username === "admin" &&
-    password === "bloodline"
+    username === "BLMC" &&
+    password === "BLMC"
   ){
 
     masukDashboard("ADMIN");
@@ -29,8 +29,8 @@ function login(){
   }
 
   else if(
-    username === "tamu" &&
-    password === "guest"
+    username === "BLMC2" &&
+    password === "BLMC2"
   ){
 
     masukDashboard("TAMU");
