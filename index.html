@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Bloodline MC Warehouse</title>
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+  <!-- LOGIN -->
+
+  <div class="login-page" id="loginPage">
+
+    <img src="icon.png" class="bg-image">
+
+    <div class="overlay"></div>
+
+    <div class="login-box">
+
+      <img src="icon.png" class="logo">
+
+      <h1>BLOODLINE MC</h1>
+
+      <p>Warehouse Management System</p>
+
+      <input type="text" id="username" placeholder="Username">
+
+      <input type="password" id="password" placeholder="Password">
+
+      <button onclick="login()">
+        LOGIN
+      </button>
+
+      <div class="account-info">
+
+        <small>ADMIN : admin / bloodline</small>
+        <small>TAMU : tamu / guest</small>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- DASHBOARD -->
+
+  <div class="dashboard" id="dashboard">
+
+    <!-- SIDEBAR -->
+
+    <div class="sidebar" id="sidebar">
+
+      <div class="sidebar-top">
+
+        <img src="icon.png" class="sidebar-logo">
+
+        <h2>Bloodline MC</h2>
+
+      </div>
+
+      <div class="sidebar-menu" id="adminMenu">
+
+        <button onclick="openTambah()">
+          ➕ Tambah Barang
+        </button>
+
+        <button onclick="openMasuk()">
+          📦 Barang Masuk
+        </button>
+
+        <button onclick="openKeluar()">
+          📤 Barang Keluar
+        </button>
+
+        <button onclick="hapusBarang()">
+          🗑 Hapus Barang
+        </button>
+
+        <button onclick="toggleRekap()">
+          📊 Rekap Bulanan
+        </button>
+
+      </div>
+
+      <button class="logout-btn" onclick="logout()">
+        🚪 Logout
+      </button>
+
+    </div>
+
+    <!-- MAIN -->
+
+    <div class="main">
+
+      <!-- TOPBAR -->
+
+      <div class="topbar">
+
+        <div>
+
+          <h1>Warehouse Dashboard</h1>
+
+          <p id="roleText">
+            Bloodline MC Stock Management
+          </p>
+
+        </div>
+
+        <button class="menu-btn" onclick="toggleSidebar()">
+          ☰
+        </button>
+
+      </div>
+
+      <!-- CARDS -->
+
+      <div class="cards">
+
+        <div class="card">
+
+          <span>Total Barang</span>
+
+          <h2 id="totalBarang">0</h2>
+
+        </div>
+
+        <div class="card">
+
+          <span>Barang Masuk</span>
+
+          <h2 id="barangMasuk">0</h2>
+
+        </div>
+
+        <div class="card">
+
+          <span>Barang Keluar</span>
+
+          <h2 id="barangKeluar">0</h2>
+
+        </div>
+
+        <div class="card">
+
+          <span>Total Stock</span>
+
+          <h2 id="totalStock">0</h2>
+
+        </div>
+
+      </div>
+
+      <!-- TABLE -->
+
+      <div class="table-container">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>Pilih</th>
+              <th>Nama Barang</th>
+              <th>Jumlah</th>
+              <th>Tanggal</th>
+              <th>Status</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody id="stockTable">
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <!-- REKAP -->
+
+      <div class="rekap" id="rekapBox">
+
+        <h2>📊 Rekap Bulanan</h2>
+
+        <div class="rekap-grid">
+
+          <div class="rekap-card">
+
+            <span>Total Barang Masuk</span>
+
+            <h3 id="rekapMasuk">0</h3>
+
+          </div>
+
+          <div class="rekap-card">
+
+            <span>Total Barang Keluar</span>
+
+            <h3 id="rekapKeluar">0</h3>
+
+          </div>
+
+          <div class="rekap-card">
+
+            <span>Total Stock Gudang</span>
+
+            <h3 id="rekapStock">0</h3>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- MODAL -->
+
+  <div class="modal" id="modal">
+
+    <div class="modal-box">
+
+      <h2 id="modalTitle">
+        Tambah Barang
+      </h2>
+
+      <div id="manualInput">
+
+        <input type="text" id="itemName" placeholder="Nama Barang">
+
+      </div>
+
+      <div id="selectInput">
+
+        <select id="selectedItem"></select>
+
+      </div>
+
+      <input type="number" id="itemQty" placeholder="Jumlah Barang">
+
+      <button onclick="submitAction()">
+        Simpan
+      </button>
+
+    </div>
+
+  </div>
+
+  <script type="module" src="script.js"></script>
+
+</body>
+
+</html>
