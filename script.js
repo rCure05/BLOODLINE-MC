@@ -20,8 +20,8 @@ function login(){
     document.getElementById("password").value;
 
   if(
-    username === "BLMC" &&
-    password === "BLMC"
+    username === "BLMCC" &&
+    password === "BLMCC"
   ){
 
     masukDashboard("ADMIN");
