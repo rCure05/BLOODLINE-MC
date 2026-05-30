@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BLOODLINE MC - Warehouse Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,6 +13,7 @@
         body {
             font-family: 'Rajdhani', sans-serif;
             background-color: #0c0c0e;
+            -webkit-tap-highlight-color: transparent; /* Optimasi ketukan di iOS/Android */
         }
         .gang-title {
             font-family: 'Permanent Marker', cursive;
@@ -23,8 +24,10 @@
         .glow-text {
             text-shadow: 0 0 10px rgba(249, 115, 22, 0.6);
         }
+        /* Kustomisasi Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
             background: #18181b;
@@ -35,23 +38,66 @@
         }
     </style>
 </head>
-<body class="text-zinc-100 overflow-hidden">
+<body class="text-zinc-100 overflow-hidden bg-zinc-950">
 
-    <div class="flex h-screen">
-        <aside class="w-64 bg-zinc-950 border-r-2 border-orange-600 flex flex-col justify-between z-10 shadow-[5px_0_25px_rgba(0,0,0,0.7)]">
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#070708] p-4">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-orange-950/20 via-zinc-950/90 to-black -z-10"></div>
+        
+        <div class="w-full max-w-md bg-zinc-950 border-2 border-orange-600 rounded-2xl p-6 md:p-8 shadow-[0_0_30px_rgba(234,88,12,0.2)] relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent"></div>
+            
+            <div class="text-center mb-6">
+                <i class="fa-solid fa-skull-crossbones text-5xl text-orange-500 animate-pulse mb-3 drop-shadow-[0_0_10px_rgba(234,88,12,0.6)]"></i>
+                <h1 class="text-4xl text-orange-500 gang-title tracking-wider glow-text">BLOODLINE MC</h1>
+                <p class="text-xs text-zinc-500 uppercase tracking-widest mt-1">SECURE STOCKADE GATEWAY</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Pilih Peranan (Role)</label>
+                    <select id="login-role" onchange="togglePasswordInput()" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-zinc-200 focus:outline-none focus:border-orange-500 transition-colors">
+                        <option value="tamu">TAMU / GUEST (Pelihat Saja)</option>
+                        <option value="admin">ADMIN / QUARTERMASTER (Akses Penuh)</option>
+                    </select>
+                </div>
+
+                <div id="password-container" class="hidden">
+                    <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Kata Sandi Admin</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        <input type="password" id="login-password" placeholder="Masukkan kata sandi..." class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 pl-10 text-zinc-200 focus:outline-none focus:border-orange-500 transition-colors">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg hover:shadow-orange-600/20 transition-all duration-200 text-sm">
+                    Masuk Gudang <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="app-container" class="hidden h-screen relative flex">
+        
+        <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-zinc-950 border-r-2 border-orange-600 flex flex-col justify-between z-30 shadow-[5px_0_25px_rgba(0,0,0,0.8)] -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:h-screen">
             <div>
-                <div class="p-5 border-b border-zinc-800 text-center bg-zinc-900/50">
-                    <h1 class="text-3xl text-orange-500 gang-title tracking-wider glow-text">Bloodline MC</h1>
+                <div class="p-5 border-b border-zinc-800 text-center bg-zinc-900/50 relative">
+                    <h1 class="text-3xl text-orange-500 gang-title tracking-wider glow-text">BLOODLINE MC</h1>
                     <p class="text-xs text-zinc-500 uppercase tracking-widest mt-1"><i class="fa-solid fa-skull-crossbones mr-1"></i> Stockade HQ <i class="fa-solid fa-skull-crossbones ml-1"></i></p>
+                    <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-zinc-400 hover:text-orange-500 md:hidden text-xl">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
 
                 <div class="px-5 py-4 flex items-center gap-3 bg-gradient-to-r from-orange-950/20 to-transparent border-b border-zinc-900">
                     <div class="w-10 h-10 rounded-full bg-zinc-800 border border-orange-500 flex items-center justify-center text-orange-500 shadow-md">
-                        <i class="fa-solid fa-user-secret text-lg"></i>
+                        <i id="user-icon" class="fa-solid fa-user-secret text-lg"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-sm tracking-wide">BLMC 'Acces'</h4>
-                        <span class="text-[10px] bg-orange-600/20 text-orange-400 px-2 py-0.5 rounded border border-orange-600/30 uppercase font-semibold">Treasury / StockOpname</span>
+                        <h4 id="user-name" class="font-bold text-sm tracking-wide">Treasury 'BLMC'</h4>
+                        <span id="user-role-badge" class="text-[10px] bg-orange-600/20 text-orange-400 px-2 py-0.5 rounded border border-orange-600/30 uppercase font-semibold">Enforcer</span>
                     </div>
                 </div>
 
@@ -59,58 +105,73 @@
                     <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide transition-all duration-200 bg-orange-600 text-white glow-orange">
                         <i class="fa-solid fa-gauge-high text-lg w-6"></i> Dashboard Gudang
                     </button>
-                    <button onclick="switchTab('masuk')" id="btn-masuk" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 transition-all duration-200">
+                    <button onclick="switchTab('masuk')" id="btn-masuk" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 transition-all duration-200">
                         <i class="fa-solid fa-boxes-packing text-lg w-6"></i> Supply Masuk (+)
                     </button>
-                    <button onclick="switchTab('keluar')" id="btn-keluar" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 transition-all duration-200">
+                    <button onclick="switchTab('keluar')" id="btn-keluar" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 transition-all duration-200">
                         <i class="fa-solid fa-truck-ramp-box text-lg w-6"></i> Supply Keluar (-)
                     </button>
-                    <button onclick="switchTab('tambah')" id="btn-tambah" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 transition-all duration-200">
+                    <button onclick="switchTab('tambah')" id="btn-tambah" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 transition-all duration-200">
                         <i class="fa-solid fa-plus-circle text-lg w-6"></i> Daftarkan Barang Baru
                     </button>
                 </nav>
             </div>
 
-            <div class="p-4 border-t border-zinc-900 bg-zinc-900/20 text-center text-xs text-zinc-600">
-                <p>&copy; 2026 Bloodline MC. Illegal Assets Control.</p>
+            <div class="p-4 border-t border-zinc-900 bg-zinc-900/20 space-y-2">
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded border border-red-900/40 bg-red-950/10 hover:bg-red-900 text-red-400 hover:text-white font-semibold text-xs tracking-wide transition-all duration-200">
+                    <i class="fa-solid fa-sign-out-alt"></i> Keluar Log
+                </button>
+                <p class="text-center text-[10px] text-zinc-600">&copy; 2026 Bloodline MC.</p>
             </div>
         </aside>
 
-        <main class="flex-1 bg-zinc-900/40 relative overflow-y-auto p-8">
+        <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/70 z-20 hidden md:hidden"></div>
+
+        <main class="flex-1 bg-zinc-900/40 relative overflow-y-auto p-4 md:p-8 w-full">
             <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-950/10 via-zinc-900/50 to-zinc-950 -z-10"></div>
 
-            <header class="flex justify-between items-center mb-8 bg-zinc-950/80 p-4 rounded-xl border border-zinc-800 shadow-xl">
-                <div>
-                    <h2 id="page-title" class="text-2xl font-bold tracking-wide uppercase text-zinc-100">DASHBOARD STOCK</h2>
-                    <p class="text-xs text-zinc-400">Pantau pergerakan senjata, obat-obatan, dan barang selundupan di database awan.</p>
+            <header class="flex justify-between items-center mb-6 bg-zinc-950/80 p-4 rounded-xl border border-zinc-800 shadow-xl gap-4">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleSidebar()" class="md:hidden text-zinc-100 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 p-2.5 rounded-lg transition-colors">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                    <div>
+                        <h2 id="page-title" class="text-xl md:text-2xl font-bold tracking-wide uppercase text-zinc-100">DASHBOARD STOCK</h2>
+                        <p class="text-xs text-zinc-400 hidden sm:block">Pantau pergerakan amunisi dan aset selundupan faksi.</p>
+                    </div>
                 </div>
-                <div class="text-right">
-                    <div id="live-clock" class="text-lg font-bold text-orange-500 tracking-wider font-mono glow-text">00:00:00</div>
-                    <span class="text-[11px] text-zinc-500 uppercase tracking-widest font-semibold">Los Santos, San Andreas</span>
+                <div class="text-right shrink-0">
+                    <div id="live-clock" class="text-base md:text-lg font-bold text-orange-500 tracking-wider font-mono glow-text">00:00:00</div>
+                    <span class="text-[9px] md:text-[11px] text-zinc-500 uppercase tracking-widest font-semibold">Los Santos, SA</span>
                 </div>
             </header>
 
             <section id="tab-dashboard" class="tab-content block">
                 <div class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl">
-                    <div class="p-5 border-b border-zinc-800 bg-zinc-900/50 flex justify-between items-center">
-                        <span class="font-bold uppercase tracking-wider text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-orange-500"></i> Manifest Inventaris Gudang Utama (Supabase Cloud)
+                    <div class="p-4 md:p-5 border-b border-zinc-800 bg-zinc-900/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <span class="font-bold uppercase tracking-wider text-xs md:text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-orange-500"></i> Manifest Inventaris Brankas Cloud (Supabase)
                         </span>
-                        <span id="db-status" class="text-xs bg-emerald-950 text-emerald-400 px-3 py-1 rounded border border-emerald-800 animate-pulse">Menghubungkan...</span>
+                        <span id="db-status" class="text-[11px] bg-emerald-950 text-emerald-400 px-2.5 py-0.5 rounded border border-emerald-800 animate-pulse">Menghubungkan...</span>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
+                    
+                    <div class="block md:hidden bg-zinc-900 px-4 py-1.5 text-[11px] text-zinc-500 border-b border-zinc-800">
+                        <i class="fa-solid fa-arrow-left-right mr-1"></i> Geser tabel ke samping untuk melihat detail penuh
+                    </div>
+
+                    <div class="overflow-x-auto w-full">
+                        <table class="w-full text-left border-collapse min-w-[450px] md:min-w-full">
                             <thead>
                                 <tr class="border-b border-zinc-800 bg-zinc-900 text-zinc-400 text-xs uppercase tracking-wider">
                                     <th class="p-4 w-16 text-center">No</th>
                                     <th class="p-4">Nama Barang Kontraband</th>
-                                    <th class="p-4 w-48 text-center">Total Stok</th>
-                                    <th class="p-4 w-32 text-center">Tindakan</th>
+                                    <th class="p-4 w-36 text-center">Total Stok</th>
+                                    <th id="th-action" class="p-4 w-28 text-center">Tindakan</th>
                                 </tr>
                             </thead>
-                            <tbody id="inventory-table-body" class="divide-y divide-zinc-900 text-sm">
+                            <tbody id="inventory-table-body" class="divide-y divide-zinc-900 text-xs md:text-sm">
                                 <tr>
-                                    <td colspan="4" class="p-8 text-center text-zinc-500 italic">Memuat data dari brankas awan...</td>
+                                    <td colspan="4" class="p-8 text-center text-zinc-500 italic">Memuat brankas penyelundupan...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -123,16 +184,16 @@
                     <div class="p-5 border-b border-zinc-800 bg-orange-600/10 text-orange-500 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
                         <i class="fa-solid fa-boxes-packing"></i> Input Supply Baru Masuk (Restock)
                     </div>
-                    <form id="form-barang-masuk" class="p-6 space-y-4" onsubmit="handleStockIn(event)">
+                    <form id="form-barang-masuk" class="p-5 md:p-6 space-y-4" onsubmit="handleStockIn(event)">
                         <div>
                             <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Pilih Barang</label>
-                            <select id="select-masuk-barang" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-zinc-200 focus:outline-none focus:border-orange-500 transition-colors"></select>
+                            <select id="select-masuk-barang" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-orange-500 transition-colors"></select>
                         </div>
                         <div>
                             <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Jumlah yang Masuk</label>
-                            <input type="number" id="input-masuk-jumlah" min="1" required placeholder="Contoh: 50" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-zinc-200 focus:outline-none focus:border-orange-500 transition-colors">
+                            <input type="number" id="input-masuk-jumlah" min="1" required placeholder="Contoh: 50" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-orange-500 transition-colors">
                         </div>
-                        <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg hover:shadow-orange-600/20 transition-all duration-200">
+                        <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg hover:shadow-orange-600/20 transition-all text-sm duration-200">
                             Konfirmasi Masuk Gudang
                         </button>
                     </form>
@@ -142,18 +203,18 @@
             <section id="tab-keluar" class="tab-content hidden max-w-xl mx-auto">
                 <div class="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden">
                     <div class="p-5 border-b border-zinc-800 bg-red-600/10 text-red-500 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-truck-ramp-box"></i> Pengambilan Barang (Gunakan/Jual)
+                        <i class="fa-solid fa-truck-ramp-box"></i> Pengambilan Barang Operasi Gang
                     </div>
-                    <form id="form-barang-keluar" class="p-6 space-y-4" onsubmit="handleStockOut(event)">
+                    <form id="form-barang-keluar" class="p-5 md:p-6 space-y-4" onsubmit="handleStockOut(event)">
                         <div>
                             <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Pilih Barang</label>
-                            <select id="select-keluar-barang" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-zinc-200 focus:outline-none focus:border-red-500 transition-colors"></select>
+                            <select id="select-keluar-barang" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-red-500 transition-colors"></select>
                         </div>
                         <div>
                             <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Jumlah yang Keluar</label>
-                            <input type="number" id="input-keluar-jumlah" min="1" required placeholder="Contoh: 10" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-zinc-200 focus:outline-none focus:border-red-500 transition-colors">
+                            <input type="number" id="input-keluar-jumlah" min="1" required placeholder="Contoh: 10" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-red-500 transition-colors">
                         </div>
-                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg hover:shadow-red-600/20 transition-all duration-200">
+                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg hover:shadow-red-600/20 transition-all text-sm duration-200">
                             Ambil Dari Gudang
                         </button>
                     </form>
@@ -165,16 +226,16 @@
                     <div class="p-5 border-b border-zinc-800 bg-emerald-600/10 text-emerald-500 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
                         <i class="fa-solid fa-circle-plus"></i> Daftarkan Jenis Kontraband Baru
                     </div>
-                    <form id="form-tambah-barang" class="p-6 space-y-4" onsubmit="handleAddNewItem(event)">
+                    <form id="form-tambah-barang" class="p-5 md:p-6 space-y-4" onsubmit="handleAddNewItem(event)">
                         <div>
                             <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Nama Barang / Senjata / Code Name</label>
-                            <input type="text" id="input-tambah-nama" required placeholder="Contoh: Assault Rifle, Paket Ganja, Body Armor" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-zinc-200 focus:outline-none focus:border-emerald-500 transition-colors">
+                            <input type="text" id="input-tambah-nama" required placeholder="Contoh: Carbine Rifle, Paket Kokain, Bandage" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 transition-colors">
                         </div>
                         <div>
                             <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Stok Awal (Initial Stock)</label>
-                            <input type="number" id="input-tambah-stok" min="0" required placeholder="Contoh: 100" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-zinc-200 focus:outline-none focus:border-emerald-500 transition-colors">
+                            <input type="number" id="input-tambah-stok" min="0" required placeholder="Contoh: 100" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 transition-colors">
                         </div>
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg hover:shadow-emerald-600/20 transition-all duration-200">
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg hover:shadow-emerald-600/20 transition-all text-sm duration-200">
                             Daftarkan ke Sistem
                         </button>
                     </form>
@@ -185,21 +246,118 @@
     </div>
 
     <script>
-        // CONFIG SUPABASE - GANTI DENGAN MILIKMU SENDIRI
+        // CONFIG SUPABASE - PASTIKAN DIISI DENGAN DATA PROYEK SUPABASE KAMU SENDIRI
         const SUPABASE_URL = 'https://fbetpczzpwbutmgxmqqy.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZiZXRwY3p6cHdidXRtZ3htcXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMjc4OTgsImV4cCI6MjA5NTcwMzg5OH0.4X5va5WwRTPN-HkWD4uHWBzR680NrTTNKCy4PwjNKak';
 
-        // Inisialisasi Klien Supabase
+        // PIN LOGIN KATA SANDI UNTUK ADMIN / QUARTERMASTER
+        const ADMIN_PASSWORD = 'blmcccrp'; 
+
+        // Inisialisasi Supabase Client
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let inventoryData = [];
+        let currentRole = 'tamu'; // Status default awal peranan
 
-        // 1. JAM REALTIME
+        // DETEKSI INPUT KATA SANDI BERDASARKAN ROLE PILIHAN
+        function togglePasswordInput() {
+            const role = document.getElementById('login-role').value;
+            const passContainer = document.getElementById('password-container');
+            if (role === 'admin') {
+                passContainer.classList.remove('hidden');
+                document.getElementById('login-password').required = true;
+            } else {
+                passContainer.classList.add('hidden');
+                document.getElementById('login-password').required = false;
+            }
+        }
+
+        // PROSES VALIDASI MASUK GERBANG
+        function handleLogin(event) {
+            event.preventDefault();
+            const selectedRole = document.getElementById('login-role').value;
+            const enteredPassword = document.getElementById('login-password').value;
+
+            if (selectedRole === 'admin') {
+                if (enteredPassword === ADMIN_PASSWORD) {
+                    currentRole = 'admin';
+                } else {
+                    alert('🚨 AKSES DITOLAK: Kata Sandi Pengurus Salah!');
+                    return;
+                }
+            } else {
+                currentRole = 'tamu';
+            }
+
+            // Membuka antarmuka utama gudang
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+            
+            setupRoleUI();
+            fetchInventory();
+        }
+
+        // PENYESUAIAN ANTARMUKA TAMPILAN SESUAI HAK AKSES
+        function setupRoleUI() {
+            const adminElements = document.querySelectorAll('.admin-only');
+            const userName = document.getElementById('user-name');
+            const userRoleBadge = document.getElementById('user-role-badge');
+            const userIcon = document.getElementById('user-icon');
+            const thAction = document.getElementById('th-action');
+
+            if (currentRole === 'admin') {
+                // Tampilkan semua fitur manajemen untuk Admin
+                adminElements.forEach(el => el.classList.remove('hidden'));
+                thAction.classList.remove('hidden');
+                
+                userName.innerText = "Treasury 'BLMC'";
+                userRoleBadge.innerText = "Quartermaster";
+                userRoleBadge.className = "text-[10px] bg-orange-600/20 text-orange-400 px-2 py-0.5 rounded border border-orange-600/30 uppercase font-semibold";
+                userIcon.className = "fa-solid fa-user-secret text-lg";
+            } else {
+                // Sembunyikan kontrol manajemen dari Tamu
+                adminElements.forEach(el => el.classList.add('hidden'));
+                thAction.classList.add('hidden');
+                
+                userName.innerText = "BLMC / Guest";
+                userRoleBadge.innerText = "Pelihat Saja";
+                userRoleBadge.className = "text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700 uppercase font-semibold";
+                userIcon.className = "fa-solid fa-eye text-base";
+                
+                // Kembalikan paksa ke dashboard utama
+                switchTab('dashboard');
+            }
+        }
+
+        // KELUAR SISTEM KEMBALI KE GERBANG UTAMA
+        function handleLogout() {
+            if(confirm("Apakah kamu ingin keluar log dari manajemen gudang Bloodline MC?")) {
+                document.getElementById('login-password').value = '';
+                document.getElementById('app-container').classList.add('hidden');
+                document.getElementById('login-screen').classList.remove('hidden');
+            }
+        }
+
+        // OPERASI TOGGLE SIDEBAR DRAWERS DI MOBILE PLATFORM
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+
+        // JAM DIGITAL NYATA
         function updateClock() {
             document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('en-US', { hour12: false });
         }
         setInterval(updateClock, 1000); updateClock();
 
-        // 2. NAVIGASI TAB SIDEBAR
+        // PENUKAR KONTEN TAB SIDEBAR
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => { tab.classList.add('hidden'); tab.classList.remove('block'); });
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
@@ -213,13 +371,20 @@
             document.getElementById('page-title').innerText = titleMap[tabId];
 
             const activeBtn = document.getElementById(`btn-${tabId}`);
-            if (tabId === 'dashboard') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-orange-600 text-white glow-orange";
-            else if (tabId === 'masuk') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-amber-600 text-white";
-            else if (tabId === 'keluar') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-red-600 text-white";
-            else if (tabId === 'tambah') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-emerald-600 text-white";
+            if (activeBtn) {
+                if (tabId === 'dashboard') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-orange-600 text-white glow-orange";
+                else if (tabId === 'masuk') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-amber-600 text-white";
+                else if (tabId === 'keluar') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-red-600 text-white";
+                else if (tabId === 'tambah') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-emerald-600 text-white";
+            }
+
+            // Tutup laci otomatis jika dibuka lewat Android/iOS setelah pilih menu
+            if (window.innerWidth < 768) {
+                toggleSidebar();
+            }
         }
 
-        // 3. AMBIL DATA DARI SUPABASE (READ)
+        // AMBIL DATA LIVE DARI DB CLOUD SUPABASE
         async function fetchInventory() {
             const statusBadge = document.getElementById('db-status');
             try {
@@ -228,16 +393,16 @@
                 
                 inventoryData = data;
                 statusBadge.innerText = "Terhubung";
-                statusBadge.className = "text-xs bg-emerald-950 text-emerald-400 px-3 py-1 rounded border border-emerald-800";
+                statusBadge.className = "text-[11px] bg-emerald-950 text-emerald-400 px-2.5 py-0.5 rounded border border-emerald-800";
                 renderTable();
             } catch (err) {
                 console.error(err);
                 statusBadge.innerText = "Error Koneksi";
-                statusBadge.className = "text-xs bg-rose-950 text-rose-400 px-3 py-1 rounded border border-rose-800";
+                statusBadge.className = "text-[11px] bg-rose-950 text-rose-400 px-2.5 py-0.5 rounded border border-rose-800";
             }
         }
 
-        // 4. TAMPILKAN DATA KE TABEL & DROPDOWN
+        // TAMPILKAN TABEL DAN MENU PILIHAN FORM
         function renderTable() {
             const tbody = document.getElementById('inventory-table-body');
             const selectMasuk = document.getElementById('select-masuk-barang');
@@ -246,7 +411,7 @@
             tbody.innerHTML = ''; selectMasuk.innerHTML = ''; selectKeluar.innerHTML = '';
 
             if(inventoryData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-zinc-500 italic">Gudang Kosong, Boss! Daftarkan barang baru.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="${currentRole === 'admin' ? 4 : 3}" class="p-8 text-center text-zinc-500 italic">Gudang Kosong, Boss! Silakan isi jenis barang baru.</td></tr>`;
                 return;
             }
 
@@ -254,16 +419,21 @@
                 const stockAlertClass = item.stock <= 15 ? 'text-rose-500 font-bold glow-text' : 'text-zinc-300';
                 const rowBg = index % 2 === 0 ? 'bg-zinc-950' : 'bg-zinc-900/30';
 
+                // Render tombol bakar/hapus hanya jika peran adalah admin
+                const actionTd = currentRole === 'admin' ? `
+                    <td class="p-4 text-center">
+                        <button onclick="handleDeleteItem(${item.id})" class="text-zinc-500 hover:text-red-500 bg-zinc-900 hover:bg-red-950/30 p-2.5 rounded border border-zinc-800 hover:border-red-800 transition-all duration-200">
+                            <i class="fa-solid fa-dumpster-fire"></i>
+                        </button>
+                    </td>
+                ` : '';
+
                 tbody.innerHTML += `
                     <tr class="${rowBg} hover:bg-zinc-800/40 transition-colors">
                         <td class="p-4 text-center text-zinc-500 font-mono">${index + 1}</td>
                         <td class="p-4 font-semibold tracking-wide">${item.name}</td>
                         <td class="p-4 text-center ${stockAlertClass} text-base font-mono">${item.stock}</td>
-                        <td class="p-4 text-center">
-                            <button onclick="handleDeleteItem(${item.id})" class="text-zinc-500 hover:text-red-500 bg-zinc-900 hover:bg-red-950/30 p-2 rounded border border-zinc-800 hover:border-red-800 transition-all duration-200">
-                                <i class="fa-solid fa-dumpster-fire"></i>
-                            </button>
-                        </td>
+                        ${actionTd}
                     </tr>
                 `;
 
@@ -273,9 +443,11 @@
             });
         }
 
-        // 5. OPERASI TAMBAH BARANG BARU (CREATE)
+        // DAFTARKAN BARANG BARU (ADMIN ONLY)
         async function handleAddNewItem(event) {
             event.preventDefault();
+            if (currentRole !== 'admin') return;
+
             const nameInput = document.getElementById('input-tambah-nama');
             const stockInput = document.getElementById('input-tambah-stok');
 
@@ -291,9 +463,11 @@
             }
         }
 
-        // 6. OPERASI BARANG MASUK (UPDATE +)
+        // SUPPLY MASUK (ADMIN ONLY)
         async function handleStockIn(event) {
             event.preventDefault();
+            if (currentRole !== 'admin') return;
+
             const itemId = parseInt(document.getElementById('select-masuk-barang').value);
             const qty = parseInt(document.getElementById('input-masuk-jumlah').value);
             const item = inventoryData.find(i => i.id === itemId);
@@ -309,16 +483,18 @@
             }
         }
 
-        // 7. OPERASI BARANG KELUAR (UPDATE -)
+        // SUPPLY KELUAR / KONTROL PROTEKSI AMBIL BARANG (ADMIN ONLY)
         async function handleStockOut(event) {
             event.preventDefault();
+            if (currentRole !== 'admin') return;
+
             const itemId = parseInt(document.getElementById('select-keluar-barang').value);
             const qty = parseInt(document.getElementById('input-keluar-jumlah').value);
             const item = inventoryData.find(i => i.id === itemId);
 
             if (item) {
                 if (item.stock < qty) {
-                    alert(`🚨 STOK KURANG! Stok ${item.name} saat ini hanya sisa ${item.stock}.`);
+                    alert(`🚨 STOK KURANG! Persediaan ${item.name} saat ini hanya tersisa ${item.stock}.`);
                     return;
                 }
                 const { error } = await db.from('inventory').update({ stock: item.stock - qty }).eq('id', itemId);
@@ -331,18 +507,17 @@
             }
         }
 
-        // 8. HAPUS BARANG DARI DASHBOARD (DELETE)
+        // BAKAR / HAPUS JENIS DATA BARANG (ADMIN ONLY)
         async function handleDeleteItem(id) {
+            if (currentRole !== 'admin') return;
+
             const item = inventoryData.find(i => i.id === id);
-            if (confirm(`⚠️ PERINGATAN: Hapus dan musnahkan data "${item.name}" dari gudang cloud?`)) {
+            if (confirm(`⚠️ PERINGATAN: Hapus total dan hanguskan data "${item.name}" dari sistem?`)) {
                 const { error } = await db.from('inventory').delete().eq('id', id);
                 if (error) alert('Gagal menghapus barang: ' + error.message);
                 else await fetchInventory();
             }
         }
-
-        // Jalankan pengambilan data saat halaman dibuka
-        document.addEventListener('DOMContentLoaded', fetchInventory);
     </script>
 </body>
 </html>
