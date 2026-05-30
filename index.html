@@ -8,12 +8,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         body {
             font-family: 'Rajdhani', sans-serif;
             background-color: #0c0c0e;
-            -webkit-tap-highlight-color: transparent; /* Optimasi ketukan di iOS/Android */
+            -webkit-tap-highlight-color: transparent; /* Optimasi ketukan sentuh layar HP */
         }
         .gang-title {
             font-family: 'Permanent Marker', cursive;
@@ -24,7 +25,7 @@
         .glow-text {
             text-shadow: 0 0 10px rgba(249, 115, 22, 0.6);
         }
-        /* Kustomisasi Scrollbar */
+        /* Kustomisasi Gulir Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -72,7 +73,7 @@
                 </div>
 
                 <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg hover:shadow-orange-600/20 transition-all duration-200 text-sm">
-                    Masuk Gudang <i class="fa-solid fa-arrow-right ml-1"></i>
+                    Sahkan Masuk Gudang <i class="fa-solid fa-arrow-right ml-1"></i>
                 </button>
             </form>
         </div>
@@ -96,7 +97,7 @@
                         <i id="user-icon" class="fa-solid fa-user-secret text-lg"></i>
                     </div>
                     <div>
-                        <h4 id="user-name" class="font-bold text-sm tracking-wide">Treasury 'BLMC'</h4>
+                        <h4 id="user-name" class="font-bold text-sm tracking-wide">Johnny 'The Axe'</h4>
                         <span id="user-role-badge" class="text-[10px] bg-orange-600/20 text-orange-400 px-2 py-0.5 rounded border border-orange-600/30 uppercase font-semibold">Enforcer</span>
                     </div>
                 </div>
@@ -113,6 +114,9 @@
                     </button>
                     <button onclick="switchTab('tambah')" id="btn-tambah" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 transition-all duration-200">
                         <i class="fa-solid fa-plus-circle text-lg w-6"></i> Daftarkan Barang Baru
+                    </button>
+                    <button onclick="switchTab('logs')" id="btn-logs" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 transition-all duration-200">
+                        <i class="fa-solid fa-clock-rotate-left text-lg w-6"></i> Riwayat Log Gudang
                     </button>
                 </nav>
             </div>
@@ -137,7 +141,7 @@
                     </button>
                     <div>
                         <h2 id="page-title" class="text-xl md:text-2xl font-bold tracking-wide uppercase text-zinc-100">DASHBOARD STOCK</h2>
-                        <p class="text-xs text-zinc-400 hidden sm:block">Pantau pergerakan amunisi dan aset selundupan faksi.</p>
+                        <p class="text-xs text-zinc-400 hidden sm:block">Data gudang Resource dan Senjata BLMC.</p>
                     </div>
                 </div>
                 <div class="text-right shrink-0">
@@ -147,12 +151,25 @@
             </header>
 
             <section id="tab-dashboard" class="tab-content block">
+                
+                <div class="mb-6 bg-zinc-950 border border-zinc-800 rounded-xl p-4 shadow-2xl">
+                    <h3 class="text-xs uppercase tracking-wider text-zinc-400 mb-3 font-semibold flex items-center gap-2">
+                        <i class="fa-solid fa-chart-bar text-orange-500"></i> Live Stock Analytics (Radar Kontraband)
+                    </h3>
+                    <div class="h-44 md:h-60 relative w-full">
+                        <canvas id="bloodlineChart"></canvas>
+                    </div>
+                </div>
+
                 <div class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl">
                     <div class="p-4 md:p-5 border-b border-zinc-800 bg-zinc-900/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                         <span class="font-bold uppercase tracking-wider text-xs md:text-sm flex items-center gap-2">
                             <i class="fa-solid fa-list-check text-orange-500"></i> Manifest Inventaris Brankas Cloud (Supabase)
                         </span>
-                        <span id="db-status" class="text-[11px] bg-emerald-950 text-emerald-400 px-2.5 py-0.5 rounded border border-emerald-800 animate-pulse">Menghubungkan...</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded font-bold uppercase tracking-wide">⚠️ Kritis: &le; 500</span>
+                            <span id="db-status" class="text-[11px] bg-emerald-950 text-emerald-400 px-2.5 py-0.5 rounded border border-emerald-800 animate-pulse">Menghubungkan...</span>
+                        </div>
                     </div>
                     
                     <div class="block md:hidden bg-zinc-900 px-4 py-1.5 text-[11px] text-zinc-500 border-b border-zinc-800">
@@ -242,6 +259,38 @@
                 </div>
             </section>
 
+            <section id="tab-logs" class="tab-content hidden max-w-4xl mx-auto">
+                <div class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl">
+                    <div class="p-4 md:p-5 border-b border-zinc-800 bg-zinc-900/50 flex justify-between items-center">
+                        <span class="font-bold uppercase tracking-wider text-xs md:text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-orange-500"></i> Jurnal Log Keluar-Masuk Kontraband
+                        </span>
+                        <button onclick="fetchLogs()" class="text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 px-3 py-1 rounded text-zinc-300 transition-colors">
+                            <i class="fa-solid fa-rotate mr-1"></i> Refresh Log
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto w-full">
+                        <table class="w-full text-left border-collapse min-w-[600px]">
+                            <thead>
+                                <tr class="border-b border-zinc-800 bg-zinc-900 text-zinc-400 text-xs uppercase tracking-wider">
+                                    <th class="p-4 text-center w-40">Waktu Penatatan</th>
+                                    <th class="p-4">Nama Kontraband</th>
+                                    <th class="p-4 text-center w-24">Tipe</th>
+                                    <th class="p-4 text-center w-24">Jumlah</th>
+                                    <th class="p-4 w-40">Quartermaster (Operator)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-table-body" class="divide-y divide-zinc-900 text-xs md:text-sm">
+                                <tr>
+                                    <td colspan="5" class="p-8 text-center text-zinc-500 italic">Memuat jurnal riwayat log...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
         </main>
     </div>
 
@@ -250,15 +299,16 @@
         const SUPABASE_URL = 'https://fbetpczzpwbutmgxmqqy.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZiZXRwY3p6cHdidXRtZ3htcXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMjc4OTgsImV4cCI6MjA5NTcwMzg5OH0.4X5va5WwRTPN-HkWD4uHWBzR680NrTTNKCy4PwjNKak';
 
-        // PIN LOGIN KATA SANDI UNTUK ADMIN / QUARTERMASTER
-        const ADMIN_PASSWORD = 'blmcccrp'; 
+        // PIN KATA SANDI UNTUK LOGIN ADMIN
+        const ADMIN_PASSWORD = '1234'; 
 
         // Inisialisasi Supabase Client
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let inventoryData = [];
-        let currentRole = 'tamu'; // Status default awal peranan
+        let currentRole = 'tamu';
+        let liveChartInstance = null; 
 
-        // DETEKSI INPUT KATA SANDI BERDASARKAN ROLE PILIHAN
+        // DETEKSI FORM INPUT KATA SANDI BERDASARKAN ROLE PILIHAN
         function togglePasswordInput() {
             const role = document.getElementById('login-role').value;
             const passContainer = document.getElementById('password-container');
@@ -271,7 +321,7 @@
             }
         }
 
-        // PROSES VALIDASI MASUK GERBANG
+        // VALIDASI MASUK SISTEM GERBANG
         function handleLogin(event) {
             event.preventDefault();
             const selectedRole = document.getElementById('login-role').value;
@@ -288,7 +338,6 @@
                 currentRole = 'tamu';
             }
 
-            // Membuka antarmuka utama gudang
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
             
@@ -296,7 +345,7 @@
             fetchInventory();
         }
 
-        // PENYESUAIAN ANTARMUKA TAMPILAN SESUAI HAK AKSES
+        // PENYESUAIAN PANEL UI BERDASARKAN HAK AKSES
         function setupRoleUI() {
             const adminElements = document.querySelectorAll('.admin-only');
             const userName = document.getElementById('user-name');
@@ -305,7 +354,6 @@
             const thAction = document.getElementById('th-action');
 
             if (currentRole === 'admin') {
-                // Tampilkan semua fitur manajemen untuk Admin
                 adminElements.forEach(el => el.classList.remove('hidden'));
                 thAction.classList.remove('hidden');
                 
@@ -314,7 +362,6 @@
                 userRoleBadge.className = "text-[10px] bg-orange-600/20 text-orange-400 px-2 py-0.5 rounded border border-orange-600/30 uppercase font-semibold";
                 userIcon.className = "fa-solid fa-user-secret text-lg";
             } else {
-                // Sembunyikan kontrol manajemen dari Tamu
                 adminElements.forEach(el => el.classList.add('hidden'));
                 thAction.classList.add('hidden');
                 
@@ -323,12 +370,11 @@
                 userRoleBadge.className = "text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700 uppercase font-semibold";
                 userIcon.className = "fa-solid fa-eye text-base";
                 
-                // Kembalikan paksa ke dashboard utama
                 switchTab('dashboard');
             }
         }
 
-        // KELUAR SISTEM KEMBALI KE GERBANG UTAMA
+        // KELUAR LOG KEMBALI KE GERBANG AWAL
         function handleLogout() {
             if(confirm("Apakah kamu ingin keluar log dari manajemen gudang Bloodline MC?")) {
                 document.getElementById('login-password').value = '';
@@ -337,7 +383,7 @@
             }
         }
 
-        // OPERASI TOGGLE SIDEBAR DRAWERS DI MOBILE PLATFORM
+        // TOGGLE SIDEBAR LACI DRAWERS KHUSUS HP (ANDROID/IOS)
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const backdrop = document.getElementById('sidebar-backdrop');
@@ -357,7 +403,7 @@
         }
         setInterval(updateClock, 1000); updateClock();
 
-        // PENUKAR KONTEN TAB SIDEBAR
+        // NAVIGASI PENUKAR TAB SIDEBAR
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => { tab.classList.add('hidden'); tab.classList.remove('block'); });
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
@@ -367,7 +413,13 @@
                 btn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 transition-all duration-200";
             });
 
-            const titleMap = { 'dashboard': 'DASHBOARD STOCK', 'masuk': 'SUPPLY MASUK (RESTOCK)', 'keluar': 'SUPPLY KELUAR (DISTRIBUSI)', 'tambah': 'DAFTARKAN JENIS BARANG BARU' };
+            const titleMap = { 
+                'dashboard': 'DASHBOARD STOCK', 
+                'masuk': 'SUPPLY MASUK (RESTOCK)', 
+                'keluar': 'SUPPLY KELUAR (DISTRIBUSI)', 
+                'tambah': 'DAFTARKAN JENIS BARANG BARU',
+                'logs': 'RIWAYAT LOG AKTIVITAS GUDANG'
+            };
             document.getElementById('page-title').innerText = titleMap[tabId];
 
             const activeBtn = document.getElementById(`btn-${tabId}`);
@@ -376,9 +428,14 @@
                 else if (tabId === 'masuk') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-amber-600 text-white";
                 else if (tabId === 'keluar') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-red-600 text-white";
                 else if (tabId === 'tambah') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-emerald-600 text-white";
+                else if (tabId === 'logs') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-indigo-600 text-white";
             }
 
-            // Tutup laci otomatis jika dibuka lewat Android/iOS setelah pilih menu
+            // Ambil data log jika membuka tab log riwayat aktivitas
+            if (tabId === 'logs') {
+                fetchLogs();
+            }
+
             if (window.innerWidth < 768) {
                 toggleSidebar();
             }
@@ -393,8 +450,9 @@
                 
                 inventoryData = data;
                 statusBadge.innerText = "Terhubung";
-                statusBadge.className = "text-[11px] bg-emerald-950 text-emerald-400 px-2.5 py-0.5 rounded border border-emerald-800";
+                statusBadge.className = "text-[11px] bg-emerald-950 text-emerald-400 px-2.5 py-0.5 rounded border border-emerald-800 animate-pulse";
                 renderTable();
+                renderAnalyticsChart(); 
             } catch (err) {
                 console.error(err);
                 statusBadge.innerText = "Error Koneksi";
@@ -402,7 +460,7 @@
             }
         }
 
-        // TAMPILKAN TABEL DAN MENU PILIHAN FORM
+        // MENDER DATA TABEL KE LAYAR & DROPDOWN FORM
         function renderTable() {
             const tbody = document.getElementById('inventory-table-body');
             const selectMasuk = document.getElementById('select-masuk-barang');
@@ -416,10 +474,10 @@
             }
 
             inventoryData.forEach((item, index) => {
-                const stockAlertClass = item.stock <= 15 ? 'text-rose-500 font-bold glow-text' : 'text-zinc-300';
+                // UPDATE: BATAS INDIKATOR MERAH DIUBAH MENJADI <= 500 UNIT
+                const stockAlertClass = item.stock <= 500 ? 'text-rose-500 font-bold glow-text animate-pulse' : 'text-zinc-300';
                 const rowBg = index % 2 === 0 ? 'bg-zinc-950' : 'bg-zinc-900/30';
 
-                // Render tombol bakar/hapus hanya jika peran adalah admin
                 const actionTd = currentRole === 'admin' ? `
                     <td class="p-4 text-center">
                         <button onclick="handleDeleteItem(${item.id})" class="text-zinc-500 hover:text-red-500 bg-zinc-900 hover:bg-red-950/30 p-2.5 rounded border border-zinc-800 hover:border-red-800 transition-all duration-200">
@@ -443,7 +501,89 @@
             });
         }
 
-        // DAFTARKAN BARANG BARU (ADMIN ONLY)
+        // AMBIL DATA LOG KELUAR MASUK SECARA HISTORIS DARI SUPABASE
+        async function fetchLogs() {
+            const tbody = document.getElementById('logs-table-body');
+            try {
+                const { data, error } = await db.from('warehouse_logs').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                
+                tbody.innerHTML = '';
+                if(data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-zinc-500 italic">Belum ada riwayat masuk atau keluar kontraband.</td></tr>`;
+                    return;
+                }
+
+                data.forEach(log => {
+                    const localTime = new Date(log.created_at).toLocaleString('id-ID', { hour12: false });
+                    const typeBadge = log.type === 'Masuk' 
+                        ? `<span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Masuk</span>`
+                        : `<span class="bg-rose-950 text-rose-400 border border-rose-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Keluar</span>`;
+                    
+                    const qtyColor = log.type === 'Masuk' ? 'text-emerald-400' : 'text-rose-400';
+                    const qtySign = log.type === 'Masuk' ? '+' : '-';
+
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-zinc-800/40 transition-colors">
+                            <td class="p-4 text-center font-mono text-zinc-500">${localTime}</td>
+                            <td class="p-4 font-semibold tracking-wide text-zinc-200">${log.item_name}</td>
+                            <td class="p-4 text-center">${typeBadge}</td>
+                            <td class="p-4 text-center font-mono font-bold ${qtyColor}">${qtySign}${log.quantity}</td>
+                            <td class="p-4 text-zinc-400">${log.operator}</td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-rose-500 italic">Gagal sinkronisasi log: ${err.message}</td></tr>`;
+            }
+        }
+
+        // LOGIK UTAMA MERENDER GRAFIK ANALYTICS (CHART.JS)
+        function renderAnalyticsChart() {
+            const ctx = document.getElementById('bloodlineChart').getContext('2d');
+            const itemNames = inventoryData.map(item => item.name);
+            const itemStocks = inventoryData.map(item => item.stock);
+            
+            const barColors = itemStocks.map(stock => stock <= 500 ? 'rgba(239, 68, 68, 0.5)' : 'rgba(234, 88, 12, 0.4)');
+            const borderColors = itemStocks.map(stock => stock <= 500 ? 'rgba(239, 68, 68, 1)' : 'rgba(234, 88, 12, 1)');
+
+            if (liveChartInstance) {
+                liveChartInstance.destroy();
+            }
+
+            liveChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: itemNames,
+                    datasets: [{
+                        data: itemStocks,
+                        backgroundColor: barColors,
+                        borderColor: borderColors,
+                        borderWidth: 2,
+                        borderRadius: 5,
+                        hoverBackgroundColor: 'rgba(251, 146, 60, 0.6)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            grid: { color: '#27272a' }, 
+                            ticks: { color: '#a1a1aa', font: { family: 'Rajdhani', size: 11, weight: '600' } }
+                        },
+                        y: {
+                            grid: { color: '#27272a' },
+                            ticks: { color: '#a1a1aa', font: { family: 'Rajdhani', size: 11 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // REGISTER DATA BARU (ADMIN ONLY)
         async function handleAddNewItem(event) {
             event.preventDefault();
             if (currentRole !== 'admin') return;
@@ -463,7 +603,7 @@
             }
         }
 
-        // SUPPLY MASUK (ADMIN ONLY)
+        // INPUT STOK MASUK + CATAT LOG (ADMIN ONLY)
         async function handleStockIn(event) {
             event.preventDefault();
             if (currentRole !== 'admin') return;
@@ -473,9 +613,14 @@
             const item = inventoryData.find(i => i.id === itemId);
 
             if (item) {
+                // 1. Update jumlah di stok utama
                 const { error } = await db.from('inventory').update({ stock: item.stock + qty }).eq('id', itemId);
                 if (error) alert('Gagal mengupdate stok: ' + error.message);
                 else {
+                    // 2. Tulis riwayat ke tabel logs cloud
+                    await db.from('warehouse_logs').insert([
+                        { item_name: item.name, quantity: qty, type: 'Masuk', operator: "Johnny 'The Axe'" }
+                    ]);
                     document.getElementById('input-masuk-jumlah').value = '';
                     await fetchInventory();
                     switchTab('dashboard');
@@ -483,7 +628,7 @@
             }
         }
 
-        // SUPPLY KELUAR / KONTROL PROTEKSI AMBIL BARANG (ADMIN ONLY)
+        // POTONG STOK KELUAR + CATAT LOG (ADMIN ONLY)
         async function handleStockOut(event) {
             event.preventDefault();
             if (currentRole !== 'admin') return;
@@ -497,9 +642,14 @@
                     alert(`🚨 STOK KURANG! Persediaan ${item.name} saat ini hanya tersisa ${item.stock}.`);
                     return;
                 }
+                // 1. Update potong jumlah di stok utama
                 const { error } = await db.from('inventory').update({ stock: item.stock - qty }).eq('id', itemId);
                 if (error) alert('Gagal memotong stok: ' + error.message);
                 else {
+                    // 2. Tulis riwayat keluar ke tabel logs cloud
+                    await db.from('warehouse_logs').insert([
+                        { item_name: item.name, quantity: qty, type: 'Keluar', operator: "Johnny 'The Axe'" }
+                    ]);
                     document.getElementById('input-keluar-jumlah').value = '';
                     await fetchInventory();
                     switchTab('dashboard');
@@ -507,7 +657,7 @@
             }
         }
 
-        // BAKAR / HAPUS JENIS DATA BARANG (ADMIN ONLY)
+        // HAPUS TOTAL MANIFEST BARANG (ADMIN ONLY)
         async function handleDeleteItem(id) {
             if (currentRole !== 'admin') return;
 
