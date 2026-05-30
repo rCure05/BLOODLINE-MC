@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         body {
@@ -22,7 +23,6 @@
         .glow-text {
             text-shadow: 0 0 10px rgba(249, 115, 22, 0.6);
         }
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -42,7 +42,7 @@
             <div>
                 <div class="p-5 border-b border-zinc-800 text-center bg-zinc-900/50">
                     <h1 class="text-3xl text-orange-500 gang-title tracking-wider glow-text">BLOODLINE MC</h1>
-                    <p class="text-xs text-zinc-500 uppercase tracking-widest mt-1"><i class="fa-solid skull-crossbones mr-1"></i> Stockade HQ <i class="fa-solid skull-crossbones ml-1"></i></p>
+                    <p class="text-xs text-zinc-500 uppercase tracking-widest mt-1"><i class="fa-solid fa-skull-crossbones mr-1"></i> Stockade HQ <i class="fa-solid fa-skull-crossbones ml-1"></i></p>
                 </div>
 
                 <div class="px-5 py-4 flex items-center gap-3 bg-gradient-to-r from-orange-950/20 to-transparent border-b border-zinc-900">
@@ -50,8 +50,8 @@
                         <i class="fa-solid fa-user-secret text-lg"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-sm tracking-wide">Still Obby 'V.President'</h4>
-                        <span class="text-[10px] bg-orange-600/20 text-orange-400 px-2 py-0.5 rounded border border-orange-600/30 uppercase font-semibold">V.P / Highcommand</span>
+                        <h4 class="font-bold text-sm tracking-wide">Still Obby 'BLMC'</h4>
+                        <span class="text-[10px] bg-orange-600/20 text-orange-400 px-2 py-0.5 rounded border border-orange-600/30 uppercase font-semibold">V.P / Hhghcommand</span>
                     </div>
                 </div>
 
@@ -72,7 +72,7 @@
             </div>
 
             <div class="p-4 border-t border-zinc-900 bg-zinc-900/20 text-center text-xs text-zinc-600">
-                <p>&copy; 2026 BLOODLINE MC. Illegal Assets Control.</p>
+                <p>&copy; 2026 Bloodline MC. Illegal Assets Control.</p>
             </div>
         </aside>
 
@@ -82,7 +82,7 @@
             <header class="flex justify-between items-center mb-8 bg-zinc-950/80 p-4 rounded-xl border border-zinc-800 shadow-xl">
                 <div>
                     <h2 id="page-title" class="text-2xl font-bold tracking-wide uppercase text-zinc-100">DASHBOARD STOCK</h2>
-                    <p class="text-xs text-zinc-400">Data stok gudang utama BLMC.</p>
+                    <p class="text-xs text-zinc-400">Data stok gudang resource dan senjata BLMC.</p>
                 </div>
                 <div class="text-right">
                     <div id="live-clock" class="text-lg font-bold text-orange-500 tracking-wider font-mono glow-text">00:00:00</div>
@@ -94,9 +94,9 @@
                 <div class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl">
                     <div class="p-5 border-b border-zinc-800 bg-zinc-900/50 flex justify-between items-center">
                         <span class="font-bold uppercase tracking-wider text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-orange-500"></i> Manifest Inventaris Gudang Utama
+                            <i class="fa-solid fa-list-check text-orange-500"></i> Manifest Inventaris Gudang Utama (Supabase Cloud)
                         </span>
-                        <span class="text-xs bg-zinc-800 px-3 py-1 rounded text-zinc-400 border border-zinc-700">Live Database</span>
+                        <span id="db-status" class="text-xs bg-emerald-950 text-emerald-400 px-3 py-1 rounded border border-emerald-800 animate-pulse">Menghubungkan...</span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
@@ -109,7 +109,10 @@
                                 </tr>
                             </thead>
                             <tbody id="inventory-table-body" class="divide-y divide-zinc-900 text-sm">
-                                </tbody>
+                                <tr>
+                                    <td colspan="4" class="p-8 text-center text-zinc-500 italic">Memuat data dari brankas awan...</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -123,8 +126,7 @@
                     <form id="form-barang-masuk" class="p-6 space-y-4" onsubmit="handleStockIn(event)">
                         <div>
                             <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Pilih Barang</label>
-                            <select id="select-masuk-barang" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-zinc-200 focus:outline-none focus:border-orange-500 transition-colors">
-                                </select>
+                            <select id="select-masuk-barang" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-zinc-200 focus:outline-none focus:border-orange-500 transition-colors"></select>
                         </div>
                         <div>
                             <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Jumlah yang Masuk</label>
@@ -145,8 +147,7 @@
                     <form id="form-barang-keluar" class="p-6 space-y-4" onsubmit="handleStockOut(event)">
                         <div>
                             <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Pilih Barang</label>
-                            <select id="select-keluar-barang" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-zinc-200 focus:outline-none focus:border-red-500 transition-colors">
-                                </select>
+                            <select id="select-keluar-barang" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-zinc-200 focus:outline-none focus:border-red-500 transition-colors"></select>
                         </div>
                         <div>
                             <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Jumlah yang Keluar</label>
@@ -170,7 +171,7 @@
                             <input type="text" id="input-tambah-nama" required placeholder="Contoh: Assault Rifle, Paket Ganja, Body Armor" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-zinc-200 focus:outline-none focus:border-emerald-500 transition-colors">
                         </div>
                         <div>
-                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Stok Awal Awal (Initial Stock)</label>
+                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Stok Awal (Initial Stock)</label>
                             <input type="number" id="input-tambah-stok" min="0" required placeholder="Contoh: 100" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-zinc-200 focus:outline-none focus:border-emerald-500 transition-colors">
                         </div>
                         <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg hover:shadow-emerald-600/20 transition-all duration-200">
@@ -184,183 +185,164 @@
     </div>
 
     <script>
-        // DATA AWAL SIMULASI GUDANG (GTA ROLEPLAY THEME)
-        let inventoryData = [
-            { id: 1, name: "Assault Rifle (AK-47)", stock: 24 },
-            { id: 2, name: "Amunisi 7.62mm (Box)", stock: 145 },
-            { id: 3, name: "Paket Methamphetamine (KG)", stock: 12 },
-            { id: 4, name: "Heavy Body Armor", stock: 40 },
-            { id: 5, name: "Kunci Master (Lockpick)", stock: 85 }
-        ];
+        // CONFIG SUPABASE - GANTI DENGAN MILIKMU SENDIRI
+        const SUPABASE_URL = 'URUTAN_URL_SUPABASE'; 
+        const SUPABASE_ANON_KEY = 'KUNCI_ANON_SUPABASE';
 
-        // 1. REALTIME CLOCK FUNCTION
+        // Inisialisasi Klien Supabase
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let inventoryData = [];
+
+        // 1. JAM REALTIME
         function updateClock() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('en-US', { hour12: false });
-            document.getElementById('live-clock').innerText = timeString;
+            document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('en-US', { hour12: false });
         }
-        setInterval(updateClock, 1000);
-        updateClock();
+        setInterval(updateClock, 1000); updateClock();
 
-        // 2. TAB SWITCHER FUNCTION
+        // 2. NAVIGASI TAB SIDEBAR
         function switchTab(tabId) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('block'));
-            
-            // Show target tab
-            const activeTab = document.getElementById(`tab-${tabId}`);
-            activeTab.classList.remove('hidden');
-            activeTab.classList.add('block');
+            document.querySelectorAll('.tab-content').forEach(tab => { tab.classList.add('hidden'); tab.classList.remove('block'); });
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('block');
 
-            // Reset navigation button classes
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 transition-all duration-200";
             });
 
-            // Set dynamic header title
-            const titleMap = {
-                'dashboard': 'DASHBOARD STOCK',
-                'masuk': 'SUPPLY MASUK (RESTOCK)',
-                'keluar': 'SUPPLY KELUAR (DISTRIBUSI)',
-                'tambah': 'DAFTARKAN JENIS BARANG BARU'
-            };
+            const titleMap = { 'dashboard': 'DASHBOARD STOCK', 'masuk': 'SUPPLY MASUK (RESTOCK)', 'keluar': 'SUPPLY KELUAR (DISTRIBUSI)', 'tambah': 'DAFTARKAN JENIS BARANG BARU' };
             document.getElementById('page-title').innerText = titleMap[tabId];
 
-            // Set active button style based on action
             const activeBtn = document.getElementById(`btn-${tabId}`);
-            if (tabId === 'dashboard') {
-                activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-orange-600 text-white glow-orange";
-            } else if (tabId === 'masuk') {
-                activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-amber-600 text-white";
-            } else if (tabId === 'keluar') {
-                activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-red-600 text-white";
-            } else if (tabId === 'tambah') {
-                activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-emerald-600 text-white";
+            if (tabId === 'dashboard') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-orange-600 text-white glow-orange";
+            else if (tabId === 'masuk') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-amber-600 text-white";
+            else if (tabId === 'keluar') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-red-600 text-white";
+            else if (tabId === 'tambah') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-emerald-600 text-white";
+        }
+
+        // 3. AMBIL DATA DARI SUPABASE (READ)
+        async function fetchInventory() {
+            const statusBadge = document.getElementById('db-status');
+            try {
+                const { data, error } = await db.from('inventory').select('*').order('id', { ascending: true });
+                if (error) throw error;
+                
+                inventoryData = data;
+                statusBadge.innerText = "Terhubung";
+                statusBadge.className = "text-xs bg-emerald-950 text-emerald-400 px-3 py-1 rounded border border-emerald-800";
+                renderTable();
+            } catch (err) {
+                console.error(err);
+                statusBadge.innerText = "Error Koneksi";
+                statusBadge.className = "text-xs bg-rose-950 text-rose-400 px-3 py-1 rounded border border-rose-800";
             }
         }
 
-        // 3. RENDER DATA TO TABLE & DROPDOWNS
-        function renderApp() {
+        // 4. TAMPILKAN DATA KE TABEL & DROPDOWN
+        function renderTable() {
             const tbody = document.getElementById('inventory-table-body');
             const selectMasuk = document.getElementById('select-masuk-barang');
             const selectKeluar = document.getElementById('select-keluar-barang');
 
-            // Clear old data
-            tbody.innerHTML = '';
-            selectMasuk.innerHTML = '';
-            selectKeluar.innerHTML = '';
+            tbody.innerHTML = ''; selectMasuk.innerHTML = ''; selectKeluar.innerHTML = '';
 
             if(inventoryData.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="p-8 text-center text-zinc-500 italic">
-                            Gudang Kosong Melompong, Boss! Daftarkan barang segera.
-                        </td>
-                    </tr>
-                `;
+                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-zinc-500 italic">Gudang Kosong, Boss! Daftarkan barang baru.</td></tr>`;
                 return;
             }
 
             inventoryData.forEach((item, index) => {
-                // Table Row Color Condition for low stock
                 const stockAlertClass = item.stock <= 15 ? 'text-rose-500 font-bold glow-text' : 'text-zinc-300';
                 const rowBg = index % 2 === 0 ? 'bg-zinc-950' : 'bg-zinc-900/30';
 
-                // Append Table Rows
                 tbody.innerHTML += `
                     <tr class="${rowBg} hover:bg-zinc-800/40 transition-colors">
                         <td class="p-4 text-center text-zinc-500 font-mono">${index + 1}</td>
                         <td class="p-4 font-semibold tracking-wide">${item.name}</td>
                         <td class="p-4 text-center ${stockAlertClass} text-base font-mono">${item.stock}</td>
                         <td class="p-4 text-center">
-                            <button onclick="handleDeleteItem(${item.id})" class="text-zinc-500 hover:text-red-500 bg-zinc-900 hover:bg-red-950/30 p-2 rounded border border-zinc-800 hover:border-red-800 transition-all duration-200" title="Hapus Barang">
+                            <button onclick="handleDeleteItem(${item.id})" class="text-zinc-500 hover:text-red-500 bg-zinc-900 hover:bg-red-950/30 p-2 rounded border border-zinc-800 hover:border-red-800 transition-all duration-200">
                                 <i class="fa-solid fa-dumpster-fire"></i>
                             </button>
                         </td>
                     </tr>
                 `;
 
-                // Append Dropdown Options
                 const optionHtml = `<option value="${item.id}">${item.name} (Stok: ${item.stock})</option>`;
                 selectMasuk.innerHTML += optionHtml;
                 selectKeluar.innerHTML += optionHtml;
             });
         }
 
-        // 4. ACTION HANDLERS
-        // Add New Item Type
-        function handleAddNewItem(event) {
+        // 5. OPERASI TAMBAH BARANG BARU (CREATE)
+        async function handleAddNewItem(event) {
             event.preventDefault();
             const nameInput = document.getElementById('input-tambah-nama');
             const stockInput = document.getElementById('input-tambah-stok');
 
-            const newItem = {
-                id: Date.now(), // Unique ID
-                name: nameInput.value,
-                stock: parseInt(stockInput.value) || 0
-            };
+            const { error } = await db.from('inventory').insert([
+                { name: nameInput.value, stock: parseInt(stockInput.value) || 0 }
+            ]);
 
-            inventoryData.push(newItem);
-            
-            // Reset fields
-            nameInput.value = '';
-            stockInput.value = '';
-            
-            alert(`Sukses! ${newItem.name} berhasil didaftarkan.`);
-            renderApp();
-            switchTab('dashboard'); // Redirect to dashboard
+            if (error) { alert('Gagal mendaftarkan barang: ' + error.message); } 
+            else {
+                nameInput.value = ''; stockInput.value = '';
+                await fetchInventory();
+                switchTab('dashboard');
+            }
         }
 
-        // Stock In (Barang Masuk)
-        function handleStockIn(event) {
+        // 6. OPERASI BARANG MASUK (UPDATE +)
+        async function handleStockIn(event) {
             event.preventDefault();
             const itemId = parseInt(document.getElementById('select-masuk-barang').value);
             const qty = parseInt(document.getElementById('input-masuk-jumlah').value);
-
             const item = inventoryData.find(i => i.id === itemId);
+
             if (item) {
-                item.stock += qty;
-                alert(`Log Masuk: +${qty} ${item.name} telah dimasukkan ke rak gudang.`);
-                document.getElementById('input-masuk-jumlah').value = '';
-                renderApp();
-                switchTab('dashboard');
+                const { error } = await db.from('inventory').update({ stock: item.stock + qty }).eq('id', itemId);
+                if (error) alert('Gagal mengupdate stok: ' + error.message);
+                else {
+                    document.getElementById('input-masuk-jumlah').value = '';
+                    await fetchInventory();
+                    switchTab('dashboard');
+                }
             }
         }
 
-        // Stock Out (Barang Keluar)
-        function handleStockOut(event) {
+        // 7. OPERASI BARANG KELUAR (UPDATE -)
+        async function handleStockOut(event) {
             event.preventDefault();
             const itemId = parseInt(document.getElementById('select-keluar-barang').value);
             const qty = parseInt(document.getElementById('input-keluar-jumlah').value);
-
             const item = inventoryData.find(i => i.id === itemId);
+
             if (item) {
                 if (item.stock < qty) {
-                    alert(`🚨 ERROR: Stok tidak cukup! Stok ${item.name} saat ini hanya ${item.stock}.`);
+                    alert(`🚨 STOK KURANG! Stok ${item.name} saat ini hanya sisa ${item.stock}.`);
                     return;
                 }
-                item.stock -= qty;
-                alert(`Log Keluar: -${qty} ${item.name} telah diambil untuk keperluan operasi gang.`);
-                document.getElementById('input-keluar-jumlah').value = '';
-                renderApp();
-                switchTab('dashboard');
+                const { error } = await db.from('inventory').update({ stock: item.stock - qty }).eq('id', itemId);
+                if (error) alert('Gagal memotong stok: ' + error.message);
+                else {
+                    document.getElementById('input-keluar-jumlah').value = '';
+                    await fetchInventory();
+                    switchTab('dashboard');
+                }
             }
         }
 
-        // Delete Item Type
-        function handleDeleteItem(id) {
+        // 8. HAPUS BARANG DARI DASHBOARD (DELETE)
+        async function handleDeleteItem(id) {
             const item = inventoryData.find(i => i.id === id);
-            if (confirm(`⚠️ PERINGATAN: Apakah kamu yakin ingin membakar data manifest dan menghapus "${item.name}" dari sistem?`)) {
-                inventoryData = inventoryData.filter(i => i.id !== id);
-                renderApp();
+            if (confirm(`⚠️ PERINGATAN: Hapus dan musnahkan data "${item.name}" dari gudang cloud?`)) {
+                const { error } = await db.from('inventory').delete().eq('id', id);
+                if (error) alert('Gagal menghapus barang: ' + error.message);
+                else await fetchInventory();
             }
         }
 
-        // INITIAL LOAD
-        document.addEventListener('DOMContentLoaded', () => {
-            renderApp();
-        });
+        // Jalankan pengambilan data saat halaman dibuka
+        document.addEventListener('DOMContentLoaded', fetchInventory);
     </script>
 </body>
 </html>
