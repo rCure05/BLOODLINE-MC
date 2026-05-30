@@ -1,8 +1,8 @@
 const SUPABASE_URL =
-"https://PROJECT-ID.supabase.co";
+"https://fbetpczzpwbutmgxmqqy.supabase.co";
 
 const SUPABASE_KEY =
-"ANON-KEY";
+"sb_secret_QZ8VpfkbgzXuoDIPXw1GvQ_wvJLt5sr";
 
 const supabaseClient =
 supabase.createClient(
