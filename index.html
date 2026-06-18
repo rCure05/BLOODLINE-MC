@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BLOODLINE - Warehouse Management</title>
+    <title>BLOODLINE - Black Market Ledger</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
@@ -17,53 +17,26 @@
             background-color: #0c0c0e;
             -webkit-tap-highlight-color: transparent;
         }
-        .gang-title {
-            font-family: 'Permanent Marker', cursive;
-        }
-        .glow-orange {
-            box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
-        }
-        .glow-text {
-            text-shadow: 0 0 10px rgba(249, 115, 22, 0.6);
-        }
+        .gang-title { font-family: 'Permanent Marker', cursive; }
+        .glow-orange { box-shadow: 0 0 15px rgba(249, 115, 22, 0.4); }
+        .glow-text { text-shadow: 0 0 10px rgba(249, 115, 22, 0.6); }
         
-        /* Scrollbar Utama */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #18181b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #ea580c;
-            border-radius: 3px;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #18181b; }
+        ::-webkit-scrollbar-thumb { background: #ea580c; border-radius: 3px; }
 
-        /* Scrollbar Khusus Sidebar (Lebih tipis dan samar) */
-        .sidebar-scroll::-webkit-scrollbar {
-            width: 4px;
-        }
-        .sidebar-scroll::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .sidebar-scroll::-webkit-scrollbar-thumb {
-            background: rgba(234, 88, 12, 0.5); /* Warna orange transparan */
-            border-radius: 4px;
-        }
-        .sidebar-scroll::-webkit-scrollbar-thumb:hover {
-            background: rgba(234, 88, 12, 1);
-        }
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(234, 88, 12, 0.5); border-radius: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgba(234, 88, 12, 1); }
     </style>
 </head>
 <body class="text-zinc-100 overflow-hidden bg-zinc-950">
 
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#070708] p-4">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-orange-950/20 via-zinc-950/90 to-black -z-10"></div>
-        
         <div class="w-full max-w-md bg-zinc-950 border-2 border-orange-600 rounded-2xl p-6 md:p-8 shadow-[0_0_30px_rgba(234,88,12,0.2)] relative overflow-hidden transition-transform duration-500 hover:scale-[1.02]">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent"></div>
-            
             <div class="text-center mb-6 hover:scale-105 transition-transform duration-300">
                 <i class="fa-solid fa-skull-crossbones text-5xl text-orange-500 animate-pulse mb-3 drop-shadow-[0_0_10px_rgba(234,88,12,0.6)]"></i>
                 <h1 class="text-4xl text-orange-500 gang-title tracking-wider glow-text">BLOODLINE MC</h1>
@@ -80,17 +53,13 @@
                         <option value="treasury"> 💰 TREASURY </option>
                     </select>
                 </div>
-
                 <div id="password-container" class="hidden group">
                     <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-orange-500 transition-colors">Kata Sandi Akses</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500 group-focus-within:text-orange-500 transition-colors">
-                            <i class="fa-solid fa-lock"></i>
-                        </span>
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500 group-focus-within:text-orange-500 transition-colors"><i class="fa-solid fa-lock"></i></span>
                         <input type="password" id="login-password" placeholder="Masukkan kata sandi..." class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 pl-10 text-zinc-200 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all">
                     </div>
                 </div>
-
                 <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 active:scale-95 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg hover:shadow-orange-600/40 transition-all duration-200 text-sm flex items-center justify-center gap-2 group">
                     Masuk Gudang <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                 </button>
@@ -99,18 +68,13 @@
     </div>
 
     <div id="app-container" class="hidden h-screen relative flex">
-        
         <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-zinc-950 border-r-2 border-orange-600 flex flex-col z-30 shadow-[5px_0_25px_rgba(0,0,0,0.8)] -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:h-screen shrink-0">
-            
             <div class="shrink-0">
                 <div class="p-5 border-b border-zinc-800 text-center bg-zinc-900/50 relative hover:bg-zinc-900 transition-colors group">
                     <h1 class="text-3xl text-orange-500 gang-title tracking-wider glow-text group-hover:scale-105 transition-transform duration-300">BLOODLINE MC</h1>
                     <p class="text-xs text-zinc-500 uppercase tracking-widest mt-1"><i class="fa-solid fa-skull-crossbones mr-1 group-hover:text-orange-500 transition-colors"></i> Stockade HQ <i class="fa-solid fa-skull-crossbones ml-1 group-hover:text-orange-500 transition-colors"></i></p>
-                    <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-zinc-400 hover:text-orange-500 md:hidden text-xl hover:rotate-90 transition-transform">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+                    <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-zinc-400 hover:text-orange-500 md:hidden text-xl hover:rotate-90 transition-transform"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-
                 <div class="px-5 py-4 flex items-center gap-3 bg-gradient-to-r from-orange-950/20 to-transparent border-b border-zinc-900 hover:bg-zinc-900/40 transition-colors cursor-default">
                     <div id="user-avatar-container" class="w-10 h-10 rounded-full bg-zinc-800 border border-orange-500 flex items-center justify-center text-orange-500 shadow-md transition-transform duration-300 hover:scale-110">
                         <i id="user-icon" class="fa-solid fa-user-secret text-lg"></i>
@@ -126,23 +90,18 @@
                 <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide transition-all duration-200 bg-orange-600 text-white glow-orange group">
                     <i class="fa-solid fa-gauge-high text-lg w-6 group-hover:rotate-12 transition-transform duration-300"></i> Dashboard Gudang
                 </button>
-                
                 <button onclick="switchTab('masuk')" id="btn-masuk" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 hover:translate-x-1 transition-all duration-200 group">
-                    <i class="fa-solid fa-boxes-packing text-lg w-6 group-hover:scale-110 transition-transform duration-300"></i> Supply Masuk (+)
+                    <i class="fa-solid fa-boxes-packing text-lg w-6 group-hover:scale-110 transition-transform duration-300"></i> Beli / Deposit Masuk (+)
                 </button>
-                
                 <button onclick="switchTab('keluar')" id="btn-keluar" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 hover:translate-x-1 transition-all duration-200 group">
-                    <i class="fa-solid fa-truck-ramp-box text-lg w-6 group-hover:-translate-x-1 transition-transform duration-300"></i> Supply Keluar (-)
+                    <i class="fa-solid fa-handshake text-lg w-6 group-hover:-translate-x-1 transition-transform duration-300"></i> Jual / Distribusi (-)
                 </button>
-                
                 <button onclick="switchTab('tambah')" id="btn-tambah" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 hover:translate-x-1 transition-all duration-200 group">
-                    <i class="fa-solid fa-plus-circle text-lg w-6 group-hover:rotate-90 transition-transform duration-300"></i> Daftarkan Barang
+                    <i class="fa-solid fa-plus-circle text-lg w-6 group-hover:rotate-90 transition-transform duration-300"></i> Daftarkan Barang Baru
                 </button>
-                
                 <button onclick="switchTab('logs')" id="btn-logs" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 hover:translate-x-1 transition-all duration-200 group">
-                    <i class="fa-solid fa-clock-rotate-left text-lg w-6 group-hover:-rotate-45 transition-transform duration-300"></i> Riwayat Log
+                    <i class="fa-solid fa-file-invoice-dollar text-lg w-6 group-hover:-rotate-45 transition-transform duration-300"></i> Ledger Keuangan
                 </button>
-                
                 <button onclick="switchTab('rekap')" id="btn-rekap" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 hover:translate-x-1 transition-all duration-200 group">
                     <i class="fa-solid fa-file-excel text-lg w-6 group-hover:scale-110 transition-transform duration-300 text-emerald-600/80 group-hover:text-emerald-500"></i> Ekspor Bulanan
                 </button>
@@ -152,7 +111,6 @@
                 <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded border border-red-900/40 bg-red-950/10 hover:bg-red-900 text-red-400 hover:text-white font-semibold text-xs tracking-wide transition-all duration-200 hover:shadow-[0_0_15px_rgba(220,38,38,0.4)] group">
                     <i class="fa-solid fa-sign-out-alt group-hover:-translate-x-1 transition-transform"></i> Keluar Log
                 </button>
-                <p class="text-center text-[10px] text-zinc-600">&copy; 2026 Bloodline MC.</p>
             </div>
         </aside>
 
@@ -161,29 +119,27 @@
         <main class="flex-1 bg-zinc-900/40 relative overflow-y-auto p-4 md:p-8 w-full">
             <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-950/10 via-zinc-900/50 to-zinc-950 -z-10"></div>
 
-            <header class="flex justify-between items-center mb-6 bg-zinc-950/80 p-4 rounded-xl border border-zinc-800 shadow-xl gap-4 hover:border-zinc-700 transition-colors">
+            <header class="flex justify-between items-center mb-6 bg-zinc-950/80 p-4 rounded-xl border border-zinc-800 shadow-xl gap-4">
                 <div class="flex items-center gap-3">
-                    <button onclick="toggleSidebar()" class="md:hidden text-zinc-100 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 p-2.5 rounded-lg transition-all active:scale-95">
-                        <i class="fa-solid fa-bars text-xl"></i>
-                    </button>
+                    <button onclick="toggleSidebar()" class="md:hidden text-zinc-100 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 p-2.5 rounded-lg transition-all active:scale-95"><i class="fa-solid fa-bars text-xl"></i></button>
                     <div>
                         <h2 id="page-title" class="text-xl md:text-2xl font-bold tracking-wide uppercase text-zinc-100">DASHBOARD STOCK</h2>
                         <p class="text-xs text-zinc-400 hidden sm:block">Data penyimpanan resource dan senjata BLMC.</p>
                     </div>
                 </div>
-                <div class="text-right shrink-0 hover:scale-105 transition-transform duration-300">
+                <div class="text-right shrink-0">
                     <div id="live-clock" class="text-base md:text-lg font-bold text-orange-500 tracking-wider font-mono glow-text">00:00:00</div>
                     <span class="text-[9px] md:text-[11px] text-zinc-500 uppercase tracking-widest font-semibold">Los Santos, CCRP</span>
                 </div>
             </header>
 
             <section id="tab-dashboard" class="tab-content block animate-[fadeIn_0.4s_ease-in-out]">
-                <div class="mb-4 bg-zinc-950 border border-zinc-800 rounded-xl p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shadow-xl hover:-translate-y-0.5 hover:border-orange-900/50 transition-all duration-300">
+                <div class="mb-4 bg-zinc-950 border border-zinc-800 rounded-xl p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shadow-xl">
                     <div class="flex items-center gap-2 group cursor-default">
-                        <i class="fa-solid fa-map-location-dot text-orange-500 text-lg group-hover:animate-bounce"></i>
-                        <span class="text-sm font-bold uppercase tracking-wider text-zinc-300 group-hover:text-orange-400 transition-colors">Koordinat Gudang:</span>
+                        <i class="fa-solid fa-map-location-dot text-orange-500 text-lg"></i>
+                        <span class="text-sm font-bold uppercase tracking-wider text-zinc-300">Koordinat Gudang:</span>
                     </div>
-                    <select id="filter-lokasi" onchange="fetchInventory()" class="w-full sm:w-64 bg-zinc-900 border border-zinc-700 rounded-lg p-2 text-sm text-orange-500 font-bold focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all cursor-pointer hover:bg-zinc-800">
+                    <select id="filter-lokasi" onchange="fetchInventory()" class="w-full sm:w-64 bg-zinc-900 border border-zinc-700 rounded-lg p-2 text-sm text-orange-500 font-bold focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 cursor-pointer">
                         <option value="Semua">🌐 SEMUA GUDANG GABUNGAN</option>
                         <option value="Brankas Bos">🏍️ Brankas Bos</option>
                         <option value="Loker Bersama">🌲 Loker Bersama</option>
@@ -191,32 +147,39 @@
                     </select>
                 </div>
 
-                <div class="mb-6 bg-zinc-950 border border-zinc-800 rounded-xl p-4 shadow-2xl hover:shadow-[0_10px_30px_rgba(234,88,12,0.05)] transition-shadow duration-300">
+                <div class="mb-6 bg-zinc-950 border border-zinc-800 rounded-xl p-4 shadow-2xl">
                     <h3 class="text-xs uppercase tracking-wider text-zinc-400 mb-3 font-semibold flex items-center gap-2">
                         <i class="fa-solid fa-chart-bar text-orange-500"></i> Stok Analytics
                     </h3>
-                    <div class="h-44 md:h-56 relative w-full">
-                        <canvas id="bloodlineChart"></canvas>
-                    </div>
+                    <div class="h-44 md:h-56 relative w-full"><canvas id="bloodlineChart"></canvas></div>
                 </div>
 
-                <div class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl transition-all duration-300 hover:border-zinc-700">
-                    <div class="p-4 md:p-5 border-b border-zinc-800 bg-zinc-900/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                        <span class="font-bold uppercase tracking-wider text-xs md:text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-orange-500"></i> Manifest Inventaris Brankas
-                        </span>
+                <div class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl">
+                    <div class="p-4 md:p-5 border-b border-zinc-800 bg-zinc-900/50 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4">
+                        <div class="flex flex-wrap items-center gap-4">
+                            <span class="font-bold uppercase tracking-wider text-xs md:text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-list-check text-orange-500"></i> Manifest Inventaris
+                            </span>
+                            
+                            <div class="flex items-center bg-black border border-emerald-900/50 px-3 py-1.5 rounded-lg shadow-inner">
+                                <i class="fa-solid fa-sack-dollar text-emerald-500 mr-2 text-sm"></i>
+                                <span class="text-[11px] text-zinc-400 uppercase tracking-widest font-semibold mr-2">Kas:</span>
+                                <span id="display-faction-funds" class="text-emerald-400 font-mono font-bold text-sm tracking-wider">Memuat...</span>
+                                
+                                <button onclick="adjustFunds()" class="admin-only ml-3 text-zinc-500 hover:text-emerald-400 hover:scale-110 transition-all" title="Tambah/Tarik Kas Manual">
+                                    <i class="fa-solid fa-money-bill-transfer text-sm"></i>
+                                </button>
+                            </div>
+
+                        </div>
                         <div class="flex items-center gap-2">
-                            <span class="text-[10px] bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded font-bold uppercase tracking-wide cursor-help" title="Stok Merah Artinya Mendesak!">⚠️ Kritis: &le; 500</span>
+                            <span class="text-[10px] bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded font-bold uppercase tracking-wide">⚠️ Kritis: &le; 500</span>
                             <span id="db-status" class="text-[11px] bg-emerald-950 text-emerald-400 px-2.5 py-0.5 rounded border border-emerald-800 animate-pulse">Menghubungkan...</span>
                         </div>
                     </div>
                     
-                    <div class="block md:hidden bg-zinc-900 px-4 py-1.5 text-[11px] text-zinc-500 border-b border-zinc-800">
-                        <i class="fa-solid fa-arrow-left-right mr-1"></i> Geser tabel ke samping untuk melihat detail penuh
-                    </div>
-
                     <div class="overflow-x-auto w-full">
-                        <table class="w-full text-left border-collapse min-w-[500px] md:min-w-full">
+                        <table class="w-full text-left border-collapse min-w-[500px]">
                             <thead>
                                 <tr class="border-b border-zinc-800 bg-zinc-900 text-zinc-400 text-xs uppercase tracking-wider">
                                     <th class="p-4 w-12 text-center">No</th>
@@ -227,9 +190,7 @@
                                 </tr>
                             </thead>
                             <tbody id="inventory-table-body" class="divide-y divide-zinc-900 text-xs md:text-sm">
-                                <tr>
-                                    <td colspan="5" class="p-8 text-center text-zinc-500 italic">Memuat brankas...</td>
-                                </tr>
+                                <tr><td colspan="5" class="p-8 text-center text-zinc-500 italic">Memuat brankas...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -237,60 +198,88 @@
             </section>
 
             <section id="tab-masuk" class="tab-content hidden max-w-xl mx-auto animate-[fadeIn_0.3s_ease-in-out]">
-                <div class="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden hover:shadow-[0_10px_30px_rgba(234,88,12,0.1)] transition-shadow duration-300">
-                    <div class="p-5 border-b border-zinc-800 bg-orange-600/10 text-orange-500 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-boxes-packing text-lg"></i> Input Supply Baru Masuk (Restock)
+                <div class="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden">
+                    <div class="p-5 border-b border-zinc-800 bg-amber-600/10 text-amber-500 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-truck-loading text-lg"></i> Catat Pembelian / Deposit Barang Masuk
                     </div>
                     <form id="form-barang-masuk" class="p-5 md:p-6 space-y-4" onsubmit="handleStockIn(event)">
                         <div class="group">
-                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-orange-500 transition-colors">Pilih Barang & Lokasi Target</label>
-                            <select id="select-masuk-barang" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all cursor-pointer hover:bg-zinc-800"></select>
+                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-amber-500">Pilih Barang yang Masuk</label>
+                            <select id="select-masuk-barang" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 cursor-pointer"></select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="group">
+                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-amber-500">Jumlah/Qty</label>
+                                <input type="number" id="input-masuk-jumlah" min="1" required oninput="calcTotalMasuk()" placeholder="10" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                            </div>
+                            <div class="group">
+                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-amber-500">Harga Beli per Unit ($)</label>
+                                <input type="number" id="input-masuk-harga" min="0" required oninput="calcTotalMasuk()" placeholder="Contoh: 1500" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                            </div>
                         </div>
                         <div class="group">
-                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-orange-500 transition-colors">Jumlah yang Masuk</label>
-                            <input type="number" id="input-masuk-jumlah" min="1" required placeholder="Contoh: 50" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all hover:bg-zinc-800">
+                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-amber-500">Nama Pemasok / Asal Barang</label>
+                            <input type="text" id="input-masuk-target" required placeholder="Contoh: Kartel El Rubio, Crafting, dll" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
                         </div>
-                        <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 active:scale-95 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg hover:shadow-orange-600/30 text-sm transition-all duration-200 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-check-circle"></i> Konfirmasi Masuk Gudang
+                        <div class="p-3 bg-black border border-amber-900/50 rounded-lg flex justify-between items-center">
+                            <span class="text-xs text-zinc-400 uppercase tracking-widest font-bold">Total Uang Yang Dipotong:</span>
+                            <span id="display-total-masuk" class="text-lg font-mono font-bold text-amber-500">$ 0</span>
+                        </div>
+                        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg text-sm transition-all duration-200 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-check-circle"></i> Eksekusi Transaksi Pembelian
                         </button>
                     </form>
                 </div>
             </section>
 
             <section id="tab-keluar" class="tab-content hidden max-w-xl mx-auto animate-[fadeIn_0.3s_ease-in-out]">
-                <div class="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden hover:shadow-[0_10px_30px_rgba(220,38,38,0.1)] transition-shadow duration-300">
+                <div class="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden">
                     <div class="p-5 border-b border-zinc-800 bg-red-600/10 text-red-500 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-truck-ramp-box text-lg"></i> Pengambilan Barang Operasi Gang
+                        <i class="fa-solid fa-hand-holding-dollar text-lg"></i> Catat Penjualan / Distribusi Barang
                     </div>
                     <form id="form-barang-keluar" class="p-5 md:p-6 space-y-4" onsubmit="handleStockOut(event)">
                         <div class="group">
-                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-red-500 transition-colors">Pilih Barang & Titik Lokasi Ambil</label>
-                            <select id="select-keluar-barang" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all cursor-pointer hover:bg-zinc-800"></select>
+                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-red-500">Pilih Barang dari Gudang</label>
+                            <select id="select-keluar-barang" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 cursor-pointer"></select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="group">
+                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-red-500">Jumlah/Qty Keluar</label>
+                                <input type="number" id="input-keluar-jumlah" min="1" required oninput="calcTotalKeluar()" placeholder="5" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500">
+                            </div>
+                            <div class="group">
+                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-red-500">Harga Jual per Unit ($)</label>
+                                <input type="number" id="input-keluar-harga" min="0" required oninput="calcTotalKeluar()" placeholder="Contoh: 3000 (Isi 0 jika gratis)" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500">
+                            </div>
                         </div>
                         <div class="group">
-                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-red-500 transition-colors">Jumlah yang Keluar</label>
-                            <input type="number" id="input-keluar-jumlah" min="1" required placeholder="Contoh: 10" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all hover:bg-zinc-800">
+                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-red-500">Nama Pembeli / Target Penerima</label>
+                            <input type="text" id="input-keluar-target" required placeholder="Contoh: Gang Ballas, Pembagian Anggota" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500">
                         </div>
-                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg hover:shadow-red-600/30 text-sm transition-all duration-200 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-dolly"></i> Ambil Dari Gudang
+                        <div class="p-3 bg-black border border-emerald-900/50 rounded-lg flex justify-between items-center">
+                            <span class="text-xs text-zinc-400 uppercase tracking-widest font-bold">Total Uang Masuk Kas:</span>
+                            <span id="display-total-keluar" class="text-lg font-mono font-bold text-emerald-500">$ 0</span>
+                        </div>
+                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg text-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-handshake"></i> Eksekusi Transaksi Penjualan
                         </button>
                     </form>
                 </div>
             </section>
 
             <section id="tab-tambah" class="tab-content hidden max-w-xl mx-auto animate-[fadeIn_0.3s_ease-in-out]">
-                <div class="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden hover:shadow-[0_10px_30px_rgba(16,185,129,0.1)] transition-shadow duration-300">
+                <div class="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden">
                     <div class="p-5 border-b border-zinc-800 bg-emerald-600/10 text-emerald-500 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
                         <i class="fa-solid fa-circle-plus text-lg"></i> Daftarkan Jenis Kontraband Baru
                     </div>
                     <form id="form-tambah-barang" class="p-5 md:p-6 space-y-4" onsubmit="handleAddNewItem(event)">
                         <div class="group">
                             <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-emerald-500 transition-colors">Nama Barang / Senjata / Code Name</label>
-                            <input type="text" id="input-tambah-nama" required placeholder="Contoh: Carbine Rifle, Paket Kokain" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all hover:bg-zinc-800">
+                            <input type="text" id="input-tambah-nama" required placeholder="Contoh: Carbine Rifle, Paket Kokain" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
                         </div>
                         <div class="group">
                             <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-emerald-500 transition-colors">Alokasikan Titik Lokasi Gudang</label>
-                            <select id="input-tambah-lokasi" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all cursor-pointer hover:bg-zinc-800">
+                            <select id="input-tambah-lokasi" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
                                 <option value="Brankas Bos">🏍️ Brankas Bos</option>
                                 <option value="Loker Bersama">🌲 Loker Bersama</option>
                                 <option value="Gudang Umum">⚓ Gudang Umum (umum)</option>
@@ -298,122 +287,138 @@
                         </div>
                         <div class="group">
                             <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-emerald-500 transition-colors">Stok Awal (Initial Stock)</label>
-                            <input type="number" id="input-tambah-stok" min="0" required placeholder="Contoh: 100" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all hover:bg-zinc-800">
+                            <input type="number" id="input-tambah-stok" min="0" required placeholder="Contoh: 100" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
                         </div>
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg hover:shadow-emerald-600/30 text-sm transition-all duration-200 flex items-center justify-center gap-2">
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg text-sm flex items-center justify-center gap-2">
                             <i class="fa-solid fa-save"></i> Daftarkan ke Sistem Lokasi
                         </button>
                     </form>
                 </div>
             </section>
 
-            <section id="tab-logs" class="tab-content hidden max-w-5xl mx-auto animate-[fadeIn_0.3s_ease-in-out]">
-                <div class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl transition-colors duration-300 hover:border-zinc-700">
+            <section id="tab-logs" class="tab-content hidden w-full mx-auto animate-[fadeIn_0.3s_ease-in-out]">
+                
+                <div class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl mb-8">
                     <div class="p-4 md:p-5 border-b border-zinc-800 bg-zinc-900/50 flex justify-between items-center">
                         <span class="font-bold uppercase tracking-wider text-xs md:text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-clock-rotate-left text-orange-500"></i> Jurnal Log Riwayat Keluar-Masuk Kontraband
+                            <i class="fa-solid fa-file-invoice-dollar text-orange-500"></i> Ledger Transaksi Pasar Gelap (Barang)
                         </span>
-                        <button onclick="fetchLogs()" class="text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 px-3 py-1.5 rounded text-zinc-300 transition-all active:scale-95 hover:text-orange-500 flex items-center gap-1 group">
-                            <i class="fa-solid fa-rotate group-hover:rotate-180 transition-transform duration-500"></i> Refresh Log
+                        <button onclick="fetchLogs()" class="text-xs bg-zinc-900 border border-zinc-700 px-3 py-1.5 rounded text-zinc-300 hover:text-orange-500 flex items-center gap-1 group transition-all">
+                            <i class="fa-solid fa-rotate group-hover:rotate-180 transition-transform duration-500"></i> Refresh
                         </button>
                     </div>
-                    
-                    <div class="overflow-x-auto w-full">
-                        <table class="w-full text-left border-collapse min-w-[700px]">
-                            <thead>
-                                <tr class="border-b border-zinc-800 bg-zinc-900 text-zinc-400 text-xs uppercase tracking-wider">
-                                    <th class="p-4 text-center w-36">Waktu Pencatatan</th>
-                                    <th class="p-4">Nama Barang</th>
-                                    <th class="p-4">Gudang TKP</th>
-                                    <th class="p-4 text-center w-20">Tipe</th>
-                                    <th class="p-4 text-center w-20">Jumlah</th>
-                                    <th class="p-4 w-36">Stocker / Jabatan</th>
+                    <div class="overflow-x-auto w-full max-h-96">
+                        <table class="w-full text-left border-collapse min-w-[1000px]">
+                            <thead class="sticky top-0 bg-zinc-900 z-10 shadow-md">
+                                <tr class="border-b border-zinc-800 text-zinc-400 text-[11px] uppercase tracking-wider">
+                                    <th class="p-3 text-center w-32">Waktu (WIB)</th>
+                                    <th class="p-3">Nama Barang</th>
+                                    <th class="p-3 text-center">Tipe Transaksi</th>
+                                    <th class="p-3 text-center">Qty</th>
+                                    <th class="p-3">Klien / Pemasok</th>
+                                    <th class="p-3 text-right">Harga Unit</th>
+                                    <th class="p-3 text-right">Total Nilai</th>
+                                    <th class="p-3 w-32">Operator</th>
                                 </tr>
                             </thead>
                             <tbody id="logs-table-body" class="divide-y divide-zinc-900 text-xs md:text-sm">
-                                <tr>
-                                    <td colspan="6" class="p-8 text-center text-zinc-500 italic">Memuat jurnal riwayat log...</td>
-                                </tr>
+                                <tr><td colspan="8" class="p-8 text-center text-zinc-500 italic">Memuat ledger transaksi barang...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
+
+                <div class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl">
+                    <div class="p-4 md:p-5 border-b border-zinc-800 bg-emerald-900/20 flex justify-between items-center">
+                        <span class="font-bold uppercase tracking-wider text-xs md:text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-vault text-emerald-500"></i> Riwayat Mutasi Brankas (Manual)
+                        </span>
+                        <button onclick="fetchFundLogs()" class="text-xs bg-zinc-900 border border-zinc-700 px-3 py-1.5 rounded text-zinc-300 hover:text-emerald-500 flex items-center gap-1 group transition-all">
+                            <i class="fa-solid fa-rotate group-hover:rotate-180 transition-transform duration-500"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto w-full max-h-80">
+                        <table class="w-full text-left border-collapse min-w-[600px]">
+                            <thead class="sticky top-0 bg-zinc-900 z-10 shadow-md">
+                                <tr class="border-b border-zinc-800 text-zinc-400 text-[11px] uppercase tracking-wider">
+                                    <th class="p-3 text-center w-36">Waktu (WIB)</th>
+                                    <th class="p-3 text-center w-32">Tipe Mutasi</th>
+                                    <th class="p-3 text-right w-44">Nominal Uang</th>
+                                    <th class="p-3">Operator / Penanggung Jawab</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fund-logs-table-body" class="divide-y divide-zinc-900 text-xs md:text-sm">
+                                <tr><td colspan="4" class="p-8 text-center text-zinc-500 italic">Memuat log brankas...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </section>
 
             <section id="tab-rekap" class="tab-content hidden max-w-2xl mx-auto animate-[fadeIn_0.3s_ease-in-out]">
-                <div class="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden hover:shadow-[0_10px_30px_rgba(99,102,241,0.1)] transition-shadow duration-300">
+                <div class="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden">
                     <div class="p-5 border-b border-zinc-800 bg-indigo-600/10 text-indigo-400 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-file-excel text-lg"></i> Generator Rekap Dokumen Bulanan (Excel)
+                        <i class="fa-solid fa-file-excel text-lg"></i> Ekspor Ledger Bulanan (Excel)
                     </div>
                     <div class="p-5 md:p-6 space-y-6">
-                        <div class="bg-zinc-900/50 p-4 border border-zinc-800 rounded-lg text-sm text-zinc-400 hover:border-indigo-900/50 transition-colors">
-                            <p class="font-semibold text-zinc-200 mb-1 flex items-center gap-1"><i class="fa-solid fa-lightbulb text-yellow-500"></i> Informasi Fitur:</p>
-                            Sistem akan mengunduh semua data sirkulasi barang keluar dan masuk berdasarkan bulan yang Anda tentukan menjadi file dokumen spreadsheet `.xlsx`.
+                        <div class="bg-zinc-900/50 p-4 border border-zinc-800 rounded-lg text-sm text-zinc-400">
+                            Sistem akan mengunduh semua data sirkulasi barang dan perputaran uang berdasarkan bulan yang ditentukan menjadi file spreadsheet `.xlsx`.
                         </div>
-                        
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="group">
-                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-indigo-400 transition-colors">Pilih Bulan</label>
-                                <select id="rekap-bulan" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer hover:bg-zinc-800">
-                                    <option value="01">Januari</option>
-                                    <option value="02">Februari</option>
-                                    <option value="03">Maret</option>
-                                    <option value="04">April</option>
-                                    <option value="05">Mei</option>
-                                    <option value="06">Juni</option>
-                                    <option value="07">Juli</option>
-                                    <option value="08">Agustus</option>
-                                    <option value="09">September</option>
-                                    <option value="10">Oktober</option>
-                                    <option value="11">November</option>
-                                    <option value="12">Desember</option>
-                                </select>
+                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Bulan</label>
+                                <select id="rekap-bulan" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:border-indigo-500"></select>
                             </div>
                             <div class="group">
-                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-indigo-400 transition-colors">Pilih Tahun</label>
-                                <select id="rekap-tahun" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer hover:bg-zinc-800">
+                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Tahun</label>
+                                <select id="rekap-tahun" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:border-indigo-500">
                                     <option value="2026">2026</option>
                                     <option value="2027">2027</option>
-                                    <option value="2025">2025</option>
                                 </select>
                             </div>
                         </div>
-
-                        <button onclick="exportMonthlyRecapExcel()" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg hover:shadow-indigo-600/30 text-sm flex items-center justify-center gap-2 transition-all duration-200 group">
-                            <i class="fa-solid fa-download group-hover:animate-bounce"></i> Unduh File Excel (.xlsx)
+                        <button onclick="exportMonthlyRecapExcel()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg text-sm flex justify-center gap-2">
+                            <i class="fa-solid fa-download"></i> Unduh Laporan Keuangan (.xlsx)
                         </button>
                     </div>
                 </div>
             </section>
-
         </main>
     </div>
 
     <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 
     <script>
         // CONFIG SUPABASE
         const SUPABASE_URL = 'https://fbetpczzpwbutmgxmqqy.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZiZXRwY3p6cHdidXRtZ3htcXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMjc4OTgsImV4cCI6MjA5NTcwMzg5OH0.4X5va5WwRTPN-HkWD4uHWBzR680NrTTNKCy4PwjNKak';
-
-        // PASSWORD AKSES
         const ADMIN_PASSWORD = 'garisdarah'; 
 
-        // Inisialisasi Supabase
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let inventoryData = [];
         let currentRole = 'tamu';
+        let currentFunds = 0; 
         let liveChartInstance = null;
+
+        // Populate Month Dropdown
+        const bulanSelect = document.getElementById('rekap-bulan');
+        const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        namaBulan.forEach((b, i) => {
+            const val = String(i+1).padStart(2, '0');
+            bulanSelect.innerHTML += `<option value="${val}">${b}</option>`;
+        });
+
+        const formatMoney = (amount) => {
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
+        };
 
         function togglePasswordInput() {
             const role = document.getElementById('login-role').value;
             const passContainer = document.getElementById('password-container');
-            if (role === 'president' || role === 'vice_president' || role === 'treasury') {
+            if (role !== 'tamu') {
                 passContainer.classList.remove('hidden');
                 document.getElementById('login-password').required = true;
             } else {
@@ -427,22 +432,14 @@
             const selectedRole = document.getElementById('login-role').value;
             const enteredPassword = document.getElementById('login-password').value;
 
-            if (selectedRole === 'president' || selectedRole === 'vice_president' || selectedRole === 'treasury') {
-                if (enteredPassword === ADMIN_PASSWORD) {
-                    currentRole = selectedRole;
-                } else {
-                    alert('🚨 AKSES DITOLAK: Kata Sandi Pengurus Salah!');
-                    return;
-                }
-            } else {
-                currentRole = 'tamu';
-            }
+            if (selectedRole !== 'tamu') {
+                if (enteredPassword === ADMIN_PASSWORD) { currentRole = selectedRole; } 
+                else { alert('🚨 AKSES DITOLAK: Kata Sandi Pengurus Salah!'); return; }
+            } else { currentRole = 'tamu'; }
 
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
-            
-            setupRoleUI();
-            fetchInventory();
+            setupRoleUI(); fetchInventory();
         }
 
         function setupRoleUI() {
@@ -450,52 +447,34 @@
             const userName = document.getElementById('user-name');
             const userRoleBadge = document.getElementById('user-role-badge');
             const userIcon = document.getElementById('user-icon');
-            const thAction = document.getElementById('th-action');
-            const avatarContainer = document.getElementById('user-avatar-container');
-
-            const isStaff = (currentRole === 'president' || currentRole === 'vice_president' || currentRole === 'treasury');
+            const isStaff = (currentRole !== 'tamu');
 
             if (isStaff) {
                 adminElements.forEach(el => el.classList.remove('hidden'));
-                thAction.classList.remove('hidden'); 
-
+                document.getElementById('th-action').classList.remove('hidden'); 
                 if (currentRole === 'president') {
-                    userName.innerText = "PRESIDENT";
-                    userRoleBadge.innerText = "Leader BLMC";
-                    userRoleBadge.className = "text-[10px] bg-red-600/20 text-red-400 px-2 py-0.5 rounded border border-red-600/30 uppercase font-semibold";
+                    userName.innerText = "PRESIDENT"; userRoleBadge.innerText = "Leader BLMC";
                     userIcon.className = "fa-solid fa-crown text-lg";
-                    avatarContainer.className = "w-10 h-10 rounded-full bg-zinc-800 border border-red-500 flex items-center justify-center text-red-500 shadow-md transition-transform hover:scale-110";
                 } else if (currentRole === 'vice_president') {
-                    userName.innerText = "VICE PRESIDENT";
-                    userRoleBadge.innerText = "Co-Leader BLMC";
-                    userRoleBadge.className = "text-[10px] bg-amber-600/20 text-amber-400 px-2 py-0.5 rounded border border-amber-600/30 uppercase font-semibold";
+                    userName.innerText = "VICE PRESIDENT"; userRoleBadge.innerText = "Co-Leader BLMC";
                     userIcon.className = "fa-solid fa-user-shield text-lg";
-                    avatarContainer.className = "w-10 h-10 rounded-full bg-zinc-800 border border-amber-500 flex items-center justify-center text-amber-500 shadow-md transition-transform hover:scale-110";
                 } else if (currentRole === 'treasury') {
-                    userName.innerText = "TREASURY";
-                    userRoleBadge.innerText = "Finance BLMC";
-                    userRoleBadge.className = "text-[10px] bg-emerald-600/20 text-emerald-400 px-2 py-0.5 rounded border border-emerald-600/30 uppercase font-semibold";
+                    userName.innerText = "TREASURY"; userRoleBadge.innerText = "Finance BLMC";
                     userIcon.className = "fa-solid fa-sack-dollar text-lg";
-                    avatarContainer.className = "w-10 h-10 rounded-full bg-zinc-800 border border-emerald-500 flex items-center justify-center text-emerald-400 shadow-md transition-transform hover:scale-110";
                 }
             } else {
                 adminElements.forEach(el => el.classList.add('hidden')); 
-                thAction.classList.add('hidden');
-                
-                userName.innerText = "Guest / Pelihat";
-                userRoleBadge.innerText = "Tamu";
-                userRoleBadge.className = "text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700 uppercase font-semibold";
+                document.getElementById('th-action').classList.add('hidden');
+                userName.innerText = "Guest / Pelihat"; userRoleBadge.innerText = "Tamu";
                 userIcon.className = "fa-solid fa-eye text-base";
-                avatarContainer.className = "w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-400 shadow-md transition-transform hover:scale-110";
-                
                 switchTab('dashboard');
             }
         }
 
         function getOperatorName() {
-            if (currentRole === 'president') return "President 'BLMC'";
-            if (currentRole === 'vice_president') return "Vice President 'BLMC'";
-            if (currentRole === 'treasury') return "Treasury 'BLMC'";
+            if (currentRole === 'president') return "President";
+            if (currentRole === 'vice_president') return "Vice President";
+            if (currentRole === 'treasury') return "Treasury";
             return "Tamu Gudang";
         }
 
@@ -510,104 +489,162 @@
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const backdrop = document.getElementById('sidebar-backdrop');
-            
             if (sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.remove('-translate-x-full');
-                backdrop.classList.remove('hidden');
+                sidebar.classList.remove('-translate-x-full'); backdrop.classList.remove('hidden');
             } else {
-                sidebar.classList.add('-translate-x-full');
-                backdrop.classList.add('hidden');
+                sidebar.classList.add('-translate-x-full'); backdrop.classList.add('hidden');
             }
         }
 
-        function updateClock() {
-            document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('en-US', { hour12: false });
-        }
-        setInterval(updateClock, 1000); updateClock();
+        setInterval(() => document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('en-US', { hour12: false }), 1000);
 
         function switchTab(tabId) {
-            const isStaff = (currentRole === 'president' || currentRole === 'vice_president' || currentRole === 'treasury');
-            
-            if (!isStaff && tabId !== 'dashboard') {
-                tabId = 'dashboard';
-            }
+            const isStaff = (currentRole !== 'tamu');
+            if (!isStaff && tabId !== 'dashboard') tabId = 'dashboard';
 
             document.querySelectorAll('.tab-content').forEach(tab => { tab.classList.add('hidden'); tab.classList.remove('block'); });
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
             document.getElementById(`tab-${tabId}`).classList.add('block');
 
-            // Reset all buttons style
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 hover:translate-x-1 transition-all duration-200 group";
-                // ensure child icon styling gets reset if previously active
-                let icon = btn.querySelector('i');
-                if(icon) icon.className = icon.className.replace(/text-white|glow-orange/g, '').trim();
-            });
-
             const titleMap = { 
-                'dashboard': 'DASHBOARD STOCK', 
-                'masuk': 'SUPPLY MASUK (RESTOCK)', 
-                'keluar': 'SUPPLY KELUAR (DISTRIBUSI)', 
-                'tambah': 'DAFTARKAN JENIS BARANG BARU',
-                'logs': 'RIWAYAT LOG AKTIVITAS',
-                'rekap': 'REKAP & EKSPOR DATA'
+                'dashboard': 'DASHBOARD STOCK', 'masuk': 'TRANSAKSI PEMBELIAN BARANG', 
+                'keluar': 'TRANSAKSI PENJUALAN BARANG', 'tambah': 'DAFTARKAN JENIS BARANG BARU',
+                'logs': 'LEDGER KEUANGAN & BRANKAS', 'rekap': 'EKSPOR LAPORAN KEUANGAN'
             };
             document.getElementById('page-title').innerText = titleMap[tabId];
 
-            const activeBtn = document.getElementById(`btn-${tabId}`);
-            if (activeBtn) {
-                if (tabId === 'dashboard') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-orange-600 text-white glow-orange shadow-lg hover:bg-orange-500 transition-all duration-200 group";
-                else if (tabId === 'masuk') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-amber-600 text-white shadow-lg hover:bg-amber-500 transition-all duration-200 group";
-                else if (tabId === 'keluar') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-red-600 text-white shadow-lg hover:bg-red-500 transition-all duration-200 group";
-                else if (tabId === 'tambah') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-emerald-600 text-white shadow-lg hover:bg-emerald-500 transition-all duration-200 group";
-                else if (tabId === 'logs') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-indigo-600 text-white shadow-lg hover:bg-indigo-500 transition-all duration-200 group";
-                else if (tabId === 'rekap') activeBtn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide bg-indigo-600 text-white shadow-lg hover:bg-indigo-500 transition-all duration-200 group";
+            if (tabId === 'logs' && isStaff) { fetchLogs(); fetchFundLogs(); }
+            if (tabId === 'rekap' && isStaff) {
+                const d = new Date();
+                document.getElementById('rekap-bulan').value = String(d.getMonth() + 1).padStart(2, '0');
+                document.getElementById('rekap-tahun').value = String(d.getFullYear());
             }
-
-            if (tabId === 'logs' && isStaff) { fetchLogs(); }
-            if (tabId === 'rekap' && isStaff) { setRekapDefaultDate(); }
-            if (window.innerWidth < 768) { toggleSidebar(); }
+            if (window.innerWidth < 768) toggleSidebar();
         }
 
-        function setRekapDefaultDate() {
-            const today = new Date();
-            const currentMonth = String(today.getMonth() + 1).padStart(2, '0');
-            const currentYear = String(today.getFullYear());
-            document.getElementById('rekap-bulan').value = currentMonth;
-            document.getElementById('rekap-tahun').value = currentYear;
+        // --- SISTEM UANG KAS (MANUAL) ---
+        async function fetchFunds() {
+            try {
+                const { data, error } = await db.from('faction_funds').select('balance').eq('id', 1).single();
+                if (error) throw error;
+                currentFunds = data.balance;
+                document.getElementById('display-faction-funds').innerText = formatMoney(currentFunds);
+                
+                if(currentFunds < 0) {
+                    document.getElementById('display-faction-funds').classList.replace('text-emerald-400', 'text-rose-500');
+                } else {
+                    document.getElementById('display-faction-funds').classList.replace('text-rose-500', 'text-emerald-400');
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById('display-faction-funds').innerText = 'Error';
+            }
+        }
+
+        async function adjustFunds() {
+            if (currentRole === 'tamu') return;
+            const input = prompt(`SALDO SAAT INI: ${formatMoney(currentFunds)}\n\nMasukkan nominal uang kas untuk DITAMBAH (Contoh: 50000)\n\nAtau gunakan tanda minus (-) untuk MENARIK uang (Contoh: -15000):`);
+            
+            if (input === null || input === "") return;
+            
+            const amount = parseFloat(input);
+            if (isNaN(amount)) { alert("Gagal: Nominal yang Anda masukkan tidak valid!"); return; }
+            
+            const newBalance = currentFunds + amount;
+            
+            // 1. Update Database Kas
+            const { error } = await db.from('faction_funds').update({ balance: newBalance }).eq('id', 1);
+            if (error) { 
+                alert("Gagal mengupdate kas: " + error.message); 
+            } else {
+                // 2. Insert Log Mutasi Manual (Ke Tabel Baru)
+                const mutasiType = amount >= 0 ? 'Deposit' : 'Tarik';
+                await db.from('vault_logs').insert([{
+                    type: mutasiType,
+                    amount: Math.abs(amount),
+                    operator: getOperatorName()
+                }]);
+
+                alert(`Transaksi Berhasil! Kas telah ${amount >= 0 ? 'ditambah' : 'ditarik'} sebesar ${formatMoney(Math.abs(amount))}.`);
+                await fetchFunds();
+                
+                // Jika sedang di tab logs, refresh tabelnya
+                if (document.getElementById('tab-logs').classList.contains('block')) {
+                    fetchFundLogs();
+                }
+            }
+        }
+
+        async function fetchFundLogs() {
+            const tbody = document.getElementById('fund-logs-table-body');
+            try {
+                const { data, error } = await db.from('vault_logs').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                tbody.innerHTML = '';
+                
+                if(data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-zinc-500 italic">Belum ada riwayat mutasi kas manual.</td></tr>`;
+                    return;
+                }
+
+                data.forEach((log, index) => {
+                    const localTime = new Date(log.created_at).toLocaleString('id-ID', { hour12: false });
+                    const isDeposit = log.type === 'Deposit';
+                    
+                    const typeBadge = isDeposit 
+                        ? `<span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(16,185,129,0.2)]">Setor Masuk</span>`
+                        : `<span class="bg-rose-950 text-rose-400 border border-rose-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(244,63,94,0.2)]">Tarik Keluar</span>`;
+                    
+                    const amtColor = isDeposit ? 'text-emerald-400' : 'text-rose-400';
+                    const amtSign = isDeposit ? '+' : '-';
+
+                    tbody.innerHTML += `
+                        <tr class="${index % 2 === 0 ? 'bg-zinc-950' : 'bg-zinc-900/30'} hover:bg-zinc-800/40 transition-colors duration-200">
+                            <td class="p-3 text-center font-mono text-zinc-500">${localTime}</td>
+                            <td class="p-3 text-center">${typeBadge}</td>
+                            <td class="p-3 text-right font-mono font-bold ${amtColor}">${amtSign}${formatMoney(log.amount)}</td>
+                            <td class="p-3 text-zinc-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-user-tie text-zinc-600"></i> ${log.operator}</td>
+                        </tr>`;
+                });
+            } catch (err) { console.error(err); }
+        }
+        // ----------------------------------
+
+        function calcTotalMasuk() {
+            const qty = document.getElementById('input-masuk-jumlah').value || 0;
+            const price = document.getElementById('input-masuk-harga').value || 0;
+            document.getElementById('display-total-masuk').innerText = formatMoney(qty * price);
+        }
+        function calcTotalKeluar() {
+            const qty = document.getElementById('input-keluar-jumlah').value || 0;
+            const price = document.getElementById('input-keluar-harga').value || 0;
+            document.getElementById('display-total-keluar').innerText = formatMoney(qty * price);
         }
 
         async function fetchInventory() {
             const statusBadge = document.getElementById('db-status');
             const lokasiFilter = document.getElementById('filter-lokasi').value;
-            
             try {
                 let query = db.from('inventory').select('*');
-                if (lokasiFilter !== 'Semua') { query = query.eq('location', lokasiFilter); }
+                if (lokasiFilter !== 'Semua') query = query.eq('location', lokasiFilter);
                 
                 const { data, error } = await query.order('id', { ascending: true });
                 if (error) throw error;
-                
                 inventoryData = data;
                 statusBadge.innerText = "Terhubung";
-                statusBadge.className = "text-[11px] bg-emerald-950 text-emerald-400 px-2.5 py-0.5 rounded border border-emerald-800 animate-pulse";
-                renderTable();
+                
+                renderTable(); 
                 renderAnalyticsChart(); 
-            } catch (err) {
-                console.error(err);
-                statusBadge.innerText = "Error Koneksi";
-                statusBadge.className = "text-[11px] bg-rose-950 text-rose-400 px-2.5 py-0.5 rounded border border-rose-800";
-            }
+                await fetchFunds(); 
+            } catch (err) { console.error(err); statusBadge.innerText = "Error Koneksi"; }
         }
 
         function renderTable() {
             const tbody = document.getElementById('inventory-table-body');
             const selectMasuk = document.getElementById('select-masuk-barang');
             const selectKeluar = document.getElementById('select-keluar-barang');
-
             tbody.innerHTML = ''; selectMasuk.innerHTML = ''; selectKeluar.innerHTML = '';
-
-            const isStaff = (currentRole === 'president' || currentRole === 'vice_president' || currentRole === 'treasury');
+            const isStaff = (currentRole !== 'tamu');
 
             if(inventoryData.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="${isStaff ? 5 : 4}" class="p-8 text-center text-zinc-500 italic">Tidak ada manifest kontraband di lokasi ini.</td></tr>`;
@@ -617,203 +654,90 @@
             inventoryData.forEach((item, index) => {
                 const stockAlertClass = item.stock <= 500 ? 'text-rose-500 font-bold glow-text animate-pulse' : 'text-zinc-300';
                 const rowBg = index % 2 === 0 ? 'bg-zinc-950' : 'bg-zinc-900/40';
-
-                const actionTd = isStaff ? `
-                    <td class="p-4 text-center">
-                        <button onclick="handleDeleteItem(${item.id})" class="text-zinc-500 hover:text-red-500 bg-zinc-900 hover:bg-red-950/30 p-2 rounded border border-zinc-800 hover:border-red-800 transition-all duration-200 active:scale-90 hover:-translate-y-0.5">
-                            <i class="fa-solid fa-dumpster-fire"></i>
-                        </button>
-                    </td>
-                ` : '';
+                const actionTd = isStaff ? `<td class="p-4 text-center"><button onclick="handleDeleteItem(${item.id})" class="text-zinc-500 hover:text-red-500"><i class="fa-solid fa-dumpster-fire"></i></button></td>` : '';
 
                 tbody.innerHTML += `
-                    <tr class="${rowBg} hover:bg-zinc-800/60 transition-colors duration-200">
+                    <tr class="${rowBg}">
                         <td class="p-4 text-center text-zinc-500 font-mono">${index + 1}</td>
-                        <td class="p-4 font-semibold tracking-wide">${item.name}</td>
-                        <td class="p-4 text-zinc-400"><span class="bg-zinc-900 border border-zinc-800 px-2 py-1 rounded text-xs"><i class="fa-solid fa-location-crosshairs text-orange-500 mr-1"></i>${item.location || 'Clubhouse HQ'}</span></td>
+                        <td class="p-4 font-semibold">${item.name}</td>
+                        <td class="p-4 text-zinc-400"><span class="bg-zinc-900 px-2 py-1 rounded text-xs">${item.location}</span></td>
                         <td class="p-4 text-center ${stockAlertClass} text-base font-mono">${item.stock}</td>
                         ${actionTd}
-                    </tr>
-                `;
+                    </tr>`;
 
-                const optionHtml = `<option value="${item.id}">${item.name} [${item.location || 'Clubhouse'}] (Stok: ${item.stock})</option>`;
-                selectMasuk.innerHTML += optionHtml;
-                selectKeluar.innerHTML += optionHtml;
+                const optionHtml = `<option value="${item.id}">${item.name} (Stok: ${item.stock})</option>`;
+                selectMasuk.innerHTML += optionHtml; selectKeluar.innerHTML += optionHtml;
             });
         }
 
         async function fetchLogs() {
-            if (currentRole === 'tamu') return;
             const tbody = document.getElementById('logs-table-body');
             try {
                 const { data, error } = await db.from('warehouse_logs').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
-                
                 tbody.innerHTML = '';
                 if(data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-zinc-500 italic">Belum ada riwayat aktivitas log gudang.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-zinc-500 italic">Belum ada ledger transaksi tercatat.</td></tr>`;
                     return;
                 }
 
                 data.forEach((log, index) => {
                     const localTime = new Date(log.created_at).toLocaleString('id-ID', { hour12: false });
-                    const typeBadge = log.type === 'Masuk' 
-                        ? `<span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(16,185,129,0.2)]">Masuk</span>`
-                        : `<span class="bg-rose-950 text-rose-400 border border-rose-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(244,63,94,0.2)]">Keluar</span>`;
+                    const isBeli = log.type === 'Masuk';
+                    const typeBadge = isBeli 
+                        ? `<span class="bg-amber-950 text-amber-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Pembelian</span>`
+                        : `<span class="bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Penjualan</span>`;
                     
-                    const qtyColor = log.type === 'Masuk' ? 'text-emerald-400' : 'text-rose-400';
-                    const qtySign = log.type === 'Masuk' ? '+' : '-';
-                    const rowBg = index % 2 === 0 ? 'bg-zinc-950' : 'bg-zinc-900/30';
+                    const qtyColor = isBeli ? 'text-amber-400' : 'text-emerald-400';
+                    const targetName = log.target_name || 'Tidak ada catatan';
+                    const priceUnit = formatMoney(log.price || 0);
+                    const priceTotal = formatMoney(log.total_price || 0);
 
                     tbody.innerHTML += `
-                        <tr class="${rowBg} hover:bg-zinc-800/40 transition-colors duration-200">
-                            <td class="p-4 text-center font-mono text-zinc-500">${localTime}</td>
-                            <td class="p-4 font-semibold tracking-wide text-zinc-200">${log.item_name}</td>
-                            <td class="p-4 text-zinc-400 text-xs font-semibold"><i class="fa-solid fa-warehouse mr-1 text-zinc-600"></i>${log.location || 'Clubhouse HQ'}</td>
-                            <td class="p-4 text-center">${typeBadge}</td>
-                            <td class="p-4 text-center font-mono font-bold ${qtyColor}">${qtySign}${log.quantity}</td>
-                            <td class="p-4 text-zinc-400 font-semibold">${log.operator}</td>
-                        </tr>
-                    `;
+                        <tr class="${index % 2 === 0 ? 'bg-zinc-950' : 'bg-zinc-900/30'} hover:bg-zinc-800/40 transition-colors duration-200">
+                            <td class="p-3 text-center font-mono text-zinc-500">${localTime}</td>
+                            <td class="p-3 font-semibold text-zinc-200">${log.item_name}</td>
+                            <td class="p-3 text-center">${typeBadge}</td>
+                            <td class="p-3 text-center font-mono font-bold ${qtyColor}">${log.quantity}</td>
+                            <td class="p-3 text-zinc-300 text-xs">${targetName}</td>
+                            <td class="p-3 text-right font-mono text-xs text-zinc-400">${priceUnit}</td>
+                            <td class="p-3 text-right font-mono font-bold ${isBeli ? 'text-rose-400' : 'text-emerald-400'}">${isBeli ? '-' : '+'}${priceTotal}</td>
+                            <td class="p-3 text-zinc-500 text-xs font-semibold">${log.operator}</td>
+                        </tr>`;
                 });
-            } catch (err) {
-                console.error(err);
-                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-rose-500 italic">Gagal memuat log: ${err.message}</td></tr>`;
-            }
-        }
-
-        async function exportMonthlyRecapExcel() {
-            if (currentRole === 'tamu') return;
-
-            const targetMonth = document.getElementById('rekap-bulan').value;
-            const targetYear = document.getElementById('rekap-tahun').value;
-            
-            try {
-                const { data: logs, error } = await db.from('warehouse_logs').select('*').order('created_at', { ascending: true });
-                if (error) throw error;
-
-                const filteredLogs = logs.filter(log => {
-                    const logDate = new Date(log.created_at);
-                    const logMonth = String(logDate.getMonth() + 1).padStart(2, '0');
-                    const logYear = String(logDate.getFullYear());
-                    return logMonth === targetMonth && logYear === targetYear;
-                });
-
-                if (filteredLogs.length === 0) {
-                    alert(`ℹ️ Tidak ditemukan aktivitas log gudang pada bulan ${targetMonth}-${targetYear}.`);
-                    return;
-                }
-
-                const excelRows = filteredLogs.map((log, index) => {
-                    return {
-                        "No": index + 1,
-                        "Waktu Pencatatan (WIB)": new Date(log.created_at).toLocaleString('id-ID', { hour12: false }),
-                        "Nama Barang / Kontraband": log.item_name,
-                        "Lokasi Gudang": log.location || 'Clubhouse HQ',
-                        "Jenis Aktivitas": log.type,
-                        "Jumlah Kuantitas": log.quantity,
-                        "Petugas / Operator": log.operator
-                    };
-                });
-
-                const worksheet = XLSX.utils.json_to_sheet(excelRows);
-                const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, "Log Bulanan BLMC");
-
-                const maxProps = [{wch: 5}, {wch: 25}, {wch: 25}, {wch: 20}, {wch: 15}, {wch: 15}, {wch: 20}];
-                worksheet['!cols'] = maxProps;
-
-                const fileName = `REKAP_GUDANG_BLMC_${targetMonth}_${targetYear}.xlsx`;
-                XLSX.writeFile(workbook, fileName);
-
-            } catch (err) {
-                console.error(err);
-                alert('Gagal mengekspor data: ' + err.message);
-            }
-        }
-
-        function renderAnalyticsChart() {
-            const ctx = document.getElementById('bloodlineChart').getContext('2d');
-            const itemNames = inventoryData.map(item => item.name);
-            const itemStocks = inventoryData.map(item => item.stock);
-            
-            const barColors = itemStocks.map(stock => stock <= 500 ? 'rgba(239, 68, 68, 0.5)' : 'rgba(234, 88, 12, 0.4)');
-            const borderColors = itemStocks.map(stock => stock <= 500 ? 'rgba(239, 68, 68, 1)' : 'rgba(234, 88, 12, 1)');
-
-            if (liveChartInstance) { liveChartInstance.destroy(); }
-
-            liveChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: itemNames,
-                    datasets: [{
-                        data: itemStocks,
-                        backgroundColor: barColors,
-                        borderColor: borderColors,
-                        borderWidth: 2,
-                        borderRadius: 5,
-                        hoverBackgroundColor: 'rgba(251, 146, 60, 0.6)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    animation: {
-                        duration: 1000,
-                        easing: 'easeOutQuart'
-                    },
-                    scales: {
-                        x: {
-                            grid: { color: '#27272a' }, 
-                            ticks: { color: '#a1a1aa', font: { family: 'Rajdhani', size: 11, weight: '600' } }
-                        },
-                        y: {
-                            grid: { color: '#27272a' },
-                            ticks: { color: '#a1a1aa', font: { family: 'Rajdhani', size: 11 } }
-                        }
-                    }
-                }
-            });
-        }
-
-        async function handleAddNewItem(event) {
-            event.preventDefault();
-            if (currentRole === 'tamu') return;
-
-            const nameInput = document.getElementById('input-tambah-nama');
-            const locationInput = document.getElementById('input-tambah-lokasi');
-            const stockInput = document.getElementById('input-tambah-stok');
-
-            const { error } = await db.from('inventory').insert([
-                { name: nameInput.value, location: locationInput.value, stock: parseInt(stockInput.value) || 0 }
-            ]);
-
-            if (error) { alert('Gagal mendaftarkan barang: ' + error.message); } 
-            else {
-                nameInput.value = ''; stockInput.value = '';
-                await fetchInventory();
-                switchTab('dashboard');
-            }
+            } catch (err) { console.error(err); }
         }
 
         async function handleStockIn(event) {
             event.preventDefault();
-            if (currentRole === 'tamu') return;
-
             const itemId = parseInt(document.getElementById('select-masuk-barang').value);
             const qty = parseInt(document.getElementById('input-masuk-jumlah').value);
+            const price = parseFloat(document.getElementById('input-masuk-harga').value);
+            const target = document.getElementById('input-masuk-target').value;
             const item = inventoryData.find(i => i.id === itemId);
+            const totalPrice = qty * price;
 
             if (item) {
+                if (currentFunds < totalPrice) {
+                    if(!confirm(`⚠️ PERINGATAN KAS: Saldo Faksi (${formatMoney(currentFunds)}) tidak cukup untuk membayar tagihan ${formatMoney(totalPrice)}.\n\nTetap paksa transaksi? (Kas akan menjadi minus/hutang)`)) {
+                        return;
+                    }
+                }
+
                 const { error } = await db.from('inventory').update({ stock: item.stock + qty }).eq('id', itemId);
                 if (error) alert('Gagal mengupdate stok: ' + error.message);
                 else {
-                    await db.from('warehouse_logs').insert([
-                        { item_name: item.name, location: item.location, quantity: qty, type: 'Masuk', operator: getOperatorName() }
-                    ]);
-                    document.getElementById('input-masuk-jumlah').value = '';
-                    await fetchInventory();
+                    await db.from('warehouse_logs').insert([{ 
+                        item_name: item.name, location: item.location, quantity: qty, type: 'Masuk', 
+                        operator: getOperatorName(), price: price, total_price: totalPrice, target_name: target 
+                    }]);
+
+                    const newBalance = currentFunds - totalPrice;
+                    await db.from('faction_funds').update({ balance: newBalance }).eq('id', 1);
+
+                    document.getElementById('form-barang-masuk').reset();
+                    document.getElementById('display-total-masuk').innerText = '$ 0';
+                    await fetchInventory(); 
                     switchTab('dashboard');
                 }
             }
@@ -821,38 +745,107 @@
 
         async function handleStockOut(event) {
             event.preventDefault();
-            if (currentRole === 'tamu') return;
-
             const itemId = parseInt(document.getElementById('select-keluar-barang').value);
             const qty = parseInt(document.getElementById('input-keluar-jumlah').value);
+            const price = parseFloat(document.getElementById('input-keluar-harga').value);
+            const target = document.getElementById('input-keluar-target').value;
             const item = inventoryData.find(i => i.id === itemId);
+            const totalPrice = qty * price;
 
             if (item) {
-                if (item.stock < qty) {
-                    alert(`🚨 STOK KURANG! Persediaan ${item.name} saat ini hanya tersisa ${item.stock}.`);
-                    return;
-                }
+                if (item.stock < qty) { alert(`🚨 STOK KURANG! Sisa: ${item.stock}.`); return; }
                 const { error } = await db.from('inventory').update({ stock: item.stock - qty }).eq('id', itemId);
                 if (error) alert('Gagal memotong stok: ' + error.message);
                 else {
-                    await db.from('warehouse_logs').insert([
-                        { item_name: item.name, location: item.location, quantity: qty, type: 'Keluar', operator: getOperatorName() }
-                    ]);
-                    document.getElementById('input-keluar-jumlah').value = '';
-                    await fetchInventory();
+                    await db.from('warehouse_logs').insert([{ 
+                        item_name: item.name, location: item.location, quantity: qty, type: 'Keluar', 
+                        operator: getOperatorName(), price: price, total_price: totalPrice, target_name: target 
+                    }]);
+
+                    const newBalance = currentFunds + totalPrice;
+                    await db.from('faction_funds').update({ balance: newBalance }).eq('id', 1);
+
+                    document.getElementById('form-barang-keluar').reset();
+                    document.getElementById('display-total-keluar').innerText = '$ 0';
+                    await fetchInventory(); 
                     switchTab('dashboard');
                 }
             }
         }
 
+        async function handleAddNewItem(event) {
+            event.preventDefault();
+            const name = document.getElementById('input-tambah-nama').value;
+            const loc = document.getElementById('input-tambah-lokasi').value;
+            const stock = parseInt(document.getElementById('input-tambah-stok').value) || 0;
+            const { error } = await db.from('inventory').insert([{ name: name, location: loc, stock: stock }]);
+            if (error) alert('Gagal mendaftarkan barang: ' + error.message);
+            else { document.getElementById('form-tambah-barang').reset(); await fetchInventory(); switchTab('dashboard'); }
+        }
+
         async function handleDeleteItem(id) {
-            if (currentRole === 'tamu') return;
-            const item = inventoryData.find(i => i.id === id);
-            if (confirm(`⚠️ PERINGATAN: Hapus total dan hanguskan data "${item.name}" dari sistem?`)) {
+            if(confirm(`⚠️ Hapus total data dari sistem?`)) {
                 const { error } = await db.from('inventory').delete().eq('id', id);
-                if (error) alert('Gagal menghapus barang: ' + error.message);
-                else await fetchInventory();
+                if (!error) await fetchInventory();
             }
+        }
+
+        async function exportMonthlyRecapExcel() {
+            const targetMonth = document.getElementById('rekap-bulan').value;
+            const targetYear = document.getElementById('rekap-tahun').value;
+            try {
+                const { data: logs, error } = await db.from('warehouse_logs').select('*').order('created_at', { ascending: true });
+                if (error) throw error;
+
+                const filteredLogs = logs.filter(log => {
+                    const d = new Date(log.created_at);
+                    return String(d.getMonth() + 1).padStart(2, '0') === targetMonth && String(d.getFullYear()) === targetYear;
+                });
+
+                if (filteredLogs.length === 0) { alert(`ℹ️ Tidak ada transaksi di bulan ${targetMonth}-${targetYear}.`); return; }
+
+                const excelRows = filteredLogs.map((log, index) => ({
+                    "No": index + 1,
+                    "Waktu (WIB)": new Date(log.created_at).toLocaleString('id-ID', { hour12: false }),
+                    "Nama Barang": log.item_name,
+                    "Transaksi": log.type === 'Masuk' ? 'Pembelian / Deposit' : 'Penjualan / Distribusi',
+                    "Qty": log.quantity,
+                    "Klien / Pemasok": log.target_name || '-',
+                    "Harga per Unit": log.price || 0,
+                    "Total Uang": log.total_price || 0,
+                    "Operator": log.operator
+                }));
+
+                const worksheet = XLSX.utils.json_to_sheet(excelRows);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Ledger Keuangan");
+                XLSX.writeFile(workbook, `LAPORAN_KEUANGAN_BLMC_${targetMonth}_${targetYear}.xlsx`);
+            } catch (err) { alert('Gagal mengekspor data: ' + err.message); }
+        }
+
+        function renderAnalyticsChart() {
+            const ctx = document.getElementById('bloodlineChart').getContext('2d');
+            if (liveChartInstance) liveChartInstance.destroy();
+            liveChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: inventoryData.map(i => i.name),
+                    datasets: [{
+                        data: inventoryData.map(i => i.stock),
+                        backgroundColor: inventoryData.map(i => i.stock <= 500 ? 'rgba(239, 68, 68, 0.5)' : 'rgba(234, 88, 12, 0.4)'),
+                        borderColor: inventoryData.map(i => i.stock <= 500 ? 'rgba(239, 68, 68, 1)' : 'rgba(234, 88, 12, 1)'),
+                        borderWidth: 2, borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#a1a1aa' }, grid: { color: '#27272a' } },
+                        y: { ticks: { color: '#a1a1aa' }, grid: { color: '#27272a' } }
+                    }
+                }
+            });
         }
     </script>
 </body>
