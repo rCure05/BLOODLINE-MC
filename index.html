@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BLOODLINE - WAREHOUSE</title>
+    <title>BLOODLINE - Black Market Ledger</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
@@ -414,7 +414,7 @@
                 <div class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl">
                     <div class="p-4 md:p-5 border-b border-zinc-800 bg-emerald-900/20 flex justify-between items-center">
                         <span class="font-bold uppercase tracking-wider text-xs md:text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-vault text-emerald-500"></i> Riwayat Mutasi Brankas (Manual)
+                            <i class="fa-solid fa-vault text-emerald-500"></i> Riwayat Mutasi Brankas (Otomatis & Manual)
                         </span>
                         <button onclick="fetchFundLogs()" class="text-xs bg-zinc-900 border border-zinc-700 px-3 py-1.5 rounded text-zinc-300 hover:text-emerald-500 flex items-center gap-1 group transition-all">
                             <i class="fa-solid fa-rotate group-hover:rotate-180 transition-transform duration-500"></i> Refresh
@@ -488,7 +488,7 @@
 
             const payload = {
                 username: "BLMC - WAREHOUSE",
-                avatar_url: "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f480.png", // Menggunakan CDN Twemoji Skull publik (pasti terbaca Discord)
+                avatar_url: "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f480.png", 
                 embeds: [{
                     title: title,
                     description: description,
@@ -664,7 +664,7 @@
             const { error } = await db.from('faction_funds').update({ balance: newBalance }).eq('id', 1);
             if (!error) {
                 const mutasiType = amount >= 0 ? 'Deposit' : 'Tarik';
-                await db.from('vault_logs').insert([{ type: mutasiType, amount: Math.abs(amount), operator: getOperatorName() }]);
+                await db.from('vault_logs').insert([{ type: mutasiType, amount: Math.abs(amount), operator: getOperatorName() + " | Penyesuaian Manual" }]);
                 
                 // WEBHOOK DISCORD
                 const embedColor = amount >= 0 ? 3066993 : 15158332; 
@@ -951,9 +951,19 @@
             const newFunds = type === 'Jual' ? currentFunds + totalCost : currentFunds - totalCost;
             await db.from('faction_funds').update({ balance: newFunds }).eq('id', 1);
 
+            // 1. Catat ke Ledger Aktivitas (warehouse_logs)
             await db.from('warehouse_logs').insert([{ 
                 item_name: `[PAKET] ${bundle.name}`, location: 'Multi-Item', quantity: qty, type: type, 
                 operator: getOperatorName(), price: bundle.price, total_price: totalCost, target_name: target 
+            }]);
+
+            // 2. Catat otomatis ke Riwayat Mutasi Brankas (vault_logs)
+            const vaultType = type === 'Jual' ? 'Deposit' : 'Tarik';
+            const vaultReason = type === 'Jual' ? `Paket (Jual: ${bundle.name} x${qty} ke ${target})` : `Paket (Beli: ${bundle.name} x${qty} dari ${target})`;
+            await db.from('vault_logs').insert([{ 
+                type: vaultType, 
+                amount: totalCost, 
+                operator: `${getOperatorName()} | ${vaultReason}` 
             }]);
 
             // WEBHOOK DISCORD
@@ -980,10 +990,21 @@
             const { error } = await db.from('inventory').update({ stock: newStock }).eq('id', invId);
             if (!error) {
                 await db.from('faction_funds').update({ balance: newFunds }).eq('id', 1);
+                
+                // 1. Catat ke Ledger Aktivitas (warehouse_logs)
                 await db.from('warehouse_logs').insert([{ 
                     item_name: itemName, location: location, quantity: qty, type: type, operator: getOperatorName(), price: price, total_price: totalPrice, target_name: target 
                 }]);
                 
+                // 2. Catat otomatis ke Riwayat Mutasi Brankas (vault_logs)
+                const vaultType = type === 'Jual' ? 'Deposit' : 'Tarik';
+                const vaultReason = type === 'Jual' ? `Satuan (Jual: ${itemName} x${qty} ke ${target})` : `Satuan (Beli: ${itemName} x${qty} dari ${target})`;
+                await db.from('vault_logs').insert([{ 
+                    type: vaultType, 
+                    amount: totalPrice, 
+                    operator: `${getOperatorName()} | ${vaultReason}` 
+                }]);
+
                 // WEBHOOK DISCORD
                 const embedColor = type === 'Jual' ? 3066993 : 15158332; 
                 const actionName = type === 'Jual' ? 'Penjualan' : 'Pembelian/Restock';
