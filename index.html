@@ -479,6 +479,37 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZiZXRwY3p6cHdidXRtZ3htcXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMjc4OTgsImV4cCI6MjA5NTcwMzg5OH0.4X5va5WwRTPN-HkWD4uHWBzR680NrTTNKCy4PwjNKak';
         const ADMIN_PASSWORD = 'garisdarah'; 
 
+        // CONFIG DISCORD WEBHOOK (GANTI URL DI BAWAH INI)
+        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1517900815237513247/8yfdFA0NmDNkG5PUISJvA3YKFKUbuwMIDDmuCvJrGA7BLMMaltC3wSf3buwYYc3SUUt7';
+
+        // FUNGSI MENGIRIM KE DISCORD
+        async function sendToDiscord(title, description, color, fields) {
+            if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL === 'MASUKKAN_URL_WEBHOOK_DISCORD_ANDA_DI_SINI') return;
+
+            const payload = {
+                username: "BLMC - WAREHOUSE",
+                avatar_url: "https://imgur.com/a/ZNnIExE", // Ikon opsional
+                embeds: [{
+                    title: title,
+                    description: description,
+                    color: color, 
+                    fields: fields,
+                    timestamp: new Date().toISOString(),
+                    footer: { text: "Stockade Gateway System" }
+                }]
+            };
+
+            try {
+                await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (error) {
+                console.error("Gagal mengirim webhook ke Discord:", error);
+            }
+        }
+
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let inventoryData = [];
         let bundlesData = [];
@@ -634,6 +665,19 @@
             if (!error) {
                 const mutasiType = amount >= 0 ? 'Deposit' : 'Tarik';
                 await db.from('vault_logs').insert([{ type: mutasiType, amount: Math.abs(amount), operator: getOperatorName() }]);
+                
+                // WEBHOOK DISCORD
+                const embedColor = amount >= 0 ? 3066993 : 15158332; // Hijau untuk Setor, Merah untuk Tarik
+                await sendToDiscord(
+                    `💰 Log Brankas: ${mutasiType} Kas`,
+                    `Operator **${getOperatorName()}** melakukan penyesuaian kas brankas.`,
+                    embedColor,
+                    [
+                        { name: "Nominal Uang", value: formatMoney(Math.abs(amount)), inline: true },
+                        { name: "Total Kas Sekarang", value: formatMoney(newBalance), inline: true }
+                    ]
+                );
+
                 alert(`Transaksi Berhasil!`);
                 await fetchFunds();
                 if (document.getElementById('tab-logs').classList.contains('block')) fetchFundLogs();
@@ -902,7 +946,7 @@
 
             if (type === 'Beli' && currentFunds < totalCost && !confirm(`⚠️ Saldo Kas tidak cukup! Total: ${formatMoney(totalCost)}.\nYakin paksa beli paket? (Kas minus)`)) return;
 
-            // Execute Mutli Update
+            // Execute Multi Update
             for (let u of updates) await db.from('inventory').update({ stock: u.newStock }).eq('id', u.id);
             const newFunds = type === 'Jual' ? currentFunds + totalCost : currentFunds - totalCost;
             await db.from('faction_funds').update({ balance: newFunds }).eq('id', 1);
@@ -911,6 +955,21 @@
                 item_name: `[PAKET] ${bundle.name}`, location: 'Multi-Item', quantity: qty, type: type, 
                 operator: getOperatorName(), price: bundle.price, total_price: totalCost, target_name: target 
             }]);
+
+            // WEBHOOK DISCORD
+            const embedColor = type === 'Jual' ? 3066993 : 15158332;
+            const actionName = type === 'Jual' ? 'Penjualan Paket' : 'Pembelian Paket';
+            await sendToDiscord(
+                `📦 Transaksi Bisnis Paket (Bundle): ${actionName}`,
+                `Operator **${getOperatorName()}** telah mencatat eksekusi bisnis.`,
+                embedColor,
+                [
+                    { name: "Nama Paket", value: bundle.name, inline: true },
+                    { name: "Jumlah Paket", value: `${qty} Set`, inline: true },
+                    { name: "Klien / Sumber", value: target, inline: true },
+                    { name: "Total Kas Terlibat", value: formatMoney(totalCost), inline: true }
+                ]
+            );
 
             document.getElementById('form-bisnis-paket').reset(); document.getElementById('display-paket-total').innerText = "$ 0";
             alert(`Transaksi Paket ${type} berhasil!`);
@@ -924,6 +983,24 @@
                 await db.from('warehouse_logs').insert([{ 
                     item_name: itemName, location: location, quantity: qty, type: type, operator: getOperatorName(), price: price, total_price: totalPrice, target_name: target 
                 }]);
+                
+                // WEBHOOK DISCORD
+                const embedColor = type === 'Jual' ? 3066993 : 15158332; // Hijau (Uang Masuk), Merah (Uang Keluar)
+                const actionName = type === 'Jual' ? 'Penjualan' : 'Pembelian/Restock';
+                await sendToDiscord(
+                    `💸 Transaksi Bisnis Satuan: ${actionName}`,
+                    `Operator **${getOperatorName()}** telah mencatat eksekusi bisnis.`,
+                    embedColor,
+                    [
+                        { name: "Barang", value: itemName, inline: true },
+                        { name: "Jumlah (Qty)", value: `${qty} Unit`, inline: true },
+                        { name: "Klien / Sumber", value: target, inline: true },
+                        { name: "Harga Satuan", value: formatMoney(price), inline: true },
+                        { name: "Total Kas Terlibat", value: formatMoney(totalPrice), inline: true },
+                        { name: "Sisa Stok Gudang", value: `${newStock}`, inline: true }
+                    ]
+                );
+
                 await fetchInventory(); switchTab('dashboard');
             } else alert('Gagal memproses transaksi: ' + error.message);
         }
@@ -954,6 +1031,21 @@
                 await db.from('warehouse_logs').insert([{ 
                     item_name: item.name, location: item.location, quantity: qty, type: type, operator: getOperatorName(), price: 0, total_price: 0, target_name: target 
                 }]);
+                
+                // WEBHOOK DISCORD
+                const embedColor = type === 'Ambil' ? 10181046 : 3447003; // Ungu untuk Ambil, Biru untuk Simpan
+                await sendToDiscord(
+                    `🔫 Mutasi Logistik: ${type} Barang`,
+                    `Operator **${getOperatorName()}** melakukan pergerakan barang (Tanpa Kas).`,
+                    embedColor,
+                    [
+                        { name: "Barang", value: item.name, inline: true },
+                        { name: "Jumlah (Qty)", value: `${qty} Unit`, inline: true },
+                        { name: "Keterangan/Alasan", value: target, inline: true },
+                        { name: "Sisa Stok Gudang", value: `${newStock}`, inline: true }
+                    ]
+                );
+
                 document.getElementById('form-mutasi-gudang').reset();
                 alert(`Mutasi logistik (${type}) berhasil dicatat tanpa memotong kas!`);
                 await fetchInventory(); switchTab('dashboard');
