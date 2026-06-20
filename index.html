@@ -488,7 +488,7 @@
 
             const payload = {
                 username: "BLMC - WAREHOUSE",
-                avatar_url: "https://imgur.com/a/ZNnIExE", // Ikon opsional
+                avatar_url: "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f480.png", // Menggunakan CDN Twemoji Skull publik (pasti terbaca Discord)
                 embeds: [{
                     title: title,
                     description: description,
@@ -667,7 +667,7 @@
                 await db.from('vault_logs').insert([{ type: mutasiType, amount: Math.abs(amount), operator: getOperatorName() }]);
                 
                 // WEBHOOK DISCORD
-                const embedColor = amount >= 0 ? 3066993 : 15158332; // Hijau untuk Setor, Merah untuk Tarik
+                const embedColor = amount >= 0 ? 3066993 : 15158332; 
                 await sendToDiscord(
                     `💰 Log Brankas: ${mutasiType} Kas`,
                     `Operator **${getOperatorName()}** melakukan penyesuaian kas brankas.`,
@@ -890,7 +890,7 @@
         async function handleBusinessSatuan(e) {
             e.preventDefault();
             if(currentRole === 'tamu') return;
-            const type = document.getElementById('satuan-tipe').value; // Jual / Beli
+            const type = document.getElementById('satuan-tipe').value; 
             const itemId = parseInt(document.getElementById('satuan-item').value);
             if(!itemId) { alert("Pilih barang terlebih dahulu!"); return; }
             const qty = parseInt(document.getElementById('satuan-qty').value);
@@ -905,7 +905,7 @@
                 if (currentFunds < totalPrice && !confirm(`⚠️ Saldo Faksi (${formatMoney(currentFunds)}) tidak cukup untuk membayar tagihan ${formatMoney(totalPrice)}.\nTetap paksa beli? (Kas akan minus/hutang)`)) return;
                 await processTransaction(item.id, item.stock + qty, item.name, item.location, qty, 'Beli', price, totalPrice, target, currentFunds - totalPrice);
                 document.getElementById('form-bisnis-satuan').reset(); document.getElementById('display-satuan-total').innerText = '$ 0';
-            } else { // Jual
+            } else { 
                 if (item.stock < qty) { alert(`🚨 STOK KURANG! Sisa: ${item.stock}.`); return; }
                 await processTransaction(item.id, item.stock - qty, item.name, item.location, qty, 'Jual', price, totalPrice, target, currentFunds + totalPrice);
                 document.getElementById('form-bisnis-satuan').reset(); document.getElementById('display-satuan-total').innerText = '$ 0';
@@ -915,7 +915,7 @@
         async function handleBusinessPaket(e) {
             e.preventDefault();
             if(currentRole === 'tamu') return;
-            const type = document.getElementById('paket-tipe').value; // Jual / Beli
+            const type = document.getElementById('paket-tipe').value; 
             const bundleId = parseInt(document.getElementById('paket-bundle').value);
             if(!bundleId) { alert("Pilih paket terlebih dahulu!"); return; }
             const qty = parseInt(document.getElementById('paket-qty').value) || 1;
@@ -985,7 +985,7 @@
                 }]);
                 
                 // WEBHOOK DISCORD
-                const embedColor = type === 'Jual' ? 3066993 : 15158332; // Hijau (Uang Masuk), Merah (Uang Keluar)
+                const embedColor = type === 'Jual' ? 3066993 : 15158332; 
                 const actionName = type === 'Jual' ? 'Penjualan' : 'Pembelian/Restock';
                 await sendToDiscord(
                     `💸 Transaksi Bisnis Satuan: ${actionName}`,
@@ -1009,7 +1009,7 @@
         async function handleMutasiGudang(e) {
             e.preventDefault();
             if(currentRole === 'tamu') return;
-            const type = document.getElementById('mutasi-tipe').value; // Ambil / Simpan
+            const type = document.getElementById('mutasi-tipe').value; 
             const itemId = parseInt(document.getElementById('mutasi-item').value);
             if(!itemId) { alert("Pilih barang terlebih dahulu!"); return; }
             const qty = parseInt(document.getElementById('mutasi-qty').value);
@@ -1033,7 +1033,7 @@
                 }]);
                 
                 // WEBHOOK DISCORD
-                const embedColor = type === 'Ambil' ? 10181046 : 3447003; // Ungu untuk Ambil, Biru untuk Simpan
+                const embedColor = type === 'Ambil' ? 10181046 : 3447003; 
                 await sendToDiscord(
                     `🔫 Mutasi Logistik: ${type} Barang`,
                     `Operator **${getOperatorName()}** melakukan pergerakan barang (Tanpa Kas).`,
@@ -1067,7 +1067,6 @@
                     
                     let typeBadge = ''; let sign = ''; let colorVal = 'text-zinc-500';
                     
-                    // Filter badge based on type (Beli, Jual, Simpan, Ambil) & fallback for old logs (Masuk, Keluar)
                     if(log.type === 'Beli' || (log.type === 'Masuk' && log.price > 0)) {
                         typeBadge = `<span class="bg-rose-950/80 text-rose-400 border border-rose-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_8px_rgba(244,63,94,0.3)]">Beli/Restock Bisnis</span>`;
                         sign = '-'; colorVal = 'text-rose-400';
