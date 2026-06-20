@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BLOODLINE - Black Market Ledger</title>
+    <title>BLOODLINE - WAREHOUSE SYSTEM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- SweetAlert2 untuk Pop-up Interaktif -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
-        body { font-family: 'Rajdhani', sans-serif; background-color: #0c0c0e; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Rajdhani', sans-serif; background-color: #0c0c0e; -webkit-tap-highlight-color: transparent; transition: background-color 0.4s ease, color 0.4s ease; }
         .gang-title { font-family: 'Permanent Marker', cursive; }
         .glow-orange { box-shadow: 0 0 15px rgba(249, 115, 22, 0.4); }
         .glow-text { text-shadow: 0 0 10px rgba(249, 115, 22, 0.6); }
@@ -23,14 +25,35 @@
         .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
         .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(234, 88, 12, 0.5); border-radius: 4px; }
         .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgba(234, 88, 12, 1); }
+
+        /* LIGHT MODE OVERRIDES */
+        body.light-mode { background-color: #f4f4f5 !important; color: #18181b !important; }
+        body.light-mode .bg-zinc-950 { background-color: #ffffff !important; border-color: #e4e4e7 !important; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); }
+        body.light-mode .bg-zinc-900 { background-color: #f4f4f5 !important; border-color: #d4d4d8 !important; }
+        body.light-mode .bg-zinc-900\/50, body.light-mode .bg-zinc-900\/40, body.light-mode .bg-zinc-900\/30 { background-color: #fafafa !important; }
+        body.light-mode .text-zinc-100, body.light-mode .text-zinc-200 { color: #18181b !important; }
+        body.light-mode .text-zinc-300, body.light-mode .text-zinc-400 { color: #3f3f46 !important; }
+        body.light-mode .text-zinc-500 { color: #71717a !important; }
+        body.light-mode .border-zinc-800, body.light-mode .border-zinc-700 { border-color: #e4e4e7 !important; }
+        body.light-mode .divide-zinc-900 > :not([hidden]) ~ :not([hidden]) { border-color: #e4e4e7 !important; }
+        body.light-mode #login-screen { background-color: #f4f4f5; }
+        body.light-mode .from-orange-950\/20 { --tw-gradient-from: rgba(249, 115, 22, 0.1); }
+        body.light-mode .to-zinc-950, body.light-mode .via-zinc-950\/90 { --tw-gradient-to: #f4f4f5; --tw-gradient-via: rgba(244, 244, 245, 0.9); }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="text-zinc-100 overflow-hidden bg-zinc-950">
 
-    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#070708] p-4">
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#070708] p-4 transition-colors duration-500">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-orange-950/20 via-zinc-950/90 to-black -z-10"></div>
         <div class="w-full max-w-md bg-zinc-950 border-2 border-orange-600 rounded-2xl p-6 md:p-8 shadow-[0_0_30px_rgba(234,88,12,0.2)] relative overflow-hidden transition-transform duration-500 hover:scale-[1.02]">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent"></div>
+            
+            <button onclick="toggleTheme()" class="absolute top-4 right-4 text-zinc-500 hover:text-orange-500 transition-colors z-10" title="Ganti Tema">
+                <i id="login-theme-icon" class="fa-solid fa-moon text-lg"></i>
+            </button>
+
             <div class="text-center mb-6 hover:scale-105 transition-transform duration-300">
                 <i class="fa-solid fa-skull-crossbones text-5xl text-orange-500 animate-pulse mb-3 drop-shadow-[0_0_10px_rgba(234,88,12,0.6)]"></i>
                 <h1 class="text-4xl text-orange-500 gang-title tracking-wider glow-text">BLOODLINE MC</h1>
@@ -115,7 +138,7 @@
         <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/70 z-20 hidden md:hidden transition-opacity"></div>
 
         <main class="flex-1 bg-zinc-900/40 relative overflow-y-auto p-4 md:p-8 w-full">
-            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-950/10 via-zinc-900/50 to-zinc-950 -z-10"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-950/10 via-zinc-900/50 to-zinc-950 -z-10 transition-colors duration-500"></div>
 
             <header class="flex justify-between items-center mb-6 bg-zinc-950/80 p-4 rounded-xl border border-zinc-800 shadow-xl gap-4">
                 <div class="flex items-center gap-3">
@@ -125,9 +148,14 @@
                         <p class="text-xs text-zinc-400 hidden sm:block">Data penyimpanan resource dan senjata BLMC.</p>
                     </div>
                 </div>
-                <div class="text-right shrink-0">
-                    <div id="live-clock" class="text-base md:text-lg font-bold text-orange-500 tracking-wider font-mono glow-text">00:00:00</div>
-                    <span class="text-[9px] md:text-[11px] text-zinc-500 uppercase tracking-widest font-semibold">Los Santos, CCRP</span>
+                <div class="flex items-center gap-5">
+                    <button onclick="toggleTheme()" class="text-zinc-400 hover:text-orange-500 transition-colors" title="Toggle Light/Dark Mode">
+                        <i id="main-theme-icon" class="fa-solid fa-moon text-xl hover:rotate-12 transition-transform"></i>
+                    </button>
+                    <div class="text-right shrink-0">
+                        <div id="live-clock" class="text-base md:text-lg font-bold text-orange-500 tracking-wider font-mono glow-text">00:00:00</div>
+                        <span class="text-[9px] md:text-[11px] text-zinc-500 uppercase tracking-widest font-semibold">Los Santos, CCRP</span>
+                    </div>
                 </div>
             </header>
 
@@ -158,7 +186,7 @@
                             <span class="font-bold uppercase tracking-wider text-xs md:text-sm flex items-center gap-2">
                                 <i class="fa-solid fa-list-check text-orange-500"></i> Manifest Inventaris
                             </span>
-                            <div class="flex items-center bg-black border border-emerald-900/50 px-3 py-1.5 rounded-lg shadow-inner">
+                            <div class="flex items-center bg-black border border-emerald-900/50 px-3 py-1.5 rounded-lg shadow-inner transition-colors duration-300">
                                 <i class="fa-solid fa-sack-dollar text-emerald-500 mr-2 text-sm"></i>
                                 <span class="text-[11px] text-zinc-400 uppercase tracking-widest font-semibold mr-2">Kas:</span>
                                 <span id="display-faction-funds" class="text-emerald-400 font-mono font-bold text-sm tracking-wider">Memuat...</span>
@@ -469,10 +497,6 @@
         </main>
     </div>
 
-    <style>
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
-
     <script>
         // CONFIG SUPABASE
         const SUPABASE_URL = 'https://fbetpczzpwbutmgxmqqy.supabase.co'; 
@@ -482,6 +506,44 @@
         // CONFIG DISCORD WEBHOOK (GANTI URL DI BAWAH INI)
         const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1517900815237513247/8yfdFA0NmDNkG5PUISJvA3YKFKUbuwMIDDmuCvJrGA7BLMMaltC3wSf3buwYYc3SUUt7';
 
+        // THEME MANAGEMENT
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('blmc_theme', isLight ? 'light' : 'dark');
+            
+            const icons = [document.getElementById('main-theme-icon'), document.getElementById('login-theme-icon')];
+            icons.forEach(icon => {
+                if(!icon) return;
+                if(isLight) {
+                    icon.classList.remove('fa-moon'); icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun'); icon.classList.add('fa-moon');
+                }
+            });
+        }
+        
+        // Cek Preferensi Tema saat memuat halaman
+        if(localStorage.getItem('blmc_theme') === 'light') { document.body.classList.add('light-mode'); }
+        document.addEventListener("DOMContentLoaded", () => {
+            const isLight = document.body.classList.contains('light-mode');
+            const icons = [document.getElementById('main-theme-icon'), document.getElementById('login-theme-icon')];
+            icons.forEach(icon => {
+                if(!icon) return;
+                if(isLight) { icon.classList.replace('fa-moon', 'fa-sun'); }
+            });
+        });
+
+        // FUNGSI BANTUAN ALERT SWEETALERT2
+        function showMessage(title, text, icon) {
+            const isLight = document.body.classList.contains('light-mode');
+            Swal.fire({
+                title: title, text: text, icon: icon,
+                background: isLight ? '#ffffff' : '#18181b', color: isLight ? '#18181b' : '#f4f4f5',
+                confirmButtonColor: '#ea580c'
+            });
+        }
+
         // FUNGSI MENGIRIM KE DISCORD
         async function sendToDiscord(title, description, color, fields) {
             if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL === 'MASUKKAN_URL_WEBHOOK_DISCORD_ANDA_DI_SINI') return;
@@ -490,55 +552,30 @@
                 username: "BLMC - WAREHOUSE",
                 avatar_url: "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f480.png", 
                 embeds: [{
-                    title: title,
-                    description: description,
-                    color: color, 
-                    fields: fields,
-                    timestamp: new Date().toISOString(),
-                    footer: { text: "Stockade Gateway System" }
+                    title: title, description: description, color: color, fields: fields,
+                    timestamp: new Date().toISOString(), footer: { text: "Blmc Warehouse System" }
                 }]
             };
 
             try {
-                await fetch(DISCORD_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-            } catch (error) {
-                console.error("Gagal mengirim webhook ke Discord:", error);
-            }
+                await fetch(DISCORD_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            } catch (error) { console.error("Gagal mengirim webhook:", error); }
         }
 
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        let inventoryData = [];
-        let bundlesData = [];
-        let currentRole = 'tamu';
-        let currentFunds = 0; 
-        let liveChartInstance = null;
+        let inventoryData = []; let bundlesData = []; let currentRole = 'tamu'; let currentFunds = 0; let liveChartInstance = null;
 
-        // Populate Month Dropdown
         const bulanSelect = document.getElementById('rekap-bulan');
         const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        namaBulan.forEach((b, i) => {
-            const val = String(i+1).padStart(2, '0');
-            bulanSelect.innerHTML += `<option value="${val}">${b}</option>`;
-        });
+        namaBulan.forEach((b, i) => { const val = String(i+1).padStart(2, '0'); bulanSelect.innerHTML += `<option value="${val}">${b}</option>`; });
 
-        const formatMoney = (amount) => {
-            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
-        };
+        const formatMoney = (amount) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
 
         function togglePasswordInput() {
             const role = document.getElementById('login-role').value;
             const passContainer = document.getElementById('password-container');
-            if (role !== 'tamu') {
-                passContainer.classList.remove('hidden');
-                document.getElementById('login-password').required = true;
-            } else {
-                passContainer.classList.add('hidden');
-                document.getElementById('login-password').required = false;
-            }
+            if (role !== 'tamu') { passContainer.classList.remove('hidden'); document.getElementById('login-password').required = true; } 
+            else { passContainer.classList.add('hidden'); document.getElementById('login-password').required = false; }
         }
 
         function handleLogin(event) {
@@ -548,7 +585,7 @@
 
             if (selectedRole !== 'tamu') {
                 if (enteredPassword === ADMIN_PASSWORD) { currentRole = selectedRole; } 
-                else { alert('🚨 AKSES DITOLAK: Kata Sandi Pengurus Salah!'); return; }
+                else { showMessage('Akses Ditolak', 'Kata Sandi Pengurus Salah!', 'error'); return; }
             } else { currentRole = 'tamu'; }
 
             document.getElementById('login-screen').classList.add('hidden');
@@ -558,29 +595,23 @@
 
         function setupRoleUI() {
             const adminElements = document.querySelectorAll('.admin-only');
-            const userName = document.getElementById('user-name');
-            const userRoleBadge = document.getElementById('user-role-badge');
-            const userIcon = document.getElementById('user-icon');
+            const userName = document.getElementById('user-name'); const userRoleBadge = document.getElementById('user-role-badge'); const userIcon = document.getElementById('user-icon');
             const isStaff = (currentRole !== 'tamu');
 
             if (isStaff) {
                 adminElements.forEach(el => el.classList.remove('hidden'));
                 document.getElementById('th-action').classList.remove('hidden'); 
                 if (currentRole === 'president') {
-                    userName.innerText = "PRESIDENT"; userRoleBadge.innerText = "Leader BLMC";
-                    userIcon.className = "fa-solid fa-crown text-lg";
+                    userName.innerText = "PRESIDENT"; userRoleBadge.innerText = "Leader BLMC"; userIcon.className = "fa-solid fa-crown text-lg";
                 } else if (currentRole === 'vice_president') {
-                    userName.innerText = "VICE PRESIDENT"; userRoleBadge.innerText = "Co-Leader BLMC";
-                    userIcon.className = "fa-solid fa-user-shield text-lg";
+                    userName.innerText = "VICE PRESIDENT"; userRoleBadge.innerText = "Co-Leader BLMC"; userIcon.className = "fa-solid fa-user-shield text-lg";
                 } else if (currentRole === 'treasury') {
-                    userName.innerText = "TREASURY"; userRoleBadge.innerText = "Finance BLMC";
-                    userIcon.className = "fa-solid fa-sack-dollar text-lg";
+                    userName.innerText = "TREASURY"; userRoleBadge.innerText = "Finance BLMC"; userIcon.className = "fa-solid fa-sack-dollar text-lg";
                 }
             } else {
                 adminElements.forEach(el => el.classList.add('hidden')); 
                 document.getElementById('th-action').classList.add('hidden');
-                userName.innerText = "Guest / Pelihat"; userRoleBadge.innerText = "Tamu";
-                userIcon.className = "fa-solid fa-eye text-base";
+                userName.innerText = "Guest / Pelihat"; userRoleBadge.innerText = "Tamu"; userIcon.className = "fa-solid fa-eye text-base";
                 switchTab('dashboard');
             }
         }
@@ -592,8 +623,13 @@
             return "Tamu Gudang";
         }
 
-        function handleLogout() {
-            if(confirm("Apakah kamu yakin ingin keluar?")) {
+        async function handleLogout() {
+            const result = await Swal.fire({
+                title: 'Keluar?', text: "Sesi Anda akan diakhiri.", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#3f3f46',
+                background: document.body.classList.contains('light-mode') ? '#ffffff' : '#18181b', color: document.body.classList.contains('light-mode') ? '#18181b' : '#f4f4f5'
+            });
+            if(result.isConfirmed) {
                 document.getElementById('login-password').value = '';
                 document.getElementById('app-container').classList.add('hidden');
                 document.getElementById('login-screen').classList.remove('hidden');
@@ -601,13 +637,9 @@
         }
 
         function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const backdrop = document.getElementById('sidebar-backdrop');
-            if (sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.remove('-translate-x-full'); backdrop.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full'); backdrop.classList.add('hidden');
-            }
+            const sidebar = document.getElementById('sidebar'); const backdrop = document.getElementById('sidebar-backdrop');
+            if (sidebar.classList.contains('-translate-x-full')) { sidebar.classList.remove('-translate-x-full'); backdrop.classList.remove('hidden'); } 
+            else { sidebar.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); }
         }
 
         setInterval(() => document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('en-US', { hour12: false }), 1000);
@@ -617,22 +649,17 @@
             if (!isStaff && tabId !== 'dashboard') tabId = 'dashboard';
 
             document.querySelectorAll('.tab-content').forEach(tab => { tab.classList.add('hidden'); tab.classList.remove('block'); });
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            document.getElementById(`tab-${tabId}`).classList.add('block');
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden'); document.getElementById(`tab-${tabId}`).classList.add('block');
 
             const titleMap = { 
-                'dashboard': 'DASHBOARD STOCK', 'bisnis': 'EKSEKUSI TRANSAKSI BISNIS',
-                'logistik': 'MUTASI LOGISTIK INTERNAL', 
-                'tambah': 'DAFTARKAN JENIS BARANG BARU', 'logs': 'LEDGER AUDIT KEUANGAN', 
-                'rekap': 'EKSPOR LAPORAN AUDIT'
+                'dashboard': 'DASHBOARD STOCK', 'bisnis': 'EKSEKUSI TRANSAKSI BISNIS', 'logistik': 'MUTASI LOGISTIK INTERNAL', 
+                'tambah': 'DAFTARKAN JENIS BARANG BARU', 'logs': 'LEDGER AUDIT KEUANGAN', 'rekap': 'EKSPOR LAPORAN AUDIT'
             };
             document.getElementById('page-title').innerText = titleMap[tabId];
 
             if (tabId === 'logs' && isStaff) { fetchLogs(); fetchFundLogs(); }
             if (tabId === 'rekap' && isStaff) {
-                const d = new Date();
-                document.getElementById('rekap-bulan').value = String(d.getMonth() + 1).padStart(2, '0');
-                document.getElementById('rekap-tahun').value = String(d.getFullYear());
+                const d = new Date(); document.getElementById('rekap-bulan').value = String(d.getMonth() + 1).padStart(2, '0'); document.getElementById('rekap-tahun').value = String(d.getFullYear());
             }
             if (window.innerWidth < 768) toggleSidebar();
         }
@@ -644,21 +671,27 @@
                 if (error) throw error;
                 currentFunds = data.balance;
                 document.getElementById('display-faction-funds').innerText = formatMoney(currentFunds);
-                
-                if(currentFunds < 0) {
-                    document.getElementById('display-faction-funds').classList.replace('text-emerald-400', 'text-rose-500');
-                } else {
-                    document.getElementById('display-faction-funds').classList.replace('text-rose-500', 'text-emerald-400');
-                }
+                if(currentFunds < 0) { document.getElementById('display-faction-funds').classList.replace('text-emerald-400', 'text-rose-500'); } 
+                else { document.getElementById('display-faction-funds').classList.replace('text-rose-500', 'text-emerald-400'); }
             } catch (err) { console.error(err); }
         }
 
         async function adjustFunds() {
             if (currentRole === 'tamu') return;
-            const input = prompt(`SALDO SAAT INI: ${formatMoney(currentFunds)}\n\nMasukkan nominal uang kas untuk DITAMBAH (Contoh: 50000)\nAtau gunakan tanda minus (-) untuk MENARIK uang (Contoh: -15000):`);
+            const isLight = document.body.classList.contains('light-mode');
+            
+            const { value: input } = await Swal.fire({
+                title: 'Penyesuaian Kas Brankas',
+                input: 'text',
+                inputLabel: `Saldo Saat Ini: ${formatMoney(currentFunds)}\n(Gunakan minus (-) untuk menarik uang)`,
+                inputPlaceholder: 'Contoh: 50000 atau -15000',
+                showCancelButton: true, confirmButtonColor: '#10b981', cancelButtonColor: '#3f3f46',
+                background: isLight ? '#ffffff' : '#18181b', color: isLight ? '#18181b' : '#f4f4f5'
+            });
+
             if (!input) return;
             const amount = parseFloat(input);
-            if (isNaN(amount)) { alert("Gagal: Nominal tidak valid!"); return; }
+            if (isNaN(amount)) { showMessage("Gagal", "Nominal tidak valid!", "error"); return; }
             
             const newBalance = currentFunds + amount;
             const { error } = await db.from('faction_funds').update({ balance: newBalance }).eq('id', 1);
@@ -666,22 +699,15 @@
                 const mutasiType = amount >= 0 ? 'Deposit' : 'Tarik';
                 await db.from('vault_logs').insert([{ type: mutasiType, amount: Math.abs(amount), operator: getOperatorName() + " | Penyesuaian Manual" }]);
                 
-                // WEBHOOK DISCORD
                 const embedColor = amount >= 0 ? 3066993 : 15158332; 
-                await sendToDiscord(
-                    `💰 Log Brankas: ${mutasiType} Kas`,
-                    `Operator **${getOperatorName()}** melakukan penyesuaian kas brankas.`,
-                    embedColor,
-                    [
-                        { name: "Nominal Uang", value: formatMoney(Math.abs(amount)), inline: true },
-                        { name: "Total Kas Sekarang", value: formatMoney(newBalance), inline: true }
-                    ]
-                );
+                await sendToDiscord(`💰 Log Brankas: ${mutasiType} Kas`, `Operator **${getOperatorName()}** melakukan penyesuaian kas brankas.`, embedColor, [
+                    { name: "Nominal Uang", value: formatMoney(Math.abs(amount)), inline: true }, { name: "Total Kas Sekarang", value: formatMoney(newBalance), inline: true }
+                ]);
 
-                alert(`Transaksi Berhasil!`);
+                showMessage('Berhasil', 'Penyesuaian brankas berhasil dicatat.', 'success');
                 await fetchFunds();
                 if (document.getElementById('tab-logs').classList.contains('block')) fetchFundLogs();
-            } else { alert("Gagal mengupdate kas: " + error.message); }
+            } else { showMessage("Gagal", error.message, "error"); }
         }
 
         async function fetchFundLogs() {
@@ -690,24 +716,21 @@
                 const { data, error } = await db.from('vault_logs').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
                 tbody.innerHTML = '';
-                if(data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-zinc-500 italic">Belum ada riwayat mutasi kas manual.</td></tr>`;
-                    return;
-                }
+                if(data.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-zinc-500 italic">Belum ada riwayat mutasi kas.</td></tr>`; return; }
                 data.forEach((log, index) => {
                     const localTime = new Date(log.created_at).toLocaleString('id-ID', { hour12: false });
                     const isDeposit = log.type === 'Deposit';
                     const typeBadge = isDeposit 
-                        ? `<span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(16,185,129,0.2)]">Setor Masuk</span>`
-                        : `<span class="bg-rose-950 text-rose-400 border border-rose-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(244,63,94,0.2)]">Tarik Keluar</span>`;
+                        ? `<span class="bg-emerald-950/80 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(16,185,129,0.2)]">Setor Masuk</span>`
+                        : `<span class="bg-rose-950/80 text-rose-400 border border-rose-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(244,63,94,0.2)]">Tarik Keluar</span>`;
                     const amtColor = isDeposit ? 'text-emerald-400' : 'text-rose-400';
                     const amtSign = isDeposit ? '+' : '-';
                     tbody.innerHTML += `
-                        <tr class="${index % 2 === 0 ? 'bg-zinc-950' : 'bg-zinc-900/30'} hover:bg-zinc-800/40 transition-colors duration-200">
+                        <tr class="${index % 2 === 0 ? 'bg-zinc-950/50' : 'bg-transparent'} hover:bg-zinc-800/20 transition-colors duration-200">
                             <td class="p-3 text-center font-mono text-zinc-500">${localTime}</td>
                             <td class="p-3 text-center">${typeBadge}</td>
                             <td class="p-3 text-right font-mono font-bold ${amtColor}">${amtSign}${formatMoney(log.amount)}</td>
-                            <td class="p-3 text-zinc-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-user-tie text-zinc-600"></i> ${log.operator}</td>
+                            <td class="p-3 text-zinc-400 text-xs font-semibold flex items-center gap-2"><i class="fa-solid fa-user-tie text-zinc-600"></i> ${log.operator}</td>
                         </tr>`;
                 });
             } catch (err) { console.error(err); }
@@ -715,45 +738,36 @@
 
         // --- FETCH INVENTORY ---
         async function fetchInventory() {
-            const statusBadge = document.getElementById('db-status');
-            const lokasiFilter = document.getElementById('filter-lokasi').value;
+            const statusBadge = document.getElementById('db-status'); const lokasiFilter = document.getElementById('filter-lokasi').value;
             try {
                 let query = db.from('inventory').select('*');
                 if (lokasiFilter !== 'Semua') query = query.eq('location', lokasiFilter);
                 
                 const { data, error } = await query.order('id', { ascending: true });
                 if (error) throw error;
-                inventoryData = data;
-                statusBadge.innerText = "Terhubung";
+                inventoryData = data; statusBadge.innerText = "Terhubung";
                 
-                renderTable(); 
-                renderAnalyticsChart(); 
-                renderSelectOptions(); 
-                await fetchFunds(); 
-                await fetchBundles(); 
+                renderTable(); renderAnalyticsChart(); renderSelectOptions(); 
+                await fetchFunds(); await fetchBundles(); 
             } catch (err) { console.error(err); statusBadge.innerText = "Error Koneksi"; }
         }
 
         function renderTable() {
-            const tbody = document.getElementById('inventory-table-body');
-            tbody.innerHTML = ''; 
+            const tbody = document.getElementById('inventory-table-body'); tbody.innerHTML = ''; 
             const isStaff = (currentRole !== 'tamu');
 
-            if(inventoryData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${isStaff ? 5 : 4}" class="p-8 text-center text-zinc-500 italic">Tidak ada manifest kontraband di lokasi ini.</td></tr>`;
-                return;
-            }
+            if(inventoryData.length === 0) { tbody.innerHTML = `<tr><td colspan="${isStaff ? 5 : 4}" class="p-8 text-center text-zinc-500 italic">Tidak ada manifest kontraband di lokasi ini.</td></tr>`; return; }
 
             inventoryData.forEach((item, index) => {
                 const stockAlertClass = item.stock <= 500 ? 'text-rose-500 font-bold glow-text animate-pulse' : 'text-zinc-300';
-                const rowBg = index % 2 === 0 ? 'bg-zinc-950' : 'bg-zinc-900/40';
-                const actionTd = isStaff ? `<td class="p-4 text-center"><button onclick="handleDeleteItem(${item.id})" class="text-zinc-500 hover:text-red-500"><i class="fa-solid fa-dumpster-fire"></i></button></td>` : '';
+                const rowBg = index % 2 === 0 ? 'bg-zinc-950/50' : 'bg-transparent';
+                const actionTd = isStaff ? `<td class="p-4 text-center"><button onclick="handleDeleteItem(${item.id})" class="text-zinc-500 hover:text-red-500 transition-colors"><i class="fa-solid fa-dumpster-fire"></i></button></td>` : '';
 
                 tbody.innerHTML += `
                     <tr class="${rowBg}">
                         <td class="p-4 text-center text-zinc-500 font-mono">${index + 1}</td>
-                        <td class="p-4 font-semibold">${item.name}</td>
-                        <td class="p-4 text-zinc-400"><span class="bg-zinc-900 px-2 py-1 rounded text-xs">${item.location}</span></td>
+                        <td class="p-4 font-semibold text-zinc-200">${item.name}</td>
+                        <td class="p-4 text-zinc-400"><span class="bg-zinc-900 px-2 py-1 rounded border border-zinc-800 text-[10px] uppercase">${item.location}</span></td>
                         <td class="p-4 text-center ${stockAlertClass} text-base font-mono">${item.stock}</td>
                         ${actionTd}
                     </tr>`;
@@ -761,72 +775,50 @@
         }
 
         function renderSelectOptions() {
-            const optionsHTML = `<option value="">-- Kosong / Pilih Barang --</option>` +
-                inventoryData.map(i => `<option value="${i.id}">${i.name} (Stok: ${i.stock})</option>`).join('');
-            
-            // Satuan Bisnis
-            document.getElementById('satuan-item').innerHTML = optionsHTML;
-            // Logistik
-            document.getElementById('mutasi-item').innerHTML = optionsHTML;
-            // Setup Paket
-            document.getElementById('bundle-item1').innerHTML = optionsHTML;
-            document.getElementById('bundle-item2').innerHTML = optionsHTML;
-            document.getElementById('bundle-item3').innerHTML = optionsHTML;
+            const optionsHTML = `<option value="">-- Kosong / Pilih Barang --</option>` + inventoryData.map(i => `<option value="${i.id}">${i.name} (Stok: ${i.stock})</option>`).join('');
+            document.getElementById('satuan-item').innerHTML = optionsHTML; document.getElementById('mutasi-item').innerHTML = optionsHTML;
+            document.getElementById('bundle-item1').innerHTML = optionsHTML; document.getElementById('bundle-item2').innerHTML = optionsHTML; document.getElementById('bundle-item3').innerHTML = optionsHTML;
         }
 
         // --- SISTEM PAKET (BUNDLING) VIEW ---
         async function fetchBundles() {
             try {
                 const { data, error } = await db.from('bundles').select('*').order('id', { ascending: true });
-                if (!error) {
-                    bundlesData = data;
-                    renderBundlesTable();
-                }
-            } catch (e) { console.error("Gagal memuat paket:", e); }
+                if (!error) { bundlesData = data; renderBundlesTable(); }
+            } catch (e) { console.error(e); }
         }
 
         function renderBundlesTable() {
             const selectTrx = document.getElementById('paket-bundle');
-            selectTrx.innerHTML = `<option value="">-- Pilih Paket --</option>` + 
-                bundlesData.map(b => `<option value="${b.id}">${b.name} - ${formatMoney(b.price)}</option>`).join('');
+            selectTrx.innerHTML = `<option value="">-- Pilih Paket --</option>` + bundlesData.map(b => `<option value="${b.id}">${b.name} - ${formatMoney(b.price)}</option>`).join('');
 
-            const tbody = document.getElementById('bundles-table-body');
-            tbody.innerHTML = '';
-            if (bundlesData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-zinc-500 italic">Belum ada paket/bundle yang dikonfigurasi.</td></tr>`;
-                return;
-            }
+            const tbody = document.getElementById('bundles-table-body'); tbody.innerHTML = '';
+            if (bundlesData.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-zinc-500 italic">Belum ada paket/bundle.</td></tr>`; return; }
 
             bundlesData.forEach(b => {
                 let items = [];
-                if (b.item1_id) { const i = inventoryData.find(x=>x.id==b.item1_id); items.push(`<span class="text-zinc-400">» ${i?i.name:'<i class="text-red-500">Item Terhapus</i>'} <b class="text-orange-500">x${b.item1_qty}</b></span>`); }
-                if (b.item2_id) { const i = inventoryData.find(x=>x.id==b.item2_id); items.push(`<span class="text-zinc-400">» ${i?i.name:'<i class="text-red-500">Item Terhapus</i>'} <b class="text-orange-500">x${b.item2_qty}</b></span>`); }
-                if (b.item3_id) { const i = inventoryData.find(x=>x.id==b.item3_id); items.push(`<span class="text-zinc-400">» ${i?i.name:'<i class="text-red-500">Item Terhapus</i>'} <b class="text-orange-500">x${b.item3_qty}</b></span>`); }
+                if (b.item1_id) { const i = inventoryData.find(x=>x.id==b.item1_id); items.push(`<span class="text-zinc-500">» ${i?i.name:'<i class="text-red-500">Terhapus</i>'} <b class="text-orange-500">x${b.item1_qty}</b></span>`); }
+                if (b.item2_id) { const i = inventoryData.find(x=>x.id==b.item2_id); items.push(`<span class="text-zinc-500">» ${i?i.name:'<i class="text-red-500">Terhapus</i>'} <b class="text-orange-500">x${b.item2_qty}</b></span>`); }
+                if (b.item3_id) { const i = inventoryData.find(x=>x.id==b.item3_id); items.push(`<span class="text-zinc-500">» ${i?i.name:'<i class="text-red-500">Terhapus</i>'} <b class="text-orange-500">x${b.item3_qty}</b></span>`); }
 
                 tbody.innerHTML += `
-                    <tr class="bg-zinc-950 border-b border-zinc-800 hover:bg-zinc-900/50 transition-colors">
+                    <tr class="bg-zinc-950/30 border-b border-zinc-800/50 hover:bg-zinc-900/50 transition-colors">
                         <td class="p-3 pl-5 font-bold text-orange-500 tracking-wide">${b.name}</td>
-                        <td class="p-3 text-sm flex flex-col space-y-0.5">${items.join('')}</td>
+                        <td class="p-3 text-[11px] flex flex-col space-y-0.5">${items.join('')}</td>
                         <td class="p-3 text-right font-mono text-emerald-400 font-bold">${formatMoney(b.price)}</td>
-                        <td class="p-3 text-center">
-                            <button onclick="deleteBundle(${b.id})" class="text-red-500 hover:text-white hover:bg-red-600 border border-red-900 px-3 py-1.5 rounded transition-all"><i class="fa-solid fa-trash"></i></button>
-                        </td>
+                        <td class="p-3 text-center"><button onclick="deleteBundle(${b.id})" class="text-red-500 hover:text-white hover:bg-red-600 border border-red-900/50 px-3 py-1.5 rounded transition-all"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>`;
             });
         }
 
         async function handleCreateBundle(e) {
-            e.preventDefault();
-            if(currentRole === 'tamu') return;
-            
-            const name = document.getElementById('create-bundle-name').value;
-            const price = parseFloat(document.getElementById('create-bundle-price').value);
-
+            e.preventDefault(); if(currentRole === 'tamu') return;
+            const name = document.getElementById('create-bundle-name').value; const price = parseFloat(document.getElementById('create-bundle-price').value);
             const i1 = document.getElementById('bundle-item1').value; const q1 = document.getElementById('bundle-qty1').value;
             const i2 = document.getElementById('bundle-item2').value; const q2 = document.getElementById('bundle-qty2').value;
             const i3 = document.getElementById('bundle-item3').value; const q3 = document.getElementById('bundle-qty3').value;
 
-            if (!i1) { alert('Kolom Item 1 WAJIB diisi untuk membuat sebuah paket!'); return; }
+            if (!i1) { showMessage('Perhatian', 'Kolom Item 1 WAJIB diisi untuk membuat paket!', 'warning'); return; }
 
             const payload = {
                 name: name, price: price,
@@ -836,153 +828,126 @@
             };
 
             const { error } = await db.from('bundles').insert([payload]);
-            if (error) alert("Gagal menyimpan paket: " + error.message);
-            else { alert("Paket berhasil dibuat!"); document.getElementById('form-buat-paket').reset(); await fetchBundles(); }
+            if (error) showMessage('Error', error.message, 'error');
+            else { showMessage('Tersimpan', 'Paket berhasil dibuat!', 'success'); document.getElementById('form-buat-paket').reset(); await fetchBundles(); }
         }
 
         async function deleteBundle(id) {
             if(currentRole === 'tamu') return;
-            if(confirm("Yakin ingin menghapus konfigurasi paket ini dari sistem?")) {
+            const isLight = document.body.classList.contains('light-mode');
+            const result = await Swal.fire({
+                title: 'Hapus Paket?', text: "Konfigurasi paket ini akan hilang dari database.", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#3f3f46',
+                background: isLight ? '#ffffff' : '#18181b', color: isLight ? '#18181b' : '#f4f4f5'
+            });
+            if(result.isConfirmed) {
                 const { error } = await db.from('bundles').delete().eq('id', id);
                 if (!error) await fetchBundles();
             }
         }
 
-        // --- UX HELPERS ---
         function toggleSatuanColors() {
-            const type = document.getElementById('satuan-tipe').value;
-            const box = document.getElementById('satuan-total-box');
-            const display = document.getElementById('display-satuan-total');
+            const type = document.getElementById('satuan-tipe').value; const box = document.getElementById('satuan-total-box'); const display = document.getElementById('display-satuan-total');
             if(type === 'Beli') { box.classList.replace('border-emerald-900/50', 'border-rose-900/50'); display.classList.replace('text-emerald-500', 'text-rose-500'); }
             else { box.classList.replace('border-rose-900/50', 'border-emerald-900/50'); display.classList.replace('text-rose-500', 'text-emerald-500'); }
         }
-
         function togglePaketColors() {
-            const type = document.getElementById('paket-tipe').value;
-            const box = document.getElementById('paket-total-box');
-            const display = document.getElementById('display-paket-total');
+            const type = document.getElementById('paket-tipe').value; const box = document.getElementById('paket-total-box'); const display = document.getElementById('display-paket-total');
             if(type === 'Beli') { box.classList.replace('border-orange-900/50', 'border-rose-900/50'); display.classList.replace('text-orange-500', 'text-rose-500'); }
             else { box.classList.replace('border-rose-900/50', 'border-orange-900/50'); display.classList.replace('text-rose-500', 'text-orange-500'); }
         }
-
         function toggleMutasiColors() {
-            const type = document.getElementById('mutasi-tipe').value;
-            const btn = document.getElementById('mutasi-btn');
+            const type = document.getElementById('mutasi-tipe').value; const btn = document.getElementById('mutasi-btn');
             if(type === 'Ambil') { btn.classList.replace('bg-blue-600', 'bg-purple-600'); btn.classList.replace('hover:bg-blue-700', 'hover:bg-purple-700'); }
             else { btn.classList.replace('bg-purple-600', 'bg-blue-600'); btn.classList.replace('hover:bg-purple-700', 'hover:bg-blue-700'); }
         }
-
         function calcSatuanTotal() {
-            const qty = document.getElementById('satuan-qty').value || 0;
-            const price = document.getElementById('satuan-harga').value || 0;
+            const qty = document.getElementById('satuan-qty').value || 0; const price = document.getElementById('satuan-harga').value || 0;
             document.getElementById('display-satuan-total').innerText = formatMoney(qty * price);
         }
-
         function calcPaketTotal() {
-            const bundleId = document.getElementById('paket-bundle').value;
-            const qty = parseInt(document.getElementById('paket-qty').value) || 0;
+            const bundleId = document.getElementById('paket-bundle').value; const qty = parseInt(document.getElementById('paket-qty').value) || 0;
             if(!bundleId) { document.getElementById('display-paket-total').innerText = "$ 0"; return; }
-            const b = bundlesData.find(x => x.id == bundleId);
-            document.getElementById('display-paket-total').innerText = formatMoney((b ? b.price : 0) * qty);
+            const b = bundlesData.find(x => x.id == bundleId); document.getElementById('display-paket-total').innerText = formatMoney((b ? b.price : 0) * qty);
         }
 
-        // --- HANDLERS TRANSAKSI BISNIS (KAS) ---
+        // --- HANDLERS TRANSAKSI BISNIS ---
+        async function confirmTransactionBox(title, text) {
+            const isLight = document.body.classList.contains('light-mode');
+            const res = await Swal.fire({
+                title: title, text: text, icon: 'warning', showCancelButton: true, confirmButtonColor: '#ea580c', cancelButtonColor: '#3f3f46',
+                background: isLight ? '#ffffff' : '#18181b', color: isLight ? '#18181b' : '#f4f4f5'
+            });
+            return res.isConfirmed;
+        }
+
         async function handleBusinessSatuan(e) {
-            e.preventDefault();
-            if(currentRole === 'tamu') return;
-            const type = document.getElementById('satuan-tipe').value; 
-            const itemId = parseInt(document.getElementById('satuan-item').value);
-            if(!itemId) { alert("Pilih barang terlebih dahulu!"); return; }
-            const qty = parseInt(document.getElementById('satuan-qty').value);
-            const price = parseFloat(document.getElementById('satuan-harga').value);
-            const target = document.getElementById('satuan-target').value;
+            e.preventDefault(); if(currentRole === 'tamu') return;
+            const type = document.getElementById('satuan-tipe').value; const itemId = parseInt(document.getElementById('satuan-item').value);
+            if(!itemId) { showMessage('Peringatan', 'Pilih barang terlebih dahulu!', 'warning'); return; }
+            const qty = parseInt(document.getElementById('satuan-qty').value); const price = parseFloat(document.getElementById('satuan-harga').value); const target = document.getElementById('satuan-target').value;
             
-            const item = inventoryData.find(i => i.id === itemId);
-            if (!item) return;
+            const item = inventoryData.find(i => i.id === itemId); if (!item) return;
             const totalPrice = qty * price;
 
             if (type === 'Beli') {
-                if (currentFunds < totalPrice && !confirm(`⚠️ Saldo Faksi (${formatMoney(currentFunds)}) tidak cukup untuk membayar tagihan ${formatMoney(totalPrice)}.\nTetap paksa beli? (Kas akan minus/hutang)`)) return;
+                if (currentFunds < totalPrice) {
+                    const c = await confirmTransactionBox('Saldo Faksi Kurang!', `Kas tidak cukup untuk membayar tagihan ${formatMoney(totalPrice)}. Tetap paksa beli? (Kas akan minus)`);
+                    if(!c) return;
+                }
                 await processTransaction(item.id, item.stock + qty, item.name, item.location, qty, 'Beli', price, totalPrice, target, currentFunds - totalPrice);
                 document.getElementById('form-bisnis-satuan').reset(); document.getElementById('display-satuan-total').innerText = '$ 0';
             } else { 
-                if (item.stock < qty) { alert(`🚨 STOK KURANG! Sisa: ${item.stock}.`); return; }
+                if (item.stock < qty) { showMessage('Stok Kurang', `Sisa stok di gudang hanya ${item.stock}.`, 'error'); return; }
                 await processTransaction(item.id, item.stock - qty, item.name, item.location, qty, 'Jual', price, totalPrice, target, currentFunds + totalPrice);
                 document.getElementById('form-bisnis-satuan').reset(); document.getElementById('display-satuan-total').innerText = '$ 0';
             }
         }
 
         async function handleBusinessPaket(e) {
-            e.preventDefault();
-            if(currentRole === 'tamu') return;
-            const type = document.getElementById('paket-tipe').value; 
-            const bundleId = parseInt(document.getElementById('paket-bundle').value);
-            if(!bundleId) { alert("Pilih paket terlebih dahulu!"); return; }
-            const qty = parseInt(document.getElementById('paket-qty').value) || 1;
-            const target = document.getElementById('paket-target').value;
-            const bundle = bundlesData.find(b => b.id === bundleId);
-            if (!bundle) return;
+            e.preventDefault(); if(currentRole === 'tamu') return;
+            const type = document.getElementById('paket-tipe').value; const bundleId = parseInt(document.getElementById('paket-bundle').value);
+            if(!bundleId) { showMessage('Peringatan', 'Pilih paket terlebih dahulu!', 'warning'); return; }
+            const qty = parseInt(document.getElementById('paket-qty').value) || 1; const target = document.getElementById('paket-target').value;
+            const bundle = bundlesData.find(b => b.id === bundleId); if (!bundle) return;
             
             let totalCost = bundle.price * qty;
-
             const updates = [];
-            const itemsToProcess = [
-                { id: bundle.item1_id, reqQty: bundle.item1_qty },
-                { id: bundle.item2_id, reqQty: bundle.item2_qty },
-                { id: bundle.item3_id, reqQty: bundle.item3_qty }
-            ];
+            const itemsToProcess = [{ id: bundle.item1_id, reqQty: bundle.item1_qty }, { id: bundle.item2_id, reqQty: bundle.item2_qty }, { id: bundle.item3_id, reqQty: bundle.item3_qty }];
 
             for (let i of itemsToProcess) {
                 if (i.id && i.reqQty > 0) {
                     const invItem = inventoryData.find(inv => inv.id === i.id);
-                    if (!invItem) { alert(`Error: Salah satu barang di dalam paket sudah terhapus. Paket korup.`); return; }
+                    if (!invItem) { showMessage('Error', 'Barang di dalam paket korup/hilang.', 'error'); return; }
                     const requiredTotal = i.reqQty * qty;
-                    if (type === 'Jual' && invItem.stock < requiredTotal) {
-                        alert(`🚨 STOK KURANG! Sisa ${invItem.name} gudang: ${invItem.stock}, butuh ${requiredTotal}. Transaksi Batal.`); return;
-                    }
+                    if (type === 'Jual' && invItem.stock < requiredTotal) { showMessage('Stok Kurang', `Sisa ${invItem.name}: ${invItem.stock}, butuh ${requiredTotal}.`, 'error'); return; }
                     updates.push({ id: invItem.id, newStock: type === 'Jual' ? invItem.stock - requiredTotal : invItem.stock + requiredTotal });
                 }
             }
 
-            if (type === 'Beli' && currentFunds < totalCost && !confirm(`⚠️ Saldo Kas tidak cukup! Total: ${formatMoney(totalCost)}.\nYakin paksa beli paket? (Kas minus)`)) return;
+            if (type === 'Beli' && currentFunds < totalCost) {
+                const c = await confirmTransactionBox('Saldo Faksi Kurang!', `Kas tidak cukup (${formatMoney(totalCost)}). Tetap paksa beli paket?`);
+                if(!c) return;
+            }
 
-            // Execute Multi Update
             for (let u of updates) await db.from('inventory').update({ stock: u.newStock }).eq('id', u.id);
             const newFunds = type === 'Jual' ? currentFunds + totalCost : currentFunds - totalCost;
             await db.from('faction_funds').update({ balance: newFunds }).eq('id', 1);
 
-            // 1. Catat ke Ledger Aktivitas (warehouse_logs)
-            await db.from('warehouse_logs').insert([{ 
-                item_name: `[PAKET] ${bundle.name}`, location: 'Multi-Item', quantity: qty, type: type, 
-                operator: getOperatorName(), price: bundle.price, total_price: totalCost, target_name: target 
-            }]);
-
-            // 2. Catat otomatis ke Riwayat Mutasi Brankas (vault_logs)
+            await db.from('warehouse_logs').insert([{ item_name: `[PAKET] ${bundle.name}`, location: 'Multi-Item', quantity: qty, type: type, operator: getOperatorName(), price: bundle.price, total_price: totalCost, target_name: target }]);
+            
             const vaultType = type === 'Jual' ? 'Deposit' : 'Tarik';
             const vaultReason = type === 'Jual' ? `Paket (Jual: ${bundle.name} x${qty} ke ${target})` : `Paket (Beli: ${bundle.name} x${qty} dari ${target})`;
-            await db.from('vault_logs').insert([{ 
-                type: vaultType, 
-                amount: totalCost, 
-                operator: `${getOperatorName()} | ${vaultReason}` 
-            }]);
+            await db.from('vault_logs').insert([{ type: vaultType, amount: totalCost, operator: `${getOperatorName()} | ${vaultReason}` }]);
 
-            // WEBHOOK DISCORD
             const embedColor = type === 'Jual' ? 3066993 : 15158332;
-            const actionName = type === 'Jual' ? 'Penjualan Paket' : 'Pembelian Paket';
-            await sendToDiscord(
-                `📦 Transaksi Bisnis Paket (Bundle): ${actionName}`,
-                `Operator **${getOperatorName()}** telah mencatat eksekusi bisnis.`,
-                embedColor,
-                [
-                    { name: "Nama Paket", value: bundle.name, inline: true },
-                    { name: "Jumlah Paket", value: `${qty} Set`, inline: true },
-                    { name: "Klien / Sumber", value: target, inline: true },
-                    { name: "Total Kas Terlibat", value: formatMoney(totalCost), inline: true }
-                ]
-            );
+            await sendToDiscord(`📦 Bisnis Paket: ${type === 'Jual' ? 'Penjualan' : 'Pembelian'}`, `Operator **${getOperatorName()}** mencatat bisnis.`, embedColor, [
+                { name: "Nama Paket", value: bundle.name, inline: true }, { name: "Jumlah Paket", value: `${qty} Set`, inline: true },
+                { name: "Klien / Sumber", value: target, inline: true }, { name: "Total Kas", value: formatMoney(totalCost), inline: true }
+            ]);
 
             document.getElementById('form-bisnis-paket').reset(); document.getElementById('display-paket-total').innerText = "$ 0";
-            alert(`Transaksi Paket ${type} berhasil!`);
+            showMessage('Selesai', `Transaksi Paket ${type} berhasil!`, 'success');
             await fetchInventory(); switchTab('dashboard');
         }
 
@@ -990,87 +955,48 @@
             const { error } = await db.from('inventory').update({ stock: newStock }).eq('id', invId);
             if (!error) {
                 await db.from('faction_funds').update({ balance: newFunds }).eq('id', 1);
+                await db.from('warehouse_logs').insert([{ item_name: itemName, location: location, quantity: qty, type: type, operator: getOperatorName(), price: price, total_price: totalPrice, target_name: target }]);
                 
-                // 1. Catat ke Ledger Aktivitas (warehouse_logs)
-                await db.from('warehouse_logs').insert([{ 
-                    item_name: itemName, location: location, quantity: qty, type: type, operator: getOperatorName(), price: price, total_price: totalPrice, target_name: target 
-                }]);
-                
-                // 2. Catat otomatis ke Riwayat Mutasi Brankas (vault_logs)
                 const vaultType = type === 'Jual' ? 'Deposit' : 'Tarik';
                 const vaultReason = type === 'Jual' ? `Satuan (Jual: ${itemName} x${qty} ke ${target})` : `Satuan (Beli: ${itemName} x${qty} dari ${target})`;
-                await db.from('vault_logs').insert([{ 
-                    type: vaultType, 
-                    amount: totalPrice, 
-                    operator: `${getOperatorName()} | ${vaultReason}` 
-                }]);
+                await db.from('vault_logs').insert([{ type: vaultType, amount: totalPrice, operator: `${getOperatorName()} | ${vaultReason}` }]);
 
-                // WEBHOOK DISCORD
                 const embedColor = type === 'Jual' ? 3066993 : 15158332; 
-                const actionName = type === 'Jual' ? 'Penjualan' : 'Pembelian/Restock';
-                await sendToDiscord(
-                    `💸 Transaksi Bisnis Satuan: ${actionName}`,
-                    `Operator **${getOperatorName()}** telah mencatat eksekusi bisnis.`,
-                    embedColor,
-                    [
-                        { name: "Barang", value: itemName, inline: true },
-                        { name: "Jumlah (Qty)", value: `${qty} Unit`, inline: true },
-                        { name: "Klien / Sumber", value: target, inline: true },
-                        { name: "Harga Satuan", value: formatMoney(price), inline: true },
-                        { name: "Total Kas Terlibat", value: formatMoney(totalPrice), inline: true },
-                        { name: "Sisa Stok Gudang", value: `${newStock}`, inline: true }
-                    ]
-                );
+                await sendToDiscord(`💸 Bisnis Satuan: ${type === 'Jual' ? 'Penjualan' : 'Restock'}`, `Operator **${getOperatorName()}** mencatat transaksi.`, embedColor, [
+                    { name: "Barang", value: itemName, inline: true }, { name: "Jumlah", value: `${qty} Unit`, inline: true },
+                    { name: "Target", value: target, inline: true }, { name: "Total Kas", value: formatMoney(totalPrice), inline: true }
+                ]);
 
+                showMessage('Selesai', `Transaksi Satuan ${type} berhasil!`, 'success');
                 await fetchInventory(); switchTab('dashboard');
-            } else alert('Gagal memproses transaksi: ' + error.message);
+            } else showMessage('Error', error.message, 'error');
         }
 
-        // --- HANDLER MUTASI LOGISTIK (TANPA KAS) ---
+        // --- HANDLER MUTASI LOGISTIK ---
         async function handleMutasiGudang(e) {
-            e.preventDefault();
-            if(currentRole === 'tamu') return;
-            const type = document.getElementById('mutasi-tipe').value; 
-            const itemId = parseInt(document.getElementById('mutasi-item').value);
-            if(!itemId) { alert("Pilih barang terlebih dahulu!"); return; }
-            const qty = parseInt(document.getElementById('mutasi-qty').value);
-            const target = document.getElementById('mutasi-keterangan').value;
-            
-            const item = inventoryData.find(i => i.id === itemId);
-            if (!item) return;
+            e.preventDefault(); if(currentRole === 'tamu') return;
+            const type = document.getElementById('mutasi-tipe').value; const itemId = parseInt(document.getElementById('mutasi-item').value);
+            if(!itemId) { showMessage('Peringatan', 'Pilih barang dahulu!', 'warning'); return; }
+            const qty = parseInt(document.getElementById('mutasi-qty').value); const target = document.getElementById('mutasi-keterangan').value;
+            const item = inventoryData.find(i => i.id === itemId); if (!item) return;
 
             let newStock = item.stock;
             if(type === 'Ambil') {
-                if (item.stock < qty) { alert(`🚨 STOK KURANG! Sisa: ${item.stock}.`); return; }
+                if (item.stock < qty) { showMessage('Stok Kurang', `Sisa stok: ${item.stock}.`, 'error'); return; }
                 newStock = item.stock - qty;
-            } else {
-                newStock = item.stock + qty;
-            }
+            } else { newStock = item.stock + qty; }
 
             const { error } = await db.from('inventory').update({ stock: newStock }).eq('id', item.id);
             if (!error) {
-                await db.from('warehouse_logs').insert([{ 
-                    item_name: item.name, location: item.location, quantity: qty, type: type, operator: getOperatorName(), price: 0, total_price: 0, target_name: target 
-                }]);
-                
-                // WEBHOOK DISCORD
+                await db.from('warehouse_logs').insert([{ item_name: item.name, location: item.location, quantity: qty, type: type, operator: getOperatorName(), price: 0, total_price: 0, target_name: target }]);
                 const embedColor = type === 'Ambil' ? 10181046 : 3447003; 
-                await sendToDiscord(
-                    `🔫 Mutasi Logistik: ${type} Barang`,
-                    `Operator **${getOperatorName()}** melakukan pergerakan barang (Tanpa Kas).`,
-                    embedColor,
-                    [
-                        { name: "Barang", value: item.name, inline: true },
-                        { name: "Jumlah (Qty)", value: `${qty} Unit`, inline: true },
-                        { name: "Keterangan/Alasan", value: target, inline: true },
-                        { name: "Sisa Stok Gudang", value: `${newStock}`, inline: true }
-                    ]
-                );
-
+                await sendToDiscord(`🔫 Mutasi Logistik: ${type}`, `Operator **${getOperatorName()}** memindahkan barang.`, embedColor, [
+                    { name: "Barang", value: item.name, inline: true }, { name: "Jumlah", value: `${qty} Unit`, inline: true }, { name: "Alasan", value: target, inline: true }
+                ]);
                 document.getElementById('form-mutasi-gudang').reset();
-                alert(`Mutasi logistik (${type}) berhasil dicatat tanpa memotong kas!`);
+                showMessage('Selesai', `Mutasi logistik (${type}) tercatat tanpa potong kas!`, 'success');
                 await fetchInventory(); switchTab('dashboard');
-            } else alert('Gagal mutasi: ' + error.message);
+            } else showMessage('Error', error.message, 'error');
         }
 
         // --- SISTEM LOG & REKAP ---
@@ -1080,40 +1006,27 @@
                 const { data, error } = await db.from('warehouse_logs').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
                 tbody.innerHTML = '';
-                if(data.length === 0) { tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-zinc-500 italic">Belum ada ledger transaksi tercatat.</td></tr>`; return; }
+                if(data.length === 0) { tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-zinc-500 italic">Belum ada ledger.</td></tr>`; return; }
 
                 data.forEach((log, index) => {
-                    const localTime = new Date(log.created_at).toLocaleString('id-ID', { hour12: false });
-                    const isPackage = log.item_name.includes('[PAKET]');
-                    
+                    const localTime = new Date(log.created_at).toLocaleString('id-ID', { hour12: false }); const isPackage = log.item_name.includes('[PAKET]');
                     let typeBadge = ''; let sign = ''; let colorVal = 'text-zinc-500';
-                    
-                    if(log.type === 'Beli' || (log.type === 'Masuk' && log.price > 0)) {
-                        typeBadge = `<span class="bg-rose-950/80 text-rose-400 border border-rose-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_8px_rgba(244,63,94,0.3)]">Beli/Restock Bisnis</span>`;
-                        sign = '-'; colorVal = 'text-rose-400';
-                    } else if (log.type === 'Jual' || (log.type === 'Keluar' && log.price > 0)) {
-                        typeBadge = `<span class="bg-emerald-950/80 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_8px_rgba(16,185,129,0.3)]">Jual/Distribusi Bisnis</span>`;
-                        sign = '+'; colorVal = 'text-emerald-400';
-                    } else if (log.type === 'Simpan' || (log.type === 'Masuk' && log.price === 0)) {
-                        typeBadge = `<span class="bg-blue-950/80 text-blue-400 border border-blue-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Deposit Logistik</span>`;
-                        sign = ''; colorVal = 'text-zinc-500';
-                    } else if (log.type === 'Ambil' || (log.type === 'Keluar' && log.price === 0)) {
-                        typeBadge = `<span class="bg-purple-950/80 text-purple-400 border border-purple-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Ambil Logistik</span>`;
-                        sign = ''; colorVal = 'text-zinc-500';
-                    }
+                    if(log.type === 'Beli' || (log.type === 'Masuk' && log.price > 0)) { typeBadge = `<span class="bg-rose-950/80 text-rose-400 border border-rose-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Restock Bisnis</span>`; sign = '-'; colorVal = 'text-rose-400'; } 
+                    else if (log.type === 'Jual' || (log.type === 'Keluar' && log.price > 0)) { typeBadge = `<span class="bg-emerald-950/80 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Jual Bisnis</span>`; sign = '+'; colorVal = 'text-emerald-400'; } 
+                    else if (log.type === 'Simpan' || (log.type === 'Masuk' && log.price === 0)) { typeBadge = `<span class="bg-blue-950/80 text-blue-400 border border-blue-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Simpan Logistik</span>`; } 
+                    else if (log.type === 'Ambil' || (log.type === 'Keluar' && log.price === 0)) { typeBadge = `<span class="bg-purple-950/80 text-purple-400 border border-purple-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Ambil Logistik</span>`; }
 
                     const valStr = log.total_price > 0 ? `${sign}${formatMoney(log.total_price)}` : '-';
-                    
                     tbody.innerHTML += `
-                        <tr class="${index % 2 === 0 ? 'bg-zinc-950' : 'bg-zinc-900/30'} hover:bg-zinc-800/40 transition-colors duration-200">
+                        <tr class="${index % 2 === 0 ? 'bg-zinc-950/50' : 'bg-transparent'} hover:bg-zinc-800/20 transition-colors duration-200">
                             <td class="p-3 text-center font-mono text-zinc-500">${localTime}</td>
                             <td class="p-3 font-semibold ${isPackage ? 'text-orange-400' : 'text-zinc-200'}">${log.item_name}</td>
                             <td class="p-3 text-center">${typeBadge}</td>
-                            <td class="p-3 text-center font-mono font-bold text-zinc-300">${log.quantity}</td>
-                            <td class="p-3 text-zinc-300 text-xs">${log.target_name || '-'}</td>
-                            <td class="p-3 text-right font-mono text-xs text-zinc-400">${log.price > 0 ? formatMoney(log.price) : '-'}</td>
+                            <td class="p-3 text-center font-mono font-bold text-zinc-400">${log.quantity}</td>
+                            <td class="p-3 text-zinc-400 text-xs">${log.target_name || '-'}</td>
+                            <td class="p-3 text-right font-mono text-xs text-zinc-500">${log.price > 0 ? formatMoney(log.price) : '-'}</td>
                             <td class="p-3 text-right font-mono font-bold ${colorVal}">${valStr}</td>
-                            <td class="p-3 text-zinc-500 text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-user-shield text-[10px] opacity-70"></i> ${log.operator}</td>
+                            <td class="p-3 text-zinc-500 text-[11px] font-semibold flex items-center gap-1"><i class="fa-solid fa-user-shield text-[10px] opacity-70"></i> ${log.operator}</td>
                         </tr>`;
                 });
             } catch (err) { console.error(err); }
@@ -1125,46 +1038,45 @@
                 const { data: logs, error } = await db.from('warehouse_logs').select('*').order('created_at', { ascending: true });
                 if (error) throw error;
                 const filteredLogs = logs.filter(log => {
-                    const d = new Date(log.created_at);
-                    return String(d.getMonth() + 1).padStart(2, '0') === targetMonth && String(d.getFullYear()) === targetYear;
+                    const d = new Date(log.created_at); return String(d.getMonth() + 1).padStart(2, '0') === targetMonth && String(d.getFullYear()) === targetYear;
                 });
-                if (filteredLogs.length === 0) { alert(`ℹ️ Tidak ada transaksi di bulan ${targetMonth}-${targetYear}.`); return; }
+                if (filteredLogs.length === 0) { showMessage('Info', `Tidak ada transaksi di bulan ${targetMonth}-${targetYear}.`, 'info'); return; }
 
                 const excelRows = filteredLogs.map((log, index) => {
                     let transName = '';
                     if (log.price > 0) transName = (log.type === 'Beli' || log.type === 'Masuk') ? 'Pembelian Bisnis' : 'Penjualan Bisnis';
                     else transName = (log.type === 'Simpan' || log.type === 'Masuk') ? 'Deposit Logistik' : 'Pengambilan Logistik';
 
-                    return {
-                        "No": index + 1, "Waktu (WIB)": new Date(log.created_at).toLocaleString('id-ID', { hour12: false }),
-                        "Nama Item/Paket": log.item_name, "Jenis Aktivitas": transName,
-                        "Qty": log.quantity, "Klien / Keterangan": log.target_name || '-', "Harga Satuan": log.price || 0,
-                        "Total Nilai Kas": log.total_price || 0, "Operator": log.operator
-                    };
+                    return { "No": index + 1, "Waktu": new Date(log.created_at).toLocaleString('id-ID', { hour12: false }), "Nama Item/Paket": log.item_name, "Jenis": transName, "Qty": log.quantity, "Keterangan": log.target_name || '-', "Harga Satuan": log.price || 0, "Total Nilai Kas": log.total_price || 0, "Operator": log.operator };
                 });
-                const worksheet = XLSX.utils.json_to_sheet(excelRows); const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, "Ledger Audit");
-                XLSX.writeFile(workbook, `AUDIT_BLMC_${targetMonth}_${targetYear}.xlsx`);
-            } catch (err) { alert('Gagal mengekspor data: ' + err.message); }
+                const worksheet = XLSX.utils.json_to_sheet(excelRows); const workbook = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(workbook, worksheet, "Ledger Audit"); XLSX.writeFile(workbook, `AUDIT_BLMC_${targetMonth}_${targetYear}.xlsx`);
+            } catch (err) { showMessage('Error', err.message, 'error'); }
         }
 
         async function handleAddNewItem(event) {
             event.preventDefault();
             const name = document.getElementById('input-tambah-nama').value; const loc = document.getElementById('input-tambah-lokasi').value; const stock = parseInt(document.getElementById('input-tambah-stok').value) || 0;
             const { error } = await db.from('inventory').insert([{ name: name, location: loc, stock: stock }]);
-            if (error) alert('Gagal mendaftarkan barang: ' + error.message);
-            else { document.getElementById('form-tambah-barang').reset(); await fetchInventory(); switchTab('dashboard'); }
+            if (error) showMessage('Gagal', error.message, 'error');
+            else { showMessage('Berhasil', 'Barang baru didaftarkan!', 'success'); document.getElementById('form-tambah-barang').reset(); await fetchInventory(); switchTab('dashboard'); }
         }
 
         async function handleDeleteItem(id) {
-            if(confirm(`⚠️ Hapus total data dari sistem? (Catatan: Jika barang ini masuk ke dalam 'Paket', maka paket tersebut akan rusak!)`)) {
+            const isLight = document.body.classList.contains('light-mode');
+            const result = await Swal.fire({
+                title: 'Hapus Data?', text: "Jika barang ini ada dalam Paket, maka paket tersebut akan ikut error!", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#3f3f46', confirmButtonText: 'Ya, Hapus!',
+                background: isLight ? '#ffffff' : '#18181b', color: isLight ? '#18181b' : '#f4f4f5'
+            });
+            if(result.isConfirmed) {
                 const { error } = await db.from('inventory').delete().eq('id', id);
-                if (!error) await fetchInventory();
+                if (!error) { await fetchInventory(); showMessage('Terhapus', 'Barang berhasil dihapus.', 'success'); }
             }
         }
 
         function renderAnalyticsChart() {
             const ctx = document.getElementById('bloodlineChart').getContext('2d');
+            const isLight = document.body.classList.contains('light-mode');
             if (liveChartInstance) liveChartInstance.destroy();
             liveChartInstance = new Chart(ctx, {
                 type: 'bar',
@@ -1172,12 +1084,12 @@
                     labels: inventoryData.map(i => i.name),
                     datasets: [{
                         data: inventoryData.map(i => i.stock),
-                        backgroundColor: inventoryData.map(i => i.stock <= 500 ? 'rgba(239, 68, 68, 0.5)' : 'rgba(234, 88, 12, 0.4)'),
+                        backgroundColor: inventoryData.map(i => i.stock <= 500 ? 'rgba(239, 68, 68, 0.6)' : 'rgba(234, 88, 12, 0.5)'),
                         borderColor: inventoryData.map(i => i.stock <= 500 ? 'rgba(239, 68, 68, 1)' : 'rgba(234, 88, 12, 1)'),
                         borderWidth: 2, borderRadius: 5
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#a1a1aa' }, grid: { color: '#27272a' } }, y: { ticks: { color: '#a1a1aa' }, grid: { color: '#27272a' } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: isLight ? '#71717a' : '#a1a1aa' }, grid: { color: isLight ? '#e4e4e7' : '#27272a' } }, y: { ticks: { color: isLight ? '#71717a' : '#a1a1aa' }, grid: { color: isLight ? '#e4e4e7' : '#27272a' } } } }
             });
         }
     </script>
