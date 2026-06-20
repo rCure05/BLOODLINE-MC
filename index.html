@@ -12,19 +12,13 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     
     <style>
-        body {
-            font-family: 'Rajdhani', sans-serif;
-            background-color: #0c0c0e;
-            -webkit-tap-highlight-color: transparent;
-        }
+        body { font-family: 'Rajdhani', sans-serif; background-color: #0c0c0e; -webkit-tap-highlight-color: transparent; }
         .gang-title { font-family: 'Permanent Marker', cursive; }
         .glow-orange { box-shadow: 0 0 15px rgba(249, 115, 22, 0.4); }
         .glow-text { text-shadow: 0 0 10px rgba(249, 115, 22, 0.6); }
-        
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #18181b; }
         ::-webkit-scrollbar-thumb { background: #ea580c; border-radius: 3px; }
-
         .sidebar-scroll::-webkit-scrollbar { width: 4px; }
         .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
         .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(234, 88, 12, 0.5); border-radius: 4px; }
@@ -42,7 +36,6 @@
                 <h1 class="text-4xl text-orange-500 gang-title tracking-wider glow-text">BLOODLINE MC</h1>
                 <p class="text-xs text-zinc-500 uppercase tracking-widest mt-1">SECURE STOCKADE GATEWAY</p>
             </div>
-
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div class="group">
                     <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-orange-500 transition-colors">Pilih Peranan (Role)</label>
@@ -60,7 +53,7 @@
                         <input type="password" id="login-password" placeholder="Masukkan kata sandi..." class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 pl-10 text-zinc-200 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all">
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 active:scale-95 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg hover:shadow-orange-600/40 transition-all duration-200 text-sm flex items-center justify-center gap-2 group">
+                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 active:scale-95 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg transition-all duration-200 text-sm flex items-center justify-center gap-2 group">
                     Masuk Gudang <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                 </button>
             </form>
@@ -75,7 +68,7 @@
                     <p class="text-xs text-zinc-500 uppercase tracking-widest mt-1"><i class="fa-solid fa-skull-crossbones mr-1 group-hover:text-orange-500 transition-colors"></i> Stockade HQ <i class="fa-solid fa-skull-crossbones ml-1 group-hover:text-orange-500 transition-colors"></i></p>
                     <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-zinc-400 hover:text-orange-500 md:hidden text-xl hover:rotate-90 transition-transform"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <div class="px-5 py-4 flex items-center gap-3 bg-gradient-to-r from-orange-950/20 to-transparent border-b border-zinc-900 hover:bg-zinc-900/40 transition-colors cursor-default">
+                <div class="px-5 py-4 flex items-center gap-3 bg-gradient-to-r from-orange-950/20 to-transparent border-b border-zinc-900 hover:bg-zinc-900/40 cursor-default">
                     <div id="user-avatar-container" class="w-10 h-10 rounded-full bg-zinc-800 border border-orange-500 flex items-center justify-center text-orange-500 shadow-md transition-transform duration-300 hover:scale-110">
                         <i id="user-icon" class="fa-solid fa-user-secret text-lg"></i>
                     </div>
@@ -90,25 +83,30 @@
                 <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide transition-all duration-200 bg-orange-600 text-white glow-orange group">
                     <i class="fa-solid fa-gauge-high text-lg w-6 group-hover:rotate-12 transition-transform duration-300"></i> Dashboard Gudang
                 </button>
-                <button onclick="switchTab('masuk')" id="btn-masuk" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 hover:translate-x-1 transition-all duration-200 group">
-                    <i class="fa-solid fa-boxes-packing text-lg w-6 group-hover:scale-110 transition-transform duration-300"></i> Beli / Deposit Masuk (+)
+                
+                <button onclick="switchTab('bisnis')" id="btn-bisnis" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 hover:translate-x-1 transition-all duration-200 group">
+                    <i class="fa-solid fa-hand-holding-dollar text-lg w-6 group-hover:scale-110 transition-transform duration-300"></i> Transaksi Bisnis (Kas)
                 </button>
-                <button onclick="switchTab('keluar')" id="btn-keluar" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 hover:translate-x-1 transition-all duration-200 group">
-                    <i class="fa-solid fa-handshake text-lg w-6 group-hover:-translate-x-1 transition-transform duration-300"></i> Jual / Distribusi (-)
+                
+                <button onclick="switchTab('logistik')" id="btn-logistik" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 hover:translate-x-1 transition-all duration-200 group">
+                    <i class="fa-solid fa-people-carry-box text-lg w-6 group-hover:-translate-y-1 transition-transform duration-300"></i> Mutasi Logistik (Stok)
                 </button>
+                
                 <button onclick="switchTab('tambah')" id="btn-tambah" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 hover:translate-x-1 transition-all duration-200 group">
                     <i class="fa-solid fa-plus-circle text-lg w-6 group-hover:rotate-90 transition-transform duration-300"></i> Daftarkan Barang Baru
                 </button>
+                
                 <button onclick="switchTab('logs')" id="btn-logs" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 hover:translate-x-1 transition-all duration-200 group">
                     <i class="fa-solid fa-file-invoice-dollar text-lg w-6 group-hover:-rotate-45 transition-transform duration-300"></i> Ledger Keuangan
                 </button>
+                
                 <button onclick="switchTab('rekap')" id="btn-rekap" class="admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-semibold tracking-wide text-zinc-400 hover:bg-zinc-900 hover:text-orange-500 hover:translate-x-1 transition-all duration-200 group">
                     <i class="fa-solid fa-file-excel text-lg w-6 group-hover:scale-110 transition-transform duration-300 text-emerald-600/80 group-hover:text-emerald-500"></i> Ekspor Bulanan
                 </button>
             </nav>
 
             <div class="p-4 border-t border-zinc-900 bg-zinc-900/20 space-y-2 shrink-0">
-                <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded border border-red-900/40 bg-red-950/10 hover:bg-red-900 text-red-400 hover:text-white font-semibold text-xs tracking-wide transition-all duration-200 hover:shadow-[0_0_15px_rgba(220,38,38,0.4)] group">
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded border border-red-900/40 bg-red-950/10 hover:bg-red-900 text-red-400 hover:text-white font-semibold text-xs tracking-wide transition-all duration-200 group">
                     <i class="fa-solid fa-sign-out-alt group-hover:-translate-x-1 transition-transform"></i> Keluar Log
                 </button>
             </div>
@@ -129,7 +127,7 @@
                 </div>
                 <div class="text-right shrink-0">
                     <div id="live-clock" class="text-base md:text-lg font-bold text-orange-500 tracking-wider font-mono glow-text">00:00:00</div>
-                    <span class="text-[9px] md:text-[11px] text-zinc-500 uppercase tracking-widest font-semibold">Los Santos, BLMC</span>
+                    <span class="text-[9px] md:text-[11px] text-zinc-500 uppercase tracking-widest font-semibold">Los Santos, CCRP</span>
                 </div>
             </header>
 
@@ -160,17 +158,14 @@
                             <span class="font-bold uppercase tracking-wider text-xs md:text-sm flex items-center gap-2">
                                 <i class="fa-solid fa-list-check text-orange-500"></i> Manifest Inventaris
                             </span>
-                            
                             <div class="flex items-center bg-black border border-emerald-900/50 px-3 py-1.5 rounded-lg shadow-inner">
                                 <i class="fa-solid fa-sack-dollar text-emerald-500 mr-2 text-sm"></i>
                                 <span class="text-[11px] text-zinc-400 uppercase tracking-widest font-semibold mr-2">Kas:</span>
                                 <span id="display-faction-funds" class="text-emerald-400 font-mono font-bold text-sm tracking-wider">Memuat...</span>
-                                
                                 <button onclick="adjustFunds()" class="admin-only ml-3 text-zinc-500 hover:text-emerald-400 hover:scale-110 transition-all" title="Tambah/Tarik Kas Manual">
                                     <i class="fa-solid fa-money-bill-transfer text-sm"></i>
                                 </button>
                             </div>
-
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-[10px] bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded font-bold uppercase tracking-wide">⚠️ Kritis: &le; 500</span>
@@ -197,71 +192,160 @@
                 </div>
             </section>
 
-            <section id="tab-masuk" class="tab-content hidden max-w-xl mx-auto animate-[fadeIn_0.3s_ease-in-out]">
-                <div class="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden">
-                    <div class="p-5 border-b border-zinc-800 bg-amber-600/10 text-amber-500 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-truck-loading text-lg"></i> Catat Pembelian / Deposit Barang Masuk
+            <section id="tab-bisnis" class="tab-content hidden animate-[fadeIn_0.3s_ease-in-out]">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    
+                    <div class="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden">
+                        <div class="p-5 border-b border-zinc-800 bg-emerald-600/10 text-emerald-500 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-box text-lg"></i> Eksekusi Bisnis Satuan
+                        </div>
+                        <form id="form-bisnis-satuan" class="p-5 space-y-4" onsubmit="handleBusinessSatuan(event)">
+                            <div class="group">
+                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Jenis Transaksi Bisnis</label>
+                                <select id="satuan-tipe" required onchange="toggleSatuanColors()" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none">
+                                    <option value="Jual">💸 PENJUALAN (Menambah Kas Faksi)</option>
+                                    <option value="Beli">📥 PEMBELIAN / RESTOCK (Memotong Kas Faksi)</option>
+                                </select>
+                            </div>
+                            <div class="group">
+                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Pilih Barang</label>
+                                <select id="satuan-item" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none"></select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="group">
+                                    <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Jumlah/Qty</label>
+                                    <input type="number" id="satuan-qty" min="1" required oninput="calcSatuanTotal()" placeholder="10" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none">
+                                </div>
+                                <div class="group">
+                                    <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Harga per Unit ($)</label>
+                                    <input type="number" id="satuan-harga" min="0" required oninput="calcSatuanTotal()" placeholder="Contoh: 1500" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none">
+                                </div>
+                            </div>
+                            <div class="group">
+                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Klien / Pemasok</label>
+                                <input type="text" id="satuan-target" required placeholder="Nama Pembeli/Pemasok" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none">
+                            </div>
+                            <div class="p-3 bg-black border border-emerald-900/50 rounded-lg flex justify-between items-center transition-colors duration-300" id="satuan-total-box">
+                                <span class="text-xs text-zinc-400 uppercase tracking-widest font-bold">Total Nilai Transaksi:</span>
+                                <span id="display-satuan-total" class="text-lg font-mono font-bold text-emerald-500">$ 0</span>
+                            </div>
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg text-sm flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-handshake"></i> Konfirmasi Transaksi
+                            </button>
+                        </form>
                     </div>
-                    <form id="form-barang-masuk" class="p-5 md:p-6 space-y-4" onsubmit="handleStockIn(event)">
-                        <div class="group">
-                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-amber-500">Pilih Barang yang Masuk</label>
-                            <select id="select-masuk-barang" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 cursor-pointer"></select>
+
+                    <div class="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden">
+                        <div class="p-5 border-b border-zinc-800 bg-orange-600/10 text-orange-500 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-boxes-packing text-lg"></i> Eksekusi Bisnis Paket (Bundling)
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
+                        <form id="form-bisnis-paket" class="p-5 space-y-4" onsubmit="handleBusinessPaket(event)">
                             <div class="group">
-                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-amber-500">Jumlah/Qty</label>
-                                <input type="number" id="input-masuk-jumlah" min="1" required oninput="calcTotalMasuk()" placeholder="10" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Jenis Transaksi Bisnis</label>
+                                <select id="paket-tipe" required onchange="togglePaketColors()" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none">
+                                    <option value="Jual">💸 PENJUALAN PAKET (Menambah Kas)</option>
+                                    <option value="Beli">📥 PEMBELIAN PAKET (Memotong Kas)</option>
+                                </select>
                             </div>
                             <div class="group">
-                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-amber-500">Harga Beli per Unit ($)</label>
-                                <input type="number" id="input-masuk-harga" min="0" required oninput="calcTotalMasuk()" placeholder="Contoh: 1500" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Pilih Paket</label>
+                                <select id="paket-bundle" required onchange="calcPaketTotal()" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none"></select>
                             </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="group">
+                                    <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Jumlah Paket</label>
+                                    <input type="number" id="paket-qty" min="1" required oninput="calcPaketTotal()" placeholder="1" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none">
+                                </div>
+                                <div class="group">
+                                    <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Klien / Pemasok</label>
+                                    <input type="text" id="paket-target" required placeholder="Target/Sumber" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none">
+                                </div>
+                            </div>
+                            <div class="p-3 bg-black border border-orange-900/50 rounded-lg flex justify-between items-center transition-colors duration-300" id="paket-total-box">
+                                <span class="text-xs text-zinc-400 uppercase tracking-widest font-bold">Total Nilai Paket:</span>
+                                <span id="display-paket-total" class="text-lg font-mono font-bold text-orange-500">$ 0</span>
+                            </div>
+                            <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg text-sm flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-handshake"></i> Konfirmasi Transaksi
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden lg:col-span-1">
+                        <div class="p-4 border-b border-zinc-800 bg-zinc-900/50 text-zinc-300 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-wrench"></i> Setup Paket Baru
                         </div>
-                        <div class="group">
-                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-amber-500">Nama Pemasok / Asal Barang</label>
-                            <input type="text" id="input-masuk-target" required placeholder="Contoh: Kartel El Rubio, Crafting, dll" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                        <form id="form-buat-paket" class="p-4 space-y-4" onsubmit="handleCreateBundle(event)">
+                            <div class="space-y-3">
+                                <input type="text" id="create-bundle-name" required placeholder="Nama Paket (cth: Starter Kit)" class="w-full bg-zinc-900 border border-zinc-700 rounded p-2 text-sm text-zinc-200">
+                                <input type="number" id="create-bundle-price" min="0" required placeholder="Harga Jual/Beli ($)" class="w-full bg-zinc-900 border border-zinc-700 rounded p-2 text-sm text-zinc-200">
+                            </div>
+                            <div class="p-3 border border-zinc-800 rounded bg-zinc-900/30 space-y-3">
+                                <h4 class="text-[10px] uppercase text-zinc-500 font-bold border-b border-zinc-800 pb-1">Isi Barang (Maks 3)</h4>
+                                <div class="flex gap-2"><select id="bundle-item1" required class="flex-1 bg-zinc-900 border border-zinc-700 rounded p-2 text-xs text-zinc-200"></select><input type="number" id="bundle-qty1" min="1" required placeholder="Qty" class="w-16 bg-zinc-900 border border-zinc-700 rounded p-2 text-xs text-zinc-200"></div>
+                                <div class="flex gap-2"><select id="bundle-item2" class="flex-1 bg-zinc-900 border border-zinc-700 rounded p-2 text-xs text-zinc-200"></select><input type="number" id="bundle-qty2" min="1" placeholder="Qty" class="w-16 bg-zinc-900 border border-zinc-700 rounded p-2 text-xs text-zinc-200"></div>
+                                <div class="flex gap-2"><select id="bundle-item3" class="flex-1 bg-zinc-900 border border-zinc-700 rounded p-2 text-xs text-zinc-200"></select><input type="number" id="bundle-qty3" min="1" placeholder="Qty" class="w-16 bg-zinc-900 border border-zinc-700 rounded p-2 text-xs text-zinc-200"></div>
+                            </div>
+                            <button type="submit" class="w-full bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white font-bold uppercase tracking-wider py-2.5 rounded text-xs transition-all duration-200">Simpan Konfigurasi</button>
+                        </form>
+                    </div>
+
+                    <div class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl lg:col-span-2">
+                        <div class="p-4 border-b border-zinc-800 bg-zinc-900/50">
+                            <span class="font-bold uppercase tracking-wider text-xs md:text-sm text-zinc-300 flex items-center gap-2"><i class="fa-solid fa-boxes-stacked"></i> Database Paket Tersedia</span>
                         </div>
-                        <div class="p-3 bg-black border border-amber-900/50 rounded-lg flex justify-between items-center">
-                            <span class="text-xs text-zinc-400 uppercase tracking-widest font-bold">Total Uang Yang Dipotong:</span>
-                            <span id="display-total-masuk" class="text-lg font-mono font-bold text-amber-500">$ 0</span>
+                        <div class="overflow-x-auto w-full max-h-96">
+                            <table class="w-full text-left border-collapse min-w-[500px]">
+                                <thead class="bg-zinc-900 sticky top-0 z-10">
+                                    <tr class="border-b border-zinc-800 text-zinc-400 text-xs uppercase tracking-wider">
+                                        <th class="p-3 pl-5">Nama Paket</th>
+                                        <th class="p-3">Rincian Isi</th>
+                                        <th class="p-3 text-right">Harga Set</th>
+                                        <th class="p-3 text-center w-24">Hapus</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bundles-table-body" class="divide-y divide-zinc-900 text-sm">
+                                    <tr><td colspan="4" class="p-8 text-center text-zinc-500 italic">Memuat data paket...</td></tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg text-sm transition-all duration-200 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-check-circle"></i> Eksekusi Transaksi Pembelian
-                        </button>
-                    </form>
+                    </div>
                 </div>
             </section>
 
-            <section id="tab-keluar" class="tab-content hidden max-w-xl mx-auto animate-[fadeIn_0.3s_ease-in-out]">
+            <section id="tab-logistik" class="tab-content hidden max-w-xl mx-auto animate-[fadeIn_0.3s_ease-in-out]">
                 <div class="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden">
-                    <div class="p-5 border-b border-zinc-800 bg-red-600/10 text-red-500 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-hand-holding-dollar text-lg"></i> Catat Penjualan / Distribusi Barang
+                    <div class="p-5 border-b border-zinc-800 bg-blue-600/10 text-blue-500 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-people-carry-box text-lg"></i> Mutasi Gudang Logistik (Tanpa Kas)
                     </div>
-                    <form id="form-barang-keluar" class="p-5 md:p-6 space-y-4" onsubmit="handleStockOut(event)">
-                        <div class="group">
-                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-red-500">Pilih Barang dari Gudang</label>
-                            <select id="select-keluar-barang" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 cursor-pointer"></select>
+                    <form id="form-mutasi-gudang" class="p-5 md:p-6 space-y-5" onsubmit="handleMutasiGudang(event)">
+                        <div class="bg-zinc-900/50 p-4 border border-blue-900/30 rounded-lg text-xs text-zinc-400 leading-relaxed">
+                            <i class="fa-solid fa-circle-info text-blue-500 mr-1"></i> Fitur ini digunakan untuk <b>Mengambil</b> barang (keperluan faksi/patroli) atau <b>Menyimpan</b> barang (hasil rampasan/crafting) yang <u>tidak melibatkan perputaran uang kas</u> sama sekali.
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="group">
-                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-red-500">Jumlah/Qty Keluar</label>
-                                <input type="number" id="input-keluar-jumlah" min="1" required oninput="calcTotalKeluar()" placeholder="5" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500">
-                            </div>
-                            <div class="group">
-                                <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-red-500">Harga Jual per Unit ($)</label>
-                                <input type="number" id="input-keluar-harga" min="0" required oninput="calcTotalKeluar()" placeholder="Contoh: 3000 (Isi 0 jika gratis)" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500">
-                            </div>
+
+                        <div class="group">
+                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Jenis Mutasi Logistik</label>
+                            <select id="mutasi-tipe" required onchange="toggleMutasiColors()" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none">
+                                <option value="Ambil">📤 AMBIL BARANG (Mengurangi Stok Gudang)</option>
+                                <option value="Simpan">📥 SIMPAN BARANG (Menambah Stok Gudang)</option>
+                            </select>
                         </div>
                         <div class="group">
-                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-red-500">Nama Pembeli / Target Penerima</label>
-                            <input type="text" id="input-keluar-target" required placeholder="Contoh: Gang Ballas, Pembagian Anggota" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500">
+                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Pilih Barang</label>
+                            <select id="mutasi-item" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none"></select>
                         </div>
-                        <div class="p-3 bg-black border border-emerald-900/50 rounded-lg flex justify-between items-center">
-                            <span class="text-xs text-zinc-400 uppercase tracking-widest font-bold">Total Uang Masuk Kas:</span>
-                            <span id="display-total-keluar" class="text-lg font-mono font-bold text-emerald-500">$ 0</span>
+                        <div class="group">
+                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Jumlah (Qty)</label>
+                            <input type="number" id="mutasi-qty" min="1" required placeholder="Contoh: 2" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none">
                         </div>
-                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg text-sm flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-handshake"></i> Eksekusi Transaksi Penjualan
+                        <div class="group">
+                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Keterangan / Alasan Penggunaan</label>
+                            <input type="text" id="mutasi-keterangan" required placeholder="Contoh: Pembagian senjata untuk turf, Patroli, dll" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none">
+                        </div>
+                        <button type="submit" id="mutasi-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg text-sm flex items-center justify-center gap-2 transition-colors">
+                            <i class="fa-solid fa-boxes-stacked"></i> Catat Mutasi Logistik
                         </button>
                     </form>
                 </div>
@@ -269,60 +353,59 @@
 
             <section id="tab-tambah" class="tab-content hidden max-w-xl mx-auto animate-[fadeIn_0.3s_ease-in-out]">
                 <div class="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden">
-                    <div class="p-5 border-b border-zinc-800 bg-emerald-600/10 text-emerald-500 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
+                    <div class="p-5 border-b border-zinc-800 bg-zinc-700/20 text-zinc-300 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
                         <i class="fa-solid fa-circle-plus text-lg"></i> Daftarkan Jenis Kontraband Baru
                     </div>
                     <form id="form-tambah-barang" class="p-5 md:p-6 space-y-4" onsubmit="handleAddNewItem(event)">
                         <div class="group">
-                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-emerald-500 transition-colors">Nama Barang / Senjata / Code Name</label>
-                            <input type="text" id="input-tambah-nama" required placeholder="Contoh: Carbine Rifle, Paket Kokain" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Nama Barang / Code Name</label>
+                            <input type="text" id="input-tambah-nama" required placeholder="Contoh: Carbine Rifle, Paket Kokain" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none">
                         </div>
                         <div class="group">
-                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-emerald-500 transition-colors">Alokasikan Titik Lokasi Gudang</label>
-                            <select id="input-tambah-lokasi" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Alokasikan Titik Lokasi Gudang</label>
+                            <select id="input-tambah-lokasi" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none">
                                 <option value="Brankas Bos">🏍️ Brankas Bos</option>
                                 <option value="Loker Bersama">🌲 Loker Bersama</option>
                                 <option value="Gudang Umum">⚓ Gudang Umum (umum)</option>
                             </select>
                         </div>
                         <div class="group">
-                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold group-focus-within:text-emerald-500 transition-colors">Stok Awal (Initial Stock)</label>
-                            <input type="number" id="input-tambah-stok" min="0" required placeholder="Contoh: 100" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                            <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-2 font-semibold">Stok Awal (Initial Stock)</label>
+                            <input type="number" id="input-tambah-stok" min="0" required placeholder="Contoh: 100" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 focus:outline-none">
                         </div>
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg text-sm flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-save"></i> Daftarkan ke Sistem Lokasi
+                        <button type="submit" class="w-full bg-zinc-700 hover:bg-zinc-600 text-white font-bold uppercase tracking-wider py-3 rounded-lg shadow-lg text-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-save"></i> Daftarkan ke Sistem
                         </button>
                     </form>
                 </div>
             </section>
 
             <section id="tab-logs" class="tab-content hidden w-full mx-auto animate-[fadeIn_0.3s_ease-in-out]">
-                
                 <div class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl mb-8">
                     <div class="p-4 md:p-5 border-b border-zinc-800 bg-zinc-900/50 flex justify-between items-center">
-                        <span class="font-bold uppercase tracking-wider text-xs md:text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-file-invoice-dollar text-orange-500"></i> Ledger Transaksi Pasar Gelap (Barang)
+                        <span class="font-bold uppercase tracking-wider text-xs md:text-sm flex items-center gap-2 text-zinc-200">
+                            <i class="fa-solid fa-list-ul text-orange-500"></i> Ledger Aktivitas (Bisnis & Logistik)
                         </span>
                         <button onclick="fetchLogs()" class="text-xs bg-zinc-900 border border-zinc-700 px-3 py-1.5 rounded text-zinc-300 hover:text-orange-500 flex items-center gap-1 group transition-all">
                             <i class="fa-solid fa-rotate group-hover:rotate-180 transition-transform duration-500"></i> Refresh
                         </button>
                     </div>
-                    <div class="overflow-x-auto w-full max-h-96">
-                        <table class="w-full text-left border-collapse min-w-[1000px]">
+                    <div class="overflow-x-auto w-full max-h-[500px]">
+                        <table class="w-full text-left border-collapse min-w-[1100px]">
                             <thead class="sticky top-0 bg-zinc-900 z-10 shadow-md">
                                 <tr class="border-b border-zinc-800 text-zinc-400 text-[11px] uppercase tracking-wider">
                                     <th class="p-3 text-center w-32">Waktu (WIB)</th>
-                                    <th class="p-3">Nama Barang</th>
+                                    <th class="p-3">Nama Kontraband / Paket</th>
                                     <th class="p-3 text-center">Tipe Transaksi</th>
                                     <th class="p-3 text-center">Qty</th>
-                                    <th class="p-3">Klien / Pemasok</th>
+                                    <th class="p-3">Klien / Keterangan</th>
                                     <th class="p-3 text-right">Harga Unit</th>
-                                    <th class="p-3 text-right">Total Nilai</th>
-                                    <th class="p-3 w-32">Operator</th>
+                                    <th class="p-3 text-right">Total Kas Terlibat</th>
+                                    <th class="p-3 w-36">Operator</th>
                                 </tr>
                             </thead>
                             <tbody id="logs-table-body" class="divide-y divide-zinc-900 text-xs md:text-sm">
-                                <tr><td colspan="8" class="p-8 text-center text-zinc-500 italic">Memuat ledger transaksi barang...</td></tr>
+                                <tr><td colspan="8" class="p-8 text-center text-zinc-500 italic">Memuat ledger...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -353,7 +436,6 @@
                         </table>
                     </div>
                 </div>
-
             </section>
 
             <section id="tab-rekap" class="tab-content hidden max-w-2xl mx-auto animate-[fadeIn_0.3s_ease-in-out]">
@@ -363,7 +445,7 @@
                     </div>
                     <div class="p-5 md:p-6 space-y-6">
                         <div class="bg-zinc-900/50 p-4 border border-zinc-800 rounded-lg text-sm text-zinc-400">
-                            Sistem akan mengunduh semua data sirkulasi barang dan perputaran uang berdasarkan bulan yang ditentukan menjadi file spreadsheet `.xlsx`.
+                            Sistem akan mengunduh semua data sirkulasi logistik dan perputaran uang bisnis berdasarkan bulan yang ditentukan menjadi file `.xlsx`.
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="group">
@@ -379,7 +461,7 @@
                             </div>
                         </div>
                         <button onclick="exportMonthlyRecapExcel()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold uppercase tracking-wider py-3 rounded-lg text-sm flex justify-center gap-2">
-                            <i class="fa-solid fa-download"></i> Unduh Laporan Keuangan (.xlsx)
+                            <i class="fa-solid fa-download"></i> Unduh Laporan Audit (.xlsx)
                         </button>
                     </div>
                 </div>
@@ -399,6 +481,7 @@
 
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let inventoryData = [];
+        let bundlesData = [];
         let currentRole = 'tamu';
         let currentFunds = 0; 
         let liveChartInstance = null;
@@ -479,7 +562,7 @@
         }
 
         function handleLogout() {
-            if(confirm("Apakah kamu yakin ingin keluar log dari manajemen gudang?")) {
+            if(confirm("Apakah kamu yakin ingin keluar?")) {
                 document.getElementById('login-password').value = '';
                 document.getElementById('app-container').classList.add('hidden');
                 document.getElementById('login-screen').classList.remove('hidden');
@@ -497,7 +580,7 @@
         }
 
         setInterval(() => document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('en-US', { hour12: false }), 1000);
-
+        
         function switchTab(tabId) {
             const isStaff = (currentRole !== 'tamu');
             if (!isStaff && tabId !== 'dashboard') tabId = 'dashboard';
@@ -507,9 +590,10 @@
             document.getElementById(`tab-${tabId}`).classList.add('block');
 
             const titleMap = { 
-                'dashboard': 'DASHBOARD STOCK', 'masuk': 'TRANSAKSI PEMBELIAN BARANG', 
-                'keluar': 'TRANSAKSI PENJUALAN BARANG', 'tambah': 'DAFTARKAN JENIS BARANG BARU',
-                'logs': 'LEDGER KEUANGAN & BRANKAS', 'rekap': 'EKSPOR LAPORAN KEUANGAN'
+                'dashboard': 'DASHBOARD STOCK', 'bisnis': 'EKSEKUSI TRANSAKSI BISNIS',
+                'logistik': 'MUTASI LOGISTIK INTERNAL', 
+                'tambah': 'DAFTARKAN JENIS BARANG BARU', 'logs': 'LEDGER AUDIT KEUANGAN', 
+                'rekap': 'EKSPOR LAPORAN AUDIT'
             };
             document.getElementById('page-title').innerText = titleMap[tabId];
 
@@ -535,44 +619,25 @@
                 } else {
                     document.getElementById('display-faction-funds').classList.replace('text-rose-500', 'text-emerald-400');
                 }
-            } catch (err) {
-                console.error(err);
-                document.getElementById('display-faction-funds').innerText = 'Error';
-            }
+            } catch (err) { console.error(err); }
         }
 
         async function adjustFunds() {
             if (currentRole === 'tamu') return;
-            const input = prompt(`SALDO SAAT INI: ${formatMoney(currentFunds)}\n\nMasukkan nominal uang kas untuk DITAMBAH (Contoh: 50000)\n\nAtau gunakan tanda minus (-) untuk MENARIK uang (Contoh: -15000):`);
-            
-            if (input === null || input === "") return;
-            
+            const input = prompt(`SALDO SAAT INI: ${formatMoney(currentFunds)}\n\nMasukkan nominal uang kas untuk DITAMBAH (Contoh: 50000)\nAtau gunakan tanda minus (-) untuk MENARIK uang (Contoh: -15000):`);
+            if (!input) return;
             const amount = parseFloat(input);
-            if (isNaN(amount)) { alert("Gagal: Nominal yang Anda masukkan tidak valid!"); return; }
+            if (isNaN(amount)) { alert("Gagal: Nominal tidak valid!"); return; }
             
             const newBalance = currentFunds + amount;
-            
-            // 1. Update Database Kas
             const { error } = await db.from('faction_funds').update({ balance: newBalance }).eq('id', 1);
-            if (error) { 
-                alert("Gagal mengupdate kas: " + error.message); 
-            } else {
-                // 2. Insert Log Mutasi Manual (Ke Tabel Baru)
+            if (!error) {
                 const mutasiType = amount >= 0 ? 'Deposit' : 'Tarik';
-                await db.from('vault_logs').insert([{
-                    type: mutasiType,
-                    amount: Math.abs(amount),
-                    operator: getOperatorName()
-                }]);
-
-                alert(`Transaksi Berhasil! Kas telah ${amount >= 0 ? 'ditambah' : 'ditarik'} sebesar ${formatMoney(Math.abs(amount))}.`);
+                await db.from('vault_logs').insert([{ type: mutasiType, amount: Math.abs(amount), operator: getOperatorName() }]);
+                alert(`Transaksi Berhasil!`);
                 await fetchFunds();
-                
-                // Jika sedang di tab logs, refresh tabelnya
-                if (document.getElementById('tab-logs').classList.contains('block')) {
-                    fetchFundLogs();
-                }
-            }
+                if (document.getElementById('tab-logs').classList.contains('block')) fetchFundLogs();
+            } else { alert("Gagal mengupdate kas: " + error.message); }
         }
 
         async function fetchFundLogs() {
@@ -581,23 +646,18 @@
                 const { data, error } = await db.from('vault_logs').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
                 tbody.innerHTML = '';
-                
                 if(data.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-zinc-500 italic">Belum ada riwayat mutasi kas manual.</td></tr>`;
                     return;
                 }
-
                 data.forEach((log, index) => {
                     const localTime = new Date(log.created_at).toLocaleString('id-ID', { hour12: false });
                     const isDeposit = log.type === 'Deposit';
-                    
                     const typeBadge = isDeposit 
                         ? `<span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(16,185,129,0.2)]">Setor Masuk</span>`
                         : `<span class="bg-rose-950 text-rose-400 border border-rose-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(244,63,94,0.2)]">Tarik Keluar</span>`;
-                    
                     const amtColor = isDeposit ? 'text-emerald-400' : 'text-rose-400';
                     const amtSign = isDeposit ? '+' : '-';
-
                     tbody.innerHTML += `
                         <tr class="${index % 2 === 0 ? 'bg-zinc-950' : 'bg-zinc-900/30'} hover:bg-zinc-800/40 transition-colors duration-200">
                             <td class="p-3 text-center font-mono text-zinc-500">${localTime}</td>
@@ -608,19 +668,8 @@
                 });
             } catch (err) { console.error(err); }
         }
-        // ----------------------------------
 
-        function calcTotalMasuk() {
-            const qty = document.getElementById('input-masuk-jumlah').value || 0;
-            const price = document.getElementById('input-masuk-harga').value || 0;
-            document.getElementById('display-total-masuk').innerText = formatMoney(qty * price);
-        }
-        function calcTotalKeluar() {
-            const qty = document.getElementById('input-keluar-jumlah').value || 0;
-            const price = document.getElementById('input-keluar-harga').value || 0;
-            document.getElementById('display-total-keluar').innerText = formatMoney(qty * price);
-        }
-
+        // --- FETCH INVENTORY ---
         async function fetchInventory() {
             const statusBadge = document.getElementById('db-status');
             const lokasiFilter = document.getElementById('filter-lokasi').value;
@@ -635,15 +684,15 @@
                 
                 renderTable(); 
                 renderAnalyticsChart(); 
+                renderSelectOptions(); 
                 await fetchFunds(); 
+                await fetchBundles(); 
             } catch (err) { console.error(err); statusBadge.innerText = "Error Koneksi"; }
         }
 
         function renderTable() {
             const tbody = document.getElementById('inventory-table-body');
-            const selectMasuk = document.getElementById('select-masuk-barang');
-            const selectKeluar = document.getElementById('select-keluar-barang');
-            tbody.innerHTML = ''; selectMasuk.innerHTML = ''; selectKeluar.innerHTML = '';
+            tbody.innerHTML = ''; 
             const isStaff = (currentRole !== 'tamu');
 
             if(inventoryData.length === 0) {
@@ -664,163 +713,342 @@
                         <td class="p-4 text-center ${stockAlertClass} text-base font-mono">${item.stock}</td>
                         ${actionTd}
                     </tr>`;
-
-                const optionHtml = `<option value="${item.id}">${item.name} (Stok: ${item.stock})</option>`;
-                selectMasuk.innerHTML += optionHtml; selectKeluar.innerHTML += optionHtml;
             });
         }
 
+        function renderSelectOptions() {
+            const optionsHTML = `<option value="">-- Kosong / Pilih Barang --</option>` +
+                inventoryData.map(i => `<option value="${i.id}">${i.name} (Stok: ${i.stock})</option>`).join('');
+            
+            // Satuan Bisnis
+            document.getElementById('satuan-item').innerHTML = optionsHTML;
+            // Logistik
+            document.getElementById('mutasi-item').innerHTML = optionsHTML;
+            // Setup Paket
+            document.getElementById('bundle-item1').innerHTML = optionsHTML;
+            document.getElementById('bundle-item2').innerHTML = optionsHTML;
+            document.getElementById('bundle-item3').innerHTML = optionsHTML;
+        }
+
+        // --- SISTEM PAKET (BUNDLING) VIEW ---
+        async function fetchBundles() {
+            try {
+                const { data, error } = await db.from('bundles').select('*').order('id', { ascending: true });
+                if (!error) {
+                    bundlesData = data;
+                    renderBundlesTable();
+                }
+            } catch (e) { console.error("Gagal memuat paket:", e); }
+        }
+
+        function renderBundlesTable() {
+            const selectTrx = document.getElementById('paket-bundle');
+            selectTrx.innerHTML = `<option value="">-- Pilih Paket --</option>` + 
+                bundlesData.map(b => `<option value="${b.id}">${b.name} - ${formatMoney(b.price)}</option>`).join('');
+
+            const tbody = document.getElementById('bundles-table-body');
+            tbody.innerHTML = '';
+            if (bundlesData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-zinc-500 italic">Belum ada paket/bundle yang dikonfigurasi.</td></tr>`;
+                return;
+            }
+
+            bundlesData.forEach(b => {
+                let items = [];
+                if (b.item1_id) { const i = inventoryData.find(x=>x.id==b.item1_id); items.push(`<span class="text-zinc-400">» ${i?i.name:'<i class="text-red-500">Item Terhapus</i>'} <b class="text-orange-500">x${b.item1_qty}</b></span>`); }
+                if (b.item2_id) { const i = inventoryData.find(x=>x.id==b.item2_id); items.push(`<span class="text-zinc-400">» ${i?i.name:'<i class="text-red-500">Item Terhapus</i>'} <b class="text-orange-500">x${b.item2_qty}</b></span>`); }
+                if (b.item3_id) { const i = inventoryData.find(x=>x.id==b.item3_id); items.push(`<span class="text-zinc-400">» ${i?i.name:'<i class="text-red-500">Item Terhapus</i>'} <b class="text-orange-500">x${b.item3_qty}</b></span>`); }
+
+                tbody.innerHTML += `
+                    <tr class="bg-zinc-950 border-b border-zinc-800 hover:bg-zinc-900/50 transition-colors">
+                        <td class="p-3 pl-5 font-bold text-orange-500 tracking-wide">${b.name}</td>
+                        <td class="p-3 text-sm flex flex-col space-y-0.5">${items.join('')}</td>
+                        <td class="p-3 text-right font-mono text-emerald-400 font-bold">${formatMoney(b.price)}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="deleteBundle(${b.id})" class="text-red-500 hover:text-white hover:bg-red-600 border border-red-900 px-3 py-1.5 rounded transition-all"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        async function handleCreateBundle(e) {
+            e.preventDefault();
+            if(currentRole === 'tamu') return;
+            
+            const name = document.getElementById('create-bundle-name').value;
+            const price = parseFloat(document.getElementById('create-bundle-price').value);
+
+            const i1 = document.getElementById('bundle-item1').value; const q1 = document.getElementById('bundle-qty1').value;
+            const i2 = document.getElementById('bundle-item2').value; const q2 = document.getElementById('bundle-qty2').value;
+            const i3 = document.getElementById('bundle-item3').value; const q3 = document.getElementById('bundle-qty3').value;
+
+            if (!i1) { alert('Kolom Item 1 WAJIB diisi untuk membuat sebuah paket!'); return; }
+
+            const payload = {
+                name: name, price: price,
+                item1_id: parseInt(i1), item1_qty: parseInt(q1) || 1,
+                item2_id: i2 ? parseInt(i2) : null, item2_qty: i2 ? (parseInt(q2) || 1) : 0,
+                item3_id: i3 ? parseInt(i3) : null, item3_qty: i3 ? (parseInt(q3) || 1) : 0
+            };
+
+            const { error } = await db.from('bundles').insert([payload]);
+            if (error) alert("Gagal menyimpan paket: " + error.message);
+            else { alert("Paket berhasil dibuat!"); document.getElementById('form-buat-paket').reset(); await fetchBundles(); }
+        }
+
+        async function deleteBundle(id) {
+            if(currentRole === 'tamu') return;
+            if(confirm("Yakin ingin menghapus konfigurasi paket ini dari sistem?")) {
+                const { error } = await db.from('bundles').delete().eq('id', id);
+                if (!error) await fetchBundles();
+            }
+        }
+
+        // --- UX HELPERS ---
+        function toggleSatuanColors() {
+            const type = document.getElementById('satuan-tipe').value;
+            const box = document.getElementById('satuan-total-box');
+            const display = document.getElementById('display-satuan-total');
+            if(type === 'Beli') { box.classList.replace('border-emerald-900/50', 'border-rose-900/50'); display.classList.replace('text-emerald-500', 'text-rose-500'); }
+            else { box.classList.replace('border-rose-900/50', 'border-emerald-900/50'); display.classList.replace('text-rose-500', 'text-emerald-500'); }
+        }
+
+        function togglePaketColors() {
+            const type = document.getElementById('paket-tipe').value;
+            const box = document.getElementById('paket-total-box');
+            const display = document.getElementById('display-paket-total');
+            if(type === 'Beli') { box.classList.replace('border-orange-900/50', 'border-rose-900/50'); display.classList.replace('text-orange-500', 'text-rose-500'); }
+            else { box.classList.replace('border-rose-900/50', 'border-orange-900/50'); display.classList.replace('text-rose-500', 'text-orange-500'); }
+        }
+
+        function toggleMutasiColors() {
+            const type = document.getElementById('mutasi-tipe').value;
+            const btn = document.getElementById('mutasi-btn');
+            if(type === 'Ambil') { btn.classList.replace('bg-blue-600', 'bg-purple-600'); btn.classList.replace('hover:bg-blue-700', 'hover:bg-purple-700'); }
+            else { btn.classList.replace('bg-purple-600', 'bg-blue-600'); btn.classList.replace('hover:bg-purple-700', 'hover:bg-blue-700'); }
+        }
+
+        function calcSatuanTotal() {
+            const qty = document.getElementById('satuan-qty').value || 0;
+            const price = document.getElementById('satuan-harga').value || 0;
+            document.getElementById('display-satuan-total').innerText = formatMoney(qty * price);
+        }
+
+        function calcPaketTotal() {
+            const bundleId = document.getElementById('paket-bundle').value;
+            const qty = parseInt(document.getElementById('paket-qty').value) || 0;
+            if(!bundleId) { document.getElementById('display-paket-total').innerText = "$ 0"; return; }
+            const b = bundlesData.find(x => x.id == bundleId);
+            document.getElementById('display-paket-total').innerText = formatMoney((b ? b.price : 0) * qty);
+        }
+
+        // --- HANDLERS TRANSAKSI BISNIS (KAS) ---
+        async function handleBusinessSatuan(e) {
+            e.preventDefault();
+            if(currentRole === 'tamu') return;
+            const type = document.getElementById('satuan-tipe').value; // Jual / Beli
+            const itemId = parseInt(document.getElementById('satuan-item').value);
+            if(!itemId) { alert("Pilih barang terlebih dahulu!"); return; }
+            const qty = parseInt(document.getElementById('satuan-qty').value);
+            const price = parseFloat(document.getElementById('satuan-harga').value);
+            const target = document.getElementById('satuan-target').value;
+            
+            const item = inventoryData.find(i => i.id === itemId);
+            if (!item) return;
+            const totalPrice = qty * price;
+
+            if (type === 'Beli') {
+                if (currentFunds < totalPrice && !confirm(`⚠️ Saldo Faksi (${formatMoney(currentFunds)}) tidak cukup untuk membayar tagihan ${formatMoney(totalPrice)}.\nTetap paksa beli? (Kas akan minus/hutang)`)) return;
+                await processTransaction(item.id, item.stock + qty, item.name, item.location, qty, 'Beli', price, totalPrice, target, currentFunds - totalPrice);
+                document.getElementById('form-bisnis-satuan').reset(); document.getElementById('display-satuan-total').innerText = '$ 0';
+            } else { // Jual
+                if (item.stock < qty) { alert(`🚨 STOK KURANG! Sisa: ${item.stock}.`); return; }
+                await processTransaction(item.id, item.stock - qty, item.name, item.location, qty, 'Jual', price, totalPrice, target, currentFunds + totalPrice);
+                document.getElementById('form-bisnis-satuan').reset(); document.getElementById('display-satuan-total').innerText = '$ 0';
+            }
+        }
+
+        async function handleBusinessPaket(e) {
+            e.preventDefault();
+            if(currentRole === 'tamu') return;
+            const type = document.getElementById('paket-tipe').value; // Jual / Beli
+            const bundleId = parseInt(document.getElementById('paket-bundle').value);
+            if(!bundleId) { alert("Pilih paket terlebih dahulu!"); return; }
+            const qty = parseInt(document.getElementById('paket-qty').value) || 1;
+            const target = document.getElementById('paket-target').value;
+            const bundle = bundlesData.find(b => b.id === bundleId);
+            if (!bundle) return;
+            
+            let totalCost = bundle.price * qty;
+
+            const updates = [];
+            const itemsToProcess = [
+                { id: bundle.item1_id, reqQty: bundle.item1_qty },
+                { id: bundle.item2_id, reqQty: bundle.item2_qty },
+                { id: bundle.item3_id, reqQty: bundle.item3_qty }
+            ];
+
+            for (let i of itemsToProcess) {
+                if (i.id && i.reqQty > 0) {
+                    const invItem = inventoryData.find(inv => inv.id === i.id);
+                    if (!invItem) { alert(`Error: Salah satu barang di dalam paket sudah terhapus. Paket korup.`); return; }
+                    const requiredTotal = i.reqQty * qty;
+                    if (type === 'Jual' && invItem.stock < requiredTotal) {
+                        alert(`🚨 STOK KURANG! Sisa ${invItem.name} gudang: ${invItem.stock}, butuh ${requiredTotal}. Transaksi Batal.`); return;
+                    }
+                    updates.push({ id: invItem.id, newStock: type === 'Jual' ? invItem.stock - requiredTotal : invItem.stock + requiredTotal });
+                }
+            }
+
+            if (type === 'Beli' && currentFunds < totalCost && !confirm(`⚠️ Saldo Kas tidak cukup! Total: ${formatMoney(totalCost)}.\nYakin paksa beli paket? (Kas minus)`)) return;
+
+            // Execute Mutli Update
+            for (let u of updates) await db.from('inventory').update({ stock: u.newStock }).eq('id', u.id);
+            const newFunds = type === 'Jual' ? currentFunds + totalCost : currentFunds - totalCost;
+            await db.from('faction_funds').update({ balance: newFunds }).eq('id', 1);
+
+            await db.from('warehouse_logs').insert([{ 
+                item_name: `[PAKET] ${bundle.name}`, location: 'Multi-Item', quantity: qty, type: type, 
+                operator: getOperatorName(), price: bundle.price, total_price: totalCost, target_name: target 
+            }]);
+
+            document.getElementById('form-bisnis-paket').reset(); document.getElementById('display-paket-total').innerText = "$ 0";
+            alert(`Transaksi Paket ${type} berhasil!`);
+            await fetchInventory(); switchTab('dashboard');
+        }
+
+        async function processTransaction(invId, newStock, itemName, location, qty, type, price, totalPrice, target, newFunds) {
+            const { error } = await db.from('inventory').update({ stock: newStock }).eq('id', invId);
+            if (!error) {
+                await db.from('faction_funds').update({ balance: newFunds }).eq('id', 1);
+                await db.from('warehouse_logs').insert([{ 
+                    item_name: itemName, location: location, quantity: qty, type: type, operator: getOperatorName(), price: price, total_price: totalPrice, target_name: target 
+                }]);
+                await fetchInventory(); switchTab('dashboard');
+            } else alert('Gagal memproses transaksi: ' + error.message);
+        }
+
+        // --- HANDLER MUTASI LOGISTIK (TANPA KAS) ---
+        async function handleMutasiGudang(e) {
+            e.preventDefault();
+            if(currentRole === 'tamu') return;
+            const type = document.getElementById('mutasi-tipe').value; // Ambil / Simpan
+            const itemId = parseInt(document.getElementById('mutasi-item').value);
+            if(!itemId) { alert("Pilih barang terlebih dahulu!"); return; }
+            const qty = parseInt(document.getElementById('mutasi-qty').value);
+            const target = document.getElementById('mutasi-keterangan').value;
+            
+            const item = inventoryData.find(i => i.id === itemId);
+            if (!item) return;
+
+            let newStock = item.stock;
+            if(type === 'Ambil') {
+                if (item.stock < qty) { alert(`🚨 STOK KURANG! Sisa: ${item.stock}.`); return; }
+                newStock = item.stock - qty;
+            } else {
+                newStock = item.stock + qty;
+            }
+
+            const { error } = await db.from('inventory').update({ stock: newStock }).eq('id', item.id);
+            if (!error) {
+                await db.from('warehouse_logs').insert([{ 
+                    item_name: item.name, location: item.location, quantity: qty, type: type, operator: getOperatorName(), price: 0, total_price: 0, target_name: target 
+                }]);
+                document.getElementById('form-mutasi-gudang').reset();
+                alert(`Mutasi logistik (${type}) berhasil dicatat tanpa memotong kas!`);
+                await fetchInventory(); switchTab('dashboard');
+            } else alert('Gagal mutasi: ' + error.message);
+        }
+
+        // --- SISTEM LOG & REKAP ---
         async function fetchLogs() {
             const tbody = document.getElementById('logs-table-body');
             try {
                 const { data, error } = await db.from('warehouse_logs').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
                 tbody.innerHTML = '';
-                if(data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-zinc-500 italic">Belum ada ledger transaksi tercatat.</td></tr>`;
-                    return;
-                }
+                if(data.length === 0) { tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-zinc-500 italic">Belum ada ledger transaksi tercatat.</td></tr>`; return; }
 
                 data.forEach((log, index) => {
                     const localTime = new Date(log.created_at).toLocaleString('id-ID', { hour12: false });
-                    const isBeli = log.type === 'Masuk';
-                    const typeBadge = isBeli 
-                        ? `<span class="bg-amber-950 text-amber-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Pembelian</span>`
-                        : `<span class="bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Penjualan</span>`;
+                    const isPackage = log.item_name.includes('[PAKET]');
                     
-                    const qtyColor = isBeli ? 'text-amber-400' : 'text-emerald-400';
-                    const targetName = log.target_name || 'Tidak ada catatan';
-                    const priceUnit = formatMoney(log.price || 0);
-                    const priceTotal = formatMoney(log.total_price || 0);
+                    let typeBadge = ''; let sign = ''; let colorVal = 'text-zinc-500';
+                    
+                    // Filter badge based on type (Beli, Jual, Simpan, Ambil) & fallback for old logs (Masuk, Keluar)
+                    if(log.type === 'Beli' || (log.type === 'Masuk' && log.price > 0)) {
+                        typeBadge = `<span class="bg-rose-950/80 text-rose-400 border border-rose-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_8px_rgba(244,63,94,0.3)]">Beli/Restock Bisnis</span>`;
+                        sign = '-'; colorVal = 'text-rose-400';
+                    } else if (log.type === 'Jual' || (log.type === 'Keluar' && log.price > 0)) {
+                        typeBadge = `<span class="bg-emerald-950/80 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_8px_rgba(16,185,129,0.3)]">Jual/Distribusi Bisnis</span>`;
+                        sign = '+'; colorVal = 'text-emerald-400';
+                    } else if (log.type === 'Simpan' || (log.type === 'Masuk' && log.price === 0)) {
+                        typeBadge = `<span class="bg-blue-950/80 text-blue-400 border border-blue-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Deposit Logistik</span>`;
+                        sign = ''; colorVal = 'text-zinc-500';
+                    } else if (log.type === 'Ambil' || (log.type === 'Keluar' && log.price === 0)) {
+                        typeBadge = `<span class="bg-purple-950/80 text-purple-400 border border-purple-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Ambil Logistik</span>`;
+                        sign = ''; colorVal = 'text-zinc-500';
+                    }
 
+                    const valStr = log.total_price > 0 ? `${sign}${formatMoney(log.total_price)}` : '-';
+                    
                     tbody.innerHTML += `
                         <tr class="${index % 2 === 0 ? 'bg-zinc-950' : 'bg-zinc-900/30'} hover:bg-zinc-800/40 transition-colors duration-200">
                             <td class="p-3 text-center font-mono text-zinc-500">${localTime}</td>
-                            <td class="p-3 font-semibold text-zinc-200">${log.item_name}</td>
+                            <td class="p-3 font-semibold ${isPackage ? 'text-orange-400' : 'text-zinc-200'}">${log.item_name}</td>
                             <td class="p-3 text-center">${typeBadge}</td>
-                            <td class="p-3 text-center font-mono font-bold ${qtyColor}">${log.quantity}</td>
-                            <td class="p-3 text-zinc-300 text-xs">${targetName}</td>
-                            <td class="p-3 text-right font-mono text-xs text-zinc-400">${priceUnit}</td>
-                            <td class="p-3 text-right font-mono font-bold ${isBeli ? 'text-rose-400' : 'text-emerald-400'}">${isBeli ? '-' : '+'}${priceTotal}</td>
-                            <td class="p-3 text-zinc-500 text-xs font-semibold">${log.operator}</td>
+                            <td class="p-3 text-center font-mono font-bold text-zinc-300">${log.quantity}</td>
+                            <td class="p-3 text-zinc-300 text-xs">${log.target_name || '-'}</td>
+                            <td class="p-3 text-right font-mono text-xs text-zinc-400">${log.price > 0 ? formatMoney(log.price) : '-'}</td>
+                            <td class="p-3 text-right font-mono font-bold ${colorVal}">${valStr}</td>
+                            <td class="p-3 text-zinc-500 text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-user-shield text-[10px] opacity-70"></i> ${log.operator}</td>
                         </tr>`;
                 });
             } catch (err) { console.error(err); }
         }
 
-        async function handleStockIn(event) {
-            event.preventDefault();
-            const itemId = parseInt(document.getElementById('select-masuk-barang').value);
-            const qty = parseInt(document.getElementById('input-masuk-jumlah').value);
-            const price = parseFloat(document.getElementById('input-masuk-harga').value);
-            const target = document.getElementById('input-masuk-target').value;
-            const item = inventoryData.find(i => i.id === itemId);
-            const totalPrice = qty * price;
+        async function exportMonthlyRecapExcel() {
+            const targetMonth = document.getElementById('rekap-bulan').value; const targetYear = document.getElementById('rekap-tahun').value;
+            try {
+                const { data: logs, error } = await db.from('warehouse_logs').select('*').order('created_at', { ascending: true });
+                if (error) throw error;
+                const filteredLogs = logs.filter(log => {
+                    const d = new Date(log.created_at);
+                    return String(d.getMonth() + 1).padStart(2, '0') === targetMonth && String(d.getFullYear()) === targetYear;
+                });
+                if (filteredLogs.length === 0) { alert(`ℹ️ Tidak ada transaksi di bulan ${targetMonth}-${targetYear}.`); return; }
 
-            if (item) {
-                if (currentFunds < totalPrice) {
-                    if(!confirm(`⚠️ PERINGATAN KAS: Saldo Faksi (${formatMoney(currentFunds)}) tidak cukup untuk membayar tagihan ${formatMoney(totalPrice)}.\n\nTetap paksa transaksi? (Kas akan menjadi minus/hutang)`)) {
-                        return;
-                    }
-                }
+                const excelRows = filteredLogs.map((log, index) => {
+                    let transName = '';
+                    if (log.price > 0) transName = (log.type === 'Beli' || log.type === 'Masuk') ? 'Pembelian Bisnis' : 'Penjualan Bisnis';
+                    else transName = (log.type === 'Simpan' || log.type === 'Masuk') ? 'Deposit Logistik' : 'Pengambilan Logistik';
 
-                const { error } = await db.from('inventory').update({ stock: item.stock + qty }).eq('id', itemId);
-                if (error) alert('Gagal mengupdate stok: ' + error.message);
-                else {
-                    await db.from('warehouse_logs').insert([{ 
-                        item_name: item.name, location: item.location, quantity: qty, type: 'Masuk', 
-                        operator: getOperatorName(), price: price, total_price: totalPrice, target_name: target 
-                    }]);
-
-                    const newBalance = currentFunds - totalPrice;
-                    await db.from('faction_funds').update({ balance: newBalance }).eq('id', 1);
-
-                    document.getElementById('form-barang-masuk').reset();
-                    document.getElementById('display-total-masuk').innerText = '$ 0';
-                    await fetchInventory(); 
-                    switchTab('dashboard');
-                }
-            }
-        }
-
-        async function handleStockOut(event) {
-            event.preventDefault();
-            const itemId = parseInt(document.getElementById('select-keluar-barang').value);
-            const qty = parseInt(document.getElementById('input-keluar-jumlah').value);
-            const price = parseFloat(document.getElementById('input-keluar-harga').value);
-            const target = document.getElementById('input-keluar-target').value;
-            const item = inventoryData.find(i => i.id === itemId);
-            const totalPrice = qty * price;
-
-            if (item) {
-                if (item.stock < qty) { alert(`🚨 STOK KURANG! Sisa: ${item.stock}.`); return; }
-                const { error } = await db.from('inventory').update({ stock: item.stock - qty }).eq('id', itemId);
-                if (error) alert('Gagal memotong stok: ' + error.message);
-                else {
-                    await db.from('warehouse_logs').insert([{ 
-                        item_name: item.name, location: item.location, quantity: qty, type: 'Keluar', 
-                        operator: getOperatorName(), price: price, total_price: totalPrice, target_name: target 
-                    }]);
-
-                    const newBalance = currentFunds + totalPrice;
-                    await db.from('faction_funds').update({ balance: newBalance }).eq('id', 1);
-
-                    document.getElementById('form-barang-keluar').reset();
-                    document.getElementById('display-total-keluar').innerText = '$ 0';
-                    await fetchInventory(); 
-                    switchTab('dashboard');
-                }
-            }
+                    return {
+                        "No": index + 1, "Waktu (WIB)": new Date(log.created_at).toLocaleString('id-ID', { hour12: false }),
+                        "Nama Item/Paket": log.item_name, "Jenis Aktivitas": transName,
+                        "Qty": log.quantity, "Klien / Keterangan": log.target_name || '-', "Harga Satuan": log.price || 0,
+                        "Total Nilai Kas": log.total_price || 0, "Operator": log.operator
+                    };
+                });
+                const worksheet = XLSX.utils.json_to_sheet(excelRows); const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Ledger Audit");
+                XLSX.writeFile(workbook, `AUDIT_BLMC_${targetMonth}_${targetYear}.xlsx`);
+            } catch (err) { alert('Gagal mengekspor data: ' + err.message); }
         }
 
         async function handleAddNewItem(event) {
             event.preventDefault();
-            const name = document.getElementById('input-tambah-nama').value;
-            const loc = document.getElementById('input-tambah-lokasi').value;
-            const stock = parseInt(document.getElementById('input-tambah-stok').value) || 0;
+            const name = document.getElementById('input-tambah-nama').value; const loc = document.getElementById('input-tambah-lokasi').value; const stock = parseInt(document.getElementById('input-tambah-stok').value) || 0;
             const { error } = await db.from('inventory').insert([{ name: name, location: loc, stock: stock }]);
             if (error) alert('Gagal mendaftarkan barang: ' + error.message);
             else { document.getElementById('form-tambah-barang').reset(); await fetchInventory(); switchTab('dashboard'); }
         }
 
         async function handleDeleteItem(id) {
-            if(confirm(`⚠️ Hapus total data dari sistem?`)) {
+            if(confirm(`⚠️ Hapus total data dari sistem? (Catatan: Jika barang ini masuk ke dalam 'Paket', maka paket tersebut akan rusak!)`)) {
                 const { error } = await db.from('inventory').delete().eq('id', id);
                 if (!error) await fetchInventory();
             }
-        }
-
-        async function exportMonthlyRecapExcel() {
-            const targetMonth = document.getElementById('rekap-bulan').value;
-            const targetYear = document.getElementById('rekap-tahun').value;
-            try {
-                const { data: logs, error } = await db.from('warehouse_logs').select('*').order('created_at', { ascending: true });
-                if (error) throw error;
-
-                const filteredLogs = logs.filter(log => {
-                    const d = new Date(log.created_at);
-                    return String(d.getMonth() + 1).padStart(2, '0') === targetMonth && String(d.getFullYear()) === targetYear;
-                });
-
-                if (filteredLogs.length === 0) { alert(`ℹ️ Tidak ada transaksi di bulan ${targetMonth}-${targetYear}.`); return; }
-
-                const excelRows = filteredLogs.map((log, index) => ({
-                    "No": index + 1,
-                    "Waktu (WIB)": new Date(log.created_at).toLocaleString('id-ID', { hour12: false }),
-                    "Nama Barang": log.item_name,
-                    "Transaksi": log.type === 'Masuk' ? 'Pembelian / Deposit' : 'Penjualan / Distribusi',
-                    "Qty": log.quantity,
-                    "Klien / Pemasok": log.target_name || '-',
-                    "Harga per Unit": log.price || 0,
-                    "Total Uang": log.total_price || 0,
-                    "Operator": log.operator
-                }));
-
-                const worksheet = XLSX.utils.json_to_sheet(excelRows);
-                const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, "Ledger Keuangan");
-                XLSX.writeFile(workbook, `LAPORAN_KEUANGAN_BLMC_${targetMonth}_${targetYear}.xlsx`);
-            } catch (err) { alert('Gagal mengekspor data: ' + err.message); }
         }
 
         function renderAnalyticsChart() {
@@ -837,14 +1065,7 @@
                         borderWidth: 2, borderRadius: 5
                     }]
                 },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { ticks: { color: '#a1a1aa' }, grid: { color: '#27272a' } },
-                        y: { ticks: { color: '#a1a1aa' }, grid: { color: '#27272a' } }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#a1a1aa' }, grid: { color: '#27272a' } }, y: { ticks: { color: '#a1a1aa' }, grid: { color: '#27272a' } } } }
             });
         }
     </script>
