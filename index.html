@@ -10,7 +10,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <!-- SweetAlert2 untuk Pop-up Interaktif -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
@@ -186,6 +185,7 @@
                             <span class="font-bold uppercase tracking-wider text-xs md:text-sm flex items-center gap-2">
                                 <i class="fa-solid fa-list-check text-orange-500"></i> Manifest Inventaris
                             </span>
+                            
                             <div class="flex items-center bg-black border border-emerald-900/50 px-3 py-1.5 rounded-lg shadow-inner transition-colors duration-300">
                                 <i class="fa-solid fa-sack-dollar text-emerald-500 mr-2 text-sm"></i>
                                 <span class="text-[11px] text-zinc-400 uppercase tracking-widest font-semibold mr-2">Kas:</span>
@@ -194,6 +194,16 @@
                                     <i class="fa-solid fa-money-bill-transfer text-sm"></i>
                                 </button>
                             </div>
+
+                            <div class="flex items-center bg-black border border-red-900/50 px-3 py-1.5 rounded-lg shadow-inner transition-colors duration-300">
+                                <i class="fa-solid fa-money-bill-wave text-red-500 mr-2 text-sm"></i>
+                                <span class="text-[11px] text-zinc-400 uppercase tracking-widest font-semibold mr-2">Kotor:</span>
+                                <span id="display-dirty-funds" class="text-red-500 font-mono font-bold text-sm tracking-wider">Memuat...</span>
+                                <button onclick="adjustDirtyFunds()" class="admin-only ml-3 text-zinc-500 hover:text-red-500 hover:scale-110 transition-all" title="Tambah/Tarik Uang Kotor Manual">
+                                    <i class="fa-solid fa-money-bill-transfer text-sm"></i>
+                                </button>
+                            </div>
+
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-[10px] bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded font-bold uppercase tracking-wide">⚠️ Kritis: &le; 500</span>
@@ -563,7 +573,8 @@
         }
 
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        let inventoryData = []; let bundlesData = []; let currentRole = 'tamu'; let currentFunds = 0; let liveChartInstance = null;
+        // VARS DENGAN currentDirtyFunds
+        let inventoryData = []; let bundlesData = []; let currentRole = 'tamu'; let currentFunds = 0; let currentDirtyFunds = 0; let liveChartInstance = null;
 
         const bulanSelect = document.getElementById('rekap-bulan');
         const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -664,26 +675,38 @@
             if (window.innerWidth < 768) toggleSidebar();
         }
 
-        // --- SISTEM UANG KAS (MANUAL) ---
+        // --- SISTEM UANG KAS & UANG KOTOR (MANUAL) ---
         async function fetchFunds() {
             try {
-                const { data, error } = await db.from('faction_funds').select('balance').eq('id', 1).single();
+                // Fetch id=1 (Kas Bersih) dan id=2 (Uang Kotor)
+                const { data, error } = await db.from('faction_funds').select('*').in('id', [1, 2]);
                 if (error) throw error;
-                currentFunds = data.balance;
-                document.getElementById('display-faction-funds').innerText = formatMoney(currentFunds);
-                if(currentFunds < 0) { document.getElementById('display-faction-funds').classList.replace('text-emerald-400', 'text-rose-500'); } 
-                else { document.getElementById('display-faction-funds').classList.replace('text-rose-500', 'text-emerald-400'); }
+                
+                const kasBersih = data.find(d => d.id === 1);
+                if (kasBersih) {
+                    currentFunds = kasBersih.balance;
+                    document.getElementById('display-faction-funds').innerText = formatMoney(currentFunds);
+                    if(currentFunds < 0) document.getElementById('display-faction-funds').classList.replace('text-emerald-400', 'text-rose-500');
+                    else document.getElementById('display-faction-funds').classList.replace('text-rose-500', 'text-emerald-400');
+                }
+
+                const kasKotor = data.find(d => d.id === 2);
+                if (kasKotor) {
+                    currentDirtyFunds = kasKotor.balance;
+                    document.getElementById('display-dirty-funds').innerText = formatMoney(currentDirtyFunds);
+                    if(currentDirtyFunds < 0) document.getElementById('display-dirty-funds').classList.replace('text-red-500', 'text-rose-600');
+                    else document.getElementById('display-dirty-funds').classList.replace('text-rose-600', 'text-red-500');
+                }
             } catch (err) { console.error(err); }
         }
 
         async function adjustFunds() {
             if (currentRole === 'tamu') return;
             const isLight = document.body.classList.contains('light-mode');
-            
             const { value: input } = await Swal.fire({
                 title: 'Penyesuaian Kas Brankas',
                 input: 'text',
-                inputLabel: `Saldo Saat Ini: ${formatMoney(currentFunds)}\n(Gunakan minus (-) untuk menarik uang)`,
+                inputLabel: `Saldo Bersih Saat Ini: ${formatMoney(currentFunds)}\n(Gunakan minus (-) untuk menarik uang)`,
                 inputPlaceholder: 'Contoh: 50000 atau -15000',
                 showCancelButton: true, confirmButtonColor: '#10b981', cancelButtonColor: '#3f3f46',
                 background: isLight ? '#ffffff' : '#18181b', color: isLight ? '#18181b' : '#f4f4f5'
@@ -697,17 +720,46 @@
             const { error } = await db.from('faction_funds').update({ balance: newBalance }).eq('id', 1);
             if (!error) {
                 const mutasiType = amount >= 0 ? 'Deposit' : 'Tarik';
-                await db.from('vault_logs').insert([{ type: mutasiType, amount: Math.abs(amount), operator: getOperatorName() + " | Penyesuaian Manual" }]);
-                
+                await db.from('vault_logs').insert([{ type: mutasiType, amount: Math.abs(amount), operator: getOperatorName() + " | Penyesuaian Bersih Manual" }]);
                 const embedColor = amount >= 0 ? 3066993 : 15158332; 
                 await sendToDiscord(`💰 Log Brankas: ${mutasiType} Kas`, `Operator **${getOperatorName()}** melakukan penyesuaian kas brankas.`, embedColor, [
                     { name: "Nominal Uang", value: formatMoney(Math.abs(amount)), inline: true }, { name: "Total Kas Sekarang", value: formatMoney(newBalance), inline: true }
                 ]);
-
-                showMessage('Berhasil', 'Penyesuaian brankas berhasil dicatat.', 'success');
+                showMessage('Berhasil', 'Penyesuaian kas bersih berhasil dicatat.', 'success');
                 await fetchFunds();
                 if (document.getElementById('tab-logs').classList.contains('block')) fetchFundLogs();
-            } else { showMessage("Gagal", error.message, "error"); }
+            } else showMessage("Gagal", error.message, "error");
+        }
+
+        async function adjustDirtyFunds() {
+            if (currentRole === 'tamu') return;
+            const isLight = document.body.classList.contains('light-mode');
+            const { value: input } = await Swal.fire({
+                title: 'Penyesuaian UANG KOTOR',
+                input: 'text',
+                inputLabel: `Saldo Kotor Saat Ini: ${formatMoney(currentDirtyFunds)}\n(Gunakan minus (-) untuk menarik uang)`,
+                inputPlaceholder: 'Contoh: 50000 atau -15000',
+                showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#3f3f46',
+                background: isLight ? '#ffffff' : '#18181b', color: isLight ? '#18181b' : '#f4f4f5'
+            });
+
+            if (!input) return;
+            const amount = parseFloat(input);
+            if (isNaN(amount)) { showMessage("Gagal", "Nominal tidak valid!", "error"); return; }
+            
+            const newBalance = currentDirtyFunds + amount;
+            const { error } = await db.from('faction_funds').update({ balance: newBalance }).eq('id', 2);
+            if (!error) {
+                const mutasiType = amount >= 0 ? 'Deposit Kotor' : 'Tarik Kotor';
+                await db.from('vault_logs').insert([{ type: mutasiType, amount: Math.abs(amount), operator: getOperatorName() + " | Penyesuaian Kotor Manual" }]);
+                const embedColor = amount >= 0 ? 15105570 : 10038562; 
+                await sendToDiscord(`💸 Log Brankas: ${mutasiType}`, `Operator **${getOperatorName()}** melakukan penyesuaian UANG KOTOR.`, embedColor, [
+                    { name: "Nominal Kotor", value: formatMoney(Math.abs(amount)), inline: true }, { name: "Total Kotor Sekarang", value: formatMoney(newBalance), inline: true }
+                ]);
+                showMessage('Berhasil', 'Penyesuaian Uang Kotor berhasil dicatat.', 'success');
+                await fetchFunds();
+                if (document.getElementById('tab-logs').classList.contains('block')) fetchFundLogs();
+            } else showMessage("Gagal", error.message, "error");
         }
 
         async function fetchFundLogs() {
@@ -717,14 +769,29 @@
                 if (error) throw error;
                 tbody.innerHTML = '';
                 if(data.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-zinc-500 italic">Belum ada riwayat mutasi kas.</td></tr>`; return; }
+                
                 data.forEach((log, index) => {
                     const localTime = new Date(log.created_at).toLocaleString('id-ID', { hour12: false });
-                    const isDeposit = log.type === 'Deposit';
-                    const typeBadge = isDeposit 
-                        ? `<span class="bg-emerald-950/80 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(16,185,129,0.2)]">Setor Masuk</span>`
-                        : `<span class="bg-rose-950/80 text-rose-400 border border-rose-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(244,63,94,0.2)]">Tarik Keluar</span>`;
-                    const amtColor = isDeposit ? 'text-emerald-400' : 'text-rose-400';
-                    const amtSign = isDeposit ? '+' : '-';
+                    
+                    let typeBadge, amtColor, amtSign;
+                    if (log.type === 'Deposit') {
+                        typeBadge = `<span class="bg-emerald-950/80 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(16,185,129,0.2)]">Setor Masuk</span>`;
+                        amtColor = 'text-emerald-400'; amtSign = '+';
+                    } else if (log.type === 'Tarik') {
+                        typeBadge = `<span class="bg-rose-950/80 text-rose-400 border border-rose-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(244,63,94,0.2)]">Tarik Keluar</span>`;
+                        amtColor = 'text-rose-400'; amtSign = '-';
+                    } else if (log.type === 'Deposit Kotor') {
+                        typeBadge = `<span class="bg-red-950/80 text-red-500 border border-red-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(239,68,68,0.2)]">Setor Kotor</span>`;
+                        amtColor = 'text-red-500'; amtSign = '+';
+                    } else if (log.type === 'Tarik Kotor') {
+                        typeBadge = `<span class="bg-orange-950/80 text-orange-500 border border-orange-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-[0_0_10px_rgba(249,115,22,0.2)]">Tarik Kotor</span>`;
+                        amtColor = 'text-orange-500'; amtSign = '-';
+                    } else {
+                        // Fallback aman
+                        typeBadge = `<span class="text-zinc-500">${log.type}</span>`;
+                        amtColor = 'text-zinc-400'; amtSign = '';
+                    }
+
                     tbody.innerHTML += `
                         <tr class="${index % 2 === 0 ? 'bg-zinc-950/50' : 'bg-transparent'} hover:bg-zinc-800/20 transition-colors duration-200">
                             <td class="p-3 text-center font-mono text-zinc-500">${localTime}</td>
@@ -1053,12 +1120,41 @@
             } catch (err) { showMessage('Error', err.message, 'error'); }
         }
 
+        // --- TAMBAH BARANG BARU (DENGAN LOG SERVER) ---
         async function handleAddNewItem(event) {
             event.preventDefault();
-            const name = document.getElementById('input-tambah-nama').value; const loc = document.getElementById('input-tambah-lokasi').value; const stock = parseInt(document.getElementById('input-tambah-stok').value) || 0;
+            if(currentRole === 'tamu') return; 
+
+            const name = document.getElementById('input-tambah-nama').value; 
+            const loc = document.getElementById('input-tambah-lokasi').value; 
+            const stock = parseInt(document.getElementById('input-tambah-stok').value) || 0;
+
             const { error } = await db.from('inventory').insert([{ name: name, location: loc, stock: stock }]);
-            if (error) showMessage('Gagal', error.message, 'error');
-            else { showMessage('Berhasil', 'Barang baru didaftarkan!', 'success'); document.getElementById('form-tambah-barang').reset(); await fetchInventory(); switchTab('dashboard'); }
+            
+            if (error) {
+                showMessage('Gagal', error.message, 'error');
+            } else { 
+                await db.from('warehouse_logs').insert([{ 
+                    item_name: name, location: loc, quantity: stock, type: 'Simpan', 
+                    operator: getOperatorName(), price: 0, total_price: 0, target_name: 'Registrasi Barang Baru' 
+                }]);
+
+                await sendToDiscord(
+                    `📦 Item Baru Terdaftar`, 
+                    `Operator **${getOperatorName()}** mendaftarkan kontraband/barang baru ke database gudang.`, 
+                    3447003,
+                    [
+                        { name: "Nama Barang", value: name, inline: true }, 
+                        { name: "Lokasi Alokasi", value: loc, inline: true }, 
+                        { name: "Stok Awal", value: `${stock} Unit`, inline: true }
+                    ]
+                );
+
+                showMessage('Berhasil', 'Barang baru didaftarkan & masuk ke log sistem!', 'success'); 
+                document.getElementById('form-tambah-barang').reset(); 
+                await fetchInventory(); 
+                switchTab('dashboard'); 
+            }
         }
 
         async function handleDeleteItem(id) {
