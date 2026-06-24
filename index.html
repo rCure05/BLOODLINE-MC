@@ -38,18 +38,6 @@
         body.hacker-mode input, body.hacker-mode select { background-color: #001100 !important; color: #00ff00 !important; }
         body.hacker-mode button { background-color: #002200 !important; color: #00ff00 !important; }
         body.hacker-mode::after { content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px); pointer-events: none; z-index: 9999; opacity: 0.8; }
-
-        /* LIGHT MODE OVERRIDES */
-        body.light-mode { background-color: #f4f4f5 !important; color: #18181b !important; }
-        body.light-mode .bg-zinc-950 { background-color: #ffffff !important; border-color: #e4e4e7 !important; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); }
-        body.light-mode .bg-zinc-900 { background-color: #f4f4f5 !important; border-color: #d4d4d8 !important; }
-        body.light-mode .bg-zinc-900\/50, body.light-mode .bg-zinc-900\/40 { background-color: #fafafa !important; }
-        body.light-mode .text-zinc-100, body.light-mode .text-zinc-200 { color: #18181b !important; }
-        body.light-mode .text-zinc-300, body.light-mode .text-zinc-400 { color: #3f3f46 !important; }
-        body.light-mode .text-zinc-500 { color: #71717a !important; }
-        body.light-mode .border-zinc-800, body.light-mode .border-zinc-700 { border-color: #e4e4e7 !important; }
-        body.light-mode #login-screen { background-color: #f4f4f5; }
-        body.light-mode .stock-progress-bg { background-color: #e4e4e7; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .timeline-item::before { content: ''; position: absolute; left: -25px; top: 5px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #ea580c; background: #0c0c0e; z-index: 1; }
@@ -62,10 +50,6 @@
         <div class="w-full max-w-md bg-zinc-950 border-2 border-orange-600 rounded-2xl p-6 md:p-8 shadow-[0_0_30px_rgba(234,88,12,0.2)] relative overflow-hidden transition-transform duration-500 hover:scale-[1.02]">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent"></div>
             
-            <button onclick="toggleTheme()" class="absolute top-4 right-4 text-zinc-500 hover:text-orange-500 transition-colors z-10" title="Ganti Tema">
-                <i id="login-theme-icon" class="fa-solid fa-moon text-lg"></i>
-            </button>
-
             <div class="text-center mb-6 hover:scale-105 transition-transform duration-300">
                 <i class="fa-solid fa-skull-crossbones text-5xl text-orange-500 animate-pulse mb-3 drop-shadow-[0_0_10px_rgba(234,88,12,0.6)]"></i>
                 <h1 class="text-4xl text-orange-500 gang-title tracking-wider glow-text">BLOODLINE MC</h1>
@@ -161,12 +145,9 @@
                     <button onclick="toggleHackerMode()" class="text-zinc-500 hover:text-green-500 transition-colors hidden sm:block" title="Secret Terminal Mode">
                         <i class="fa-solid fa-skull text-xl hover:rotate-12 transition-transform"></i>
                     </button>
-                    <button onclick="toggleTheme()" class="text-zinc-400 hover:text-orange-500 transition-colors" title="Toggle Light/Dark Mode">
-                        <i id="main-theme-icon" class="fa-solid fa-moon text-xl hover:rotate-12 transition-transform"></i>
-                    </button>
                     <div class="text-right shrink-0 border-l border-zinc-700 pl-4">
                         <div id="live-clock" class="text-base md:text-lg font-bold text-orange-500 tracking-wider font-mono glow-text">00:00:00</div>
-                        <span class="text-[9px] md:text-[11px] text-zinc-500 uppercase tracking-widest font-semibold">Los Santos, BLMC</span>
+                        <span class="text-[9px] md:text-[11px] text-zinc-500 uppercase tracking-widest font-semibold">Los Santos, Memories</span>
                     </div>
                 </div>
             </header>
@@ -565,40 +546,14 @@
 
         const formatMoney = (amount) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
 
-        // THEMES & HACKER MODE
-        function toggleTheme() {
-            if(isHackerMode) return; // Prevent changing if in hacker mode
-            document.body.classList.toggle('light-mode');
-            const isLight = document.body.classList.contains('light-mode');
-            localStorage.setItem('blmc_theme', isLight ? 'light' : 'dark');
-            
-            const icons = [document.getElementById('main-theme-icon'), document.getElementById('login-theme-icon')];
-            icons.forEach(icon => {
-                if(!icon) return;
-                if(isLight) { icon.classList.replace('fa-moon', 'fa-sun'); } 
-                else { icon.classList.replace('fa-sun', 'fa-moon'); }
-            });
-        }
-        
-        if(localStorage.getItem('blmc_theme') === 'light') { document.body.classList.add('light-mode'); }
-        document.addEventListener("DOMContentLoaded", () => {
-            const isLight = document.body.classList.contains('light-mode');
-            const icons = [document.getElementById('main-theme-icon'), document.getElementById('login-theme-icon')];
-            icons.forEach(icon => {
-                if(!icon) return;
-                if(isLight) { icon.classList.replace('fa-moon', 'fa-sun'); }
-            });
-        });
-
+        // HACKER MODE
         function toggleHackerMode() {
             isHackerMode = !isHackerMode;
             if(isHackerMode) {
-                document.body.classList.remove('light-mode');
                 document.body.classList.add('hacker-mode');
                 showToast('SYSTEM OVERRIDE: TERMINAL MODE ENGAGED', 'warning');
             } else {
                 document.body.classList.remove('hacker-mode');
-                if(localStorage.getItem('blmc_theme') === 'light') document.body.classList.add('light-mode');
                 showToast('Terminal Mode Disengaged', 'info');
             }
             if(document.getElementById('tab-dashboard').classList.contains('block')) renderAnalyticsChart();
@@ -606,11 +561,10 @@
 
         // SWEETALERT2: BIG ALERT & TOAST NOTIFICATION
         function showMessage(title, text, icon) {
-            const isLight = document.body.classList.contains('light-mode') && !isHackerMode;
             Swal.fire({
                 title: title, text: text, icon: icon,
-                background: isHackerMode ? '#000' : (isLight ? '#ffffff' : '#18181b'), 
-                color: isHackerMode ? '#0f0' : (isLight ? '#18181b' : '#f4f4f5'),
+                background: isHackerMode ? '#000' : '#18181b', 
+                color: isHackerMode ? '#0f0' : '#f4f4f5',
                 confirmButtonColor: isHackerMode ? '#004400' : '#ea580c'
             });
         }
@@ -621,11 +575,10 @@
         });
 
         function showToast(title, icon='success') {
-            const isLight = document.body.classList.contains('light-mode') && !isHackerMode;
             Toast.fire({
                 icon: icon, title: title,
-                background: isHackerMode ? '#000' : (isLight ? '#ffffff' : '#18181b'), 
-                color: isHackerMode ? '#0f0' : (isLight ? '#18181b' : '#f4f4f5')
+                background: isHackerMode ? '#000' : '#18181b', 
+                color: isHackerMode ? '#0f0' : '#f4f4f5'
             });
         }
 
@@ -640,10 +593,9 @@
             try { await fetch(DISCORD_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); } catch (error) {}
         }
 
-        // ID CARD MODAL (FITUR BARU)
+        // ID CARD MODAL
         function showIDCard() {
             if(currentRole === 'tamu') { showToast('Tamu tidak memiliki ID Card', 'info'); return; }
-            const isLight = document.body.classList.contains('light-mode') && !isHackerMode;
             const opName = getOperatorName();
             const myLogs = globalLogsData.filter(l => l.operator.includes(opName));
             const totalActions = myLogs.length;
@@ -677,8 +629,8 @@
                         </div>
                     </div>
                 `,
-                background: isHackerMode ? '#000' : (isLight ? '#ffffff' : '#18181b'), 
-                color: isHackerMode ? '#0f0' : (isLight ? '#18181b' : '#f4f4f5'),
+                background: isHackerMode ? '#000' : '#18181b', 
+                color: isHackerMode ? '#0f0' : '#f4f4f5',
                 showConfirmButton: false, showCloseButton: true, customClass: { popup: 'border border-orange-600/50 rounded-2xl' }
             });
         }
@@ -737,12 +689,10 @@
         }
 
         async function handleLogout() {
-            const isLight = document.body.classList.contains('light-mode') && !isHackerMode;
             const result = await Swal.fire({
                 title: 'Keluar?', text: "Sesi Anda akan diakhiri.", icon: 'warning',
                 showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#3f3f46',
-                background: isHackerMode ? '#000' : (isLight ? '#ffffff' : '#18181b'), 
-                color: isHackerMode ? '#0f0' : (isLight ? '#18181b' : '#f4f4f5')
+                background: isHackerMode ? '#000' : '#18181b', color: isHackerMode ? '#0f0' : '#f4f4f5'
             });
             if(result.isConfirmed) {
                 document.getElementById('login-password').value = '';
@@ -829,15 +779,13 @@
 
         async function adjustCriticalLimit() {
             if (currentRole === 'tamu') return;
-            const isLight = document.body.classList.contains('light-mode') && !isHackerMode;
             const { value: input } = await Swal.fire({
                 title: 'Atur Batas Stok Kritis',
                 input: 'number',
                 inputLabel: `Batas peringatan saat ini: ${currentCriticalLimit}`,
                 inputPlaceholder: 'Masukkan angka batas baru...',
                 showCancelButton: true, confirmButtonColor: '#ea580c', cancelButtonColor: '#3f3f46',
-                background: isHackerMode ? '#000' : (isLight ? '#ffffff' : '#18181b'), 
-                color: isHackerMode ? '#0f0' : (isLight ? '#18181b' : '#f4f4f5')
+                background: isHackerMode ? '#000' : '#18181b', color: isHackerMode ? '#0f0' : '#f4f4f5'
             });
 
             if (!input) return;
@@ -856,15 +804,13 @@
 
         async function adjustFunds() {
             if (currentRole === 'tamu') return;
-            const isLight = document.body.classList.contains('light-mode') && !isHackerMode;
             const { value: input } = await Swal.fire({
                 title: 'Penyesuaian Kas Brankas',
                 input: 'text',
                 inputLabel: `Saldo Bersih: ${formatMoney(currentFunds)}\n(Gunakan minus (-) untuk menarik)`,
                 inputPlaceholder: 'Contoh: 50000 atau -15000',
                 showCancelButton: true, confirmButtonColor: '#10b981', cancelButtonColor: '#3f3f46',
-                background: isHackerMode ? '#000' : (isLight ? '#ffffff' : '#18181b'), 
-                color: isHackerMode ? '#0f0' : (isLight ? '#18181b' : '#f4f4f5')
+                background: isHackerMode ? '#000' : '#18181b', color: isHackerMode ? '#0f0' : '#f4f4f5'
             });
 
             if (!input) return;
@@ -888,15 +834,13 @@
 
         async function adjustDirtyFunds() {
             if (currentRole === 'tamu') return;
-            const isLight = document.body.classList.contains('light-mode') && !isHackerMode;
             const { value: input } = await Swal.fire({
                 title: 'Penyesuaian UANG KOTOR',
                 input: 'text',
                 inputLabel: `Saldo Kotor: ${formatMoney(currentDirtyFunds)}\n(Gunakan minus (-) untuk menarik)`,
                 inputPlaceholder: 'Contoh: 50000 atau -15000',
                 showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#3f3f46',
-                background: isHackerMode ? '#000' : (isLight ? '#ffffff' : '#18181b'), 
-                color: isHackerMode ? '#0f0' : (isLight ? '#18181b' : '#f4f4f5')
+                background: isHackerMode ? '#000' : '#18181b', color: isHackerMode ? '#0f0' : '#f4f4f5'
             });
 
             if (!input) return;
@@ -974,7 +918,7 @@
             if(statKritis) statKritis.innerText = `${criticalCount} Item`;
         }
 
-        // TOGGLE GRID/LIST INVENTORY (FITUR BARU)
+        // TOGGLE GRID/LIST INVENTORY
         function toggleInventoryView() {
             isGridView = !isGridView;
             const icon = document.getElementById('inventory-view-icon');
@@ -1139,12 +1083,10 @@
 
         async function deleteBundle(id) {
             if(currentRole === 'tamu') return;
-            const isLight = document.body.classList.contains('light-mode') && !isHackerMode;
             const result = await Swal.fire({
                 title: 'Hapus Paket?', text: "Konfigurasi paket ini akan hilang.", icon: 'warning',
                 showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#3f3f46',
-                background: isHackerMode ? '#000' : (isLight ? '#ffffff' : '#18181b'), 
-                color: isHackerMode ? '#0f0' : (isLight ? '#18181b' : '#f4f4f5')
+                background: isHackerMode ? '#000' : '#18181b', color: isHackerMode ? '#0f0' : '#f4f4f5'
             });
             if(result.isConfirmed) {
                 const { error } = await db.from('bundles').delete().eq('id', id);
@@ -1178,10 +1120,9 @@
         }
 
         async function confirmTransactionBox(title, text) {
-            const isLight = document.body.classList.contains('light-mode') && !isHackerMode;
             const res = await Swal.fire({
                 title: title, text: text, icon: 'warning', showCancelButton: true, confirmButtonColor: '#ea580c', cancelButtonColor: '#3f3f46',
-                background: isHackerMode ? '#000' : (isLight ? '#ffffff' : '#18181b'), color: isHackerMode ? '#0f0' : (isLight ? '#18181b' : '#f4f4f5')
+                background: isHackerMode ? '#000' : '#18181b', color: isHackerMode ? '#0f0' : '#f4f4f5'
             });
             return res.isConfirmed;
         }
@@ -1341,7 +1282,6 @@
             }
 
             if (isTimelineView) {
-                // TAMPILAN TIMELINE VERTIKAL
                 let html = '<div class="relative border-l-2 border-zinc-800 ml-6 my-4 pl-6 space-y-6">';
                 filteredLogs.forEach((log) => {
                     const localTime = new Date(log.created_at).toLocaleString('id-ID', { hour12: false });
@@ -1379,7 +1319,6 @@
                 html += '</div>';
                 container.innerHTML = html;
             } else {
-                // TAMPILAN TABEL STANDAR
                 let tbody = '';
                 filteredLogs.forEach((log, index) => {
                     const localTime = new Date(log.created_at).toLocaleString('id-ID', { hour12: false }); const isPackage = log.item_name.includes('[PAKET]');
@@ -1462,11 +1401,10 @@
         }
 
         async function handleDeleteItem(id) {
-            const isLight = document.body.classList.contains('light-mode') && !isHackerMode;
             const result = await Swal.fire({
                 title: 'Hapus Data?', text: "Jika barang ini ada dalam Paket, maka paket tersebut akan ikut error!", icon: 'warning',
                 showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#3f3f46', confirmButtonText: 'Ya, Hapus!',
-                background: isHackerMode ? '#000' : (isLight ? '#ffffff' : '#18181b'), color: isHackerMode ? '#0f0' : (isLight ? '#18181b' : '#f4f4f5')
+                background: isHackerMode ? '#000' : '#18181b', color: isHackerMode ? '#0f0' : '#f4f4f5'
             });
             if(result.isConfirmed) {
                 const { error } = await db.from('inventory').delete().eq('id', id);
@@ -1476,7 +1414,6 @@
 
         function renderAnalyticsChart() {
             const ctx = document.getElementById('bloodlineChart').getContext('2d');
-            const isLight = document.body.classList.contains('light-mode') && !isHackerMode;
             if (liveChartInstance) liveChartInstance.destroy();
             liveChartInstance = new Chart(ctx, {
                 type: 'bar',
@@ -1489,7 +1426,7 @@
                         borderWidth: 2, borderRadius: 5
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: isHackerMode ? '#0f0' : (isLight ? '#71717a' : '#a1a1aa') }, grid: { color: isHackerMode ? '#004400' : (isLight ? '#e4e4e7' : '#27272a') } }, y: { ticks: { color: isHackerMode ? '#0f0' : (isLight ? '#71717a' : '#a1a1aa') }, grid: { color: isHackerMode ? '#004400' : (isLight ? '#e4e4e7' : '#27272a') } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: isHackerMode ? '#0f0' : '#a1a1aa' }, grid: { color: isHackerMode ? '#004400' : '#27272a' } }, y: { ticks: { color: isHackerMode ? '#0f0' : '#a1a1aa' }, grid: { color: isHackerMode ? '#004400' : '#27272a' } } } }
             });
         }
     </script>
