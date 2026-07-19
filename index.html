@@ -203,10 +203,6 @@
                             <option value="Loker Bersama">🌲 Loker Bersama</option>
                             <option value="Gudang Umum">⚓ Gudang Umum</option>
                         </select>
-                        
-                        <button onclick="toggleInventoryView()" class="w-full sm:w-auto bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 p-2 rounded-lg transition-colors group flex items-center justify-center" title="Ubah Tampilan Grid/List">
-                            <i id="inventory-view-icon" class="fa-solid fa-border-all text-zinc-400 group-hover:text-orange-500"></i>
-                        </button>
                     </div>
                 </div>
 
@@ -564,7 +560,6 @@
         let liveChartInstance = null;
         
         // VIEW TOGGLE STATES
-        let isGridView = false;
         let isTimelineView = false;
         let isHackerMode = false;
 
@@ -667,11 +662,9 @@
             const passInput = document.getElementById('login-password');
             const aliasInput = document.getElementById('login-name');
 
-            // Setelan Password
             if (role !== 'tamu') { passContainer.classList.remove('hidden'); passInput.required = true; } 
             else { passContainer.classList.add('hidden'); passInput.required = false; }
 
-            // Setelan Alias (Hanya Treasury)
             if (role === 'treasury') { aliasContainer.classList.remove('hidden'); aliasInput.required = true; } 
             else { aliasContainer.classList.add('hidden'); aliasInput.required = false; aliasInput.value = ''; }
         }
@@ -961,87 +954,36 @@
             if(statKritis) statKritis.innerText = `${criticalCount} Item`;
         }
 
-        // TOGGLE GRID/LIST INVENTORY
-        function toggleInventoryView() {
-            isGridView = !isGridView;
-            const icon = document.getElementById('inventory-view-icon');
-            icon.className = isGridView ? 'fa-solid fa-list text-zinc-400 group-hover:text-orange-500' : 'fa-solid fa-border-all text-zinc-400 group-hover:text-orange-500';
-            renderTable();
-        }
-
+        // HANYA RENDER GRID
         function buildInventoryHTML(dataList, isStaff, tipeTabel) {
             if(dataList.length === 0) return `<div class="p-6 text-center text-zinc-600 text-xs italic bg-zinc-900/20 rounded border border-zinc-800/50">Tidak ada data ${tipeTabel} di filter ini.</div>`;
             
-            if (isGridView) {
-                let html = '<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">';
-                dataList.forEach(item => {
-                    const pct = Math.min(100, (item.stock / (currentCriticalLimit * 2)) * 100);
-                    const color = item.stock <= currentCriticalLimit ? 'bg-rose-500' : (item.stock <= currentCriticalLimit*1.5 ? 'bg-yellow-500' : 'bg-emerald-500');
-                    const textAlert = item.stock <= currentCriticalLimit ? 'text-rose-500 animate-pulse' : (tipeTabel === 'Senjata' ? 'text-rose-400' : 'text-emerald-400');
-                    const actionBtn = isStaff ? `
-                        <div class="flex gap-2 mt-3">
-                            <button onclick="handleEditItem(${item.id})" class="flex-1 text-blue-400 hover:text-white border border-blue-900/50 px-2 py-1.5 rounded text-xs transition-colors hover:bg-blue-600"><i class="fa-solid fa-pen-to-square mr-1"></i> Edit/Pindah</button>
-                            <button onclick="handleDeleteItem(${item.id})" class="flex-1 text-red-500 hover:text-white border border-red-900/50 px-2 py-1.5 rounded text-xs transition-colors hover:bg-red-600"><i class="fa-solid fa-trash mr-1"></i> Hapus</button>
+            let html = '<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">';
+            dataList.forEach(item => {
+                const pct = Math.min(100, (item.stock / (currentCriticalLimit * 2)) * 100);
+                const color = item.stock <= currentCriticalLimit ? 'bg-rose-500' : (item.stock <= currentCriticalLimit*1.5 ? 'bg-yellow-500' : 'bg-emerald-500');
+                const textAlert = item.stock <= currentCriticalLimit ? 'text-rose-500 animate-pulse' : (tipeTabel === 'Senjata' ? 'text-rose-400' : 'text-emerald-400');
+                const actionBtn = isStaff ? `
+                    <div class="flex gap-2 mt-3">
+                        <button onclick="handleEditItem(${item.id})" class="flex-1 text-blue-400 hover:text-white border border-blue-900/50 px-2 py-1.5 rounded text-xs transition-colors hover:bg-blue-600"><i class="fa-solid fa-pen-to-square mr-1"></i> Edit/Pindah</button>
+                        <button onclick="handleDeleteItem(${item.id})" class="flex-1 text-red-500 hover:text-white border border-red-900/50 px-2 py-1.5 rounded text-xs transition-colors hover:bg-red-600"><i class="fa-solid fa-trash mr-1"></i> Hapus</button>
+                    </div>
+                ` : '';
+
+                html += `
+                <div class="bg-zinc-900/80 border border-zinc-800 p-4 rounded-xl shadow-lg hover:border-orange-500/50 transition-colors flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2 gap-2">
+                            <h4 class="font-bold text-zinc-200 text-sm break-words leading-tight">${item.name}</h4>
+                            <span class="text-[9px] bg-zinc-950 px-2 py-1 rounded border border-zinc-700 text-zinc-400 uppercase shrink-0">${item.location}</span>
                         </div>
-                    ` : '';
-
-                    html += `
-                    <div class="bg-zinc-900/80 border border-zinc-800 p-4 rounded-xl shadow-lg hover:border-orange-500/50 transition-colors flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-start mb-2 gap-2">
-                                <h4 class="font-bold text-zinc-200 text-sm break-words leading-tight">${item.name}</h4>
-                                <span class="text-[9px] bg-zinc-950 px-2 py-1 rounded border border-zinc-700 text-zinc-400 uppercase shrink-0">${item.location}</span>
-                            </div>
-                            <div class="text-3xl font-mono font-bold ${textAlert} my-2">${item.stock} <span class="text-[10px] text-zinc-500 font-sans tracking-widest uppercase">Unit</span></div>
-                            <div class="stock-progress-bg"><div class="stock-progress-fill ${color}" style="width: ${pct}%"></div></div>
-                        </div>
-                        ${actionBtn}
-                    </div>`;
-                });
-                return html + '</div>';
-            } else {
-                let tbody = '';
-                dataList.forEach((item, index) => {
-                    const pct = Math.min(100, (item.stock / (currentCriticalLimit * 2)) * 100);
-                    const color = item.stock <= currentCriticalLimit ? 'bg-rose-500' : (item.stock <= currentCriticalLimit*1.5 ? 'bg-yellow-500' : 'bg-emerald-500');
-                    const stockAlertClass = item.stock <= currentCriticalLimit ? 'text-rose-500 font-bold glow-text animate-pulse' : 'text-zinc-300';
-                    const rowBg = index % 2 === 0 ? 'bg-zinc-950/50' : 'bg-transparent';
-                    const actionTd = isStaff ? `
-                        <td class="p-4 text-center w-28">
-                            <button onclick="handleEditItem(${item.id})" class="text-zinc-500 hover:text-blue-500 transition-colors mr-3" title="Edit/Pindah Data"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="handleDeleteItem(${item.id})" class="text-zinc-500 hover:text-red-500 transition-colors" title="Hapus"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    ` : '';
-
-                    tbody += `
-                        <tr class="${rowBg} hover:bg-zinc-800/30 transition-colors">
-                            <td class="p-4 text-center text-zinc-500 font-mono">${index + 1}</td>
-                            <td class="p-4 font-semibold text-zinc-200">${item.name}</td>
-                            <td class="p-4 text-zinc-400"><span class="bg-zinc-900 px-2 py-1 rounded border border-zinc-800 text-[10px] uppercase shadow-inner">${item.location}</span></td>
-                            <td class="p-4 text-center">
-                                <div class="${stockAlertClass} text-base font-mono leading-none">${item.stock}</div>
-                                <div class="stock-progress-bg w-20 mx-auto mt-1 h-1.5"><div class="stock-progress-fill ${color}" style="width: ${pct}%"></div></div>
-                            </td>
-                            ${actionTd}
-                        </tr>`;
-                });
-
-                return `
-                    <table class="w-full text-left border-collapse min-w-[500px]">
-                        <thead>
-                            <tr class="border-b border-zinc-800 bg-zinc-900 text-zinc-400 text-xs uppercase tracking-wider">
-                                <th class="p-4 w-12 text-center">No</th>
-                                <th class="p-4">Nama Barang</th>
-                                <th class="p-4 w-44 text-center">Lokasi Penyimpanan</th>
-                                <th class="p-4 w-32 text-center">Total Stok</th>
-                                ${isStaff ? '<th class="p-4 w-28 text-center">Aksi</th>' : ''}
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-zinc-900 text-xs md:text-sm">
-                            ${tbody}
-                        </tbody>
-                    </table>`;
-            }
+                        <div class="text-3xl font-mono font-bold ${textAlert} my-2">${item.stock} <span class="text-[10px] text-zinc-500 font-sans tracking-widest uppercase">Unit</span></div>
+                        <div class="stock-progress-bg"><div class="stock-progress-fill ${color}" style="width: ${pct}%"></div></div>
+                    </div>
+                    ${actionBtn}
+                </div>`;
+            });
+            return html + '</div>';
         }
 
         function renderTable() {
