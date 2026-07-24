@@ -1,0 +1,70 @@
+body { 
+    font-family: 'Rajdhani', sans-serif; 
+    background-color: #0c0c0e; 
+    -webkit-tap-highlight-color: transparent; 
+    transition: all 0.4s ease; 
+}
+.gang-title { 
+    font-family: 'Permanent Marker', cursive; 
+}
+.glow-orange { 
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.4); 
+}
+.glow-text { 
+    text-shadow: 0 0 10px rgba(249, 115, 22, 0.6); 
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #18181b; }
+::-webkit-scrollbar-thumb { background: #ea580c; border-radius: 3px; }
+
+.sidebar-scroll::-webkit-scrollbar { width: 4px; }
+.sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(234, 88, 12, 0.5); border-radius: 4px; }
+.sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgba(234, 88, 12, 1); }
+
+/* Progress Bar Stok */
+.stock-progress-bg { 
+    width: 100%; 
+    background-color: rgba(255,255,255,0.05); 
+    border-radius: 4px; 
+    height: 6px; 
+    margin-top: 6px; 
+    overflow: hidden; 
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); 
+}
+.stock-progress-fill { 
+    height: 100%; 
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
+}
+
+/* Hacker Terminal Mode */
+body.hacker-mode { 
+    background-color: #020202 !important; 
+    color: #00ff00 !important; 
+    font-family: 'Courier New', Courier, monospace !important; 
+    text-shadow: 0 0 4px rgba(0, 255, 0, 0.5); 
+}
+body.hacker-mode * { border-color: #004400 !important; }
+body.hacker-mode .bg-zinc-950, body.hacker-mode .bg-zinc-900, body.hacker-mode .bg-zinc-800 { background-color: #000 !important; }
+body.hacker-mode span, body.hacker-mode h1, body.hacker-mode h2, body.hacker-mode h3, body.hacker-mode p, body.hacker-mode td, body.hacker-mode th { color: #00ff00 !important; }
+body.hacker-mode .text-orange-500, body.hacker-mode .text-emerald-500, body.hacker-mode .text-red-500 { color: #00ff00 !important; text-shadow: 0 0 8px #00ff00; }
+body.hacker-mode input, body.hacker-mode select { background-color: #001100 !important; color: #00ff00 !important; }
+body.hacker-mode button { background-color: #002200 !important; color: #00ff00 !important; }
+body.hacker-mode::after { 
+    content: ""; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh; 
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px); 
+    pointer-events: none; 
+    z-index: 9999; 
+    opacity: 0.8; 
+}
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.timeline-item::before { content: ''; position: absolute; left: -25px; top: 5px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #ea580c; background: #0c0c0e; z-index: 1; }
