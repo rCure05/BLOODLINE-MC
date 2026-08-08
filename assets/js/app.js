@@ -56,17 +56,48 @@ function handleLogin(event) {
         if (enteredPassword === ADMIN_PASSWORD) { currentRole = selectedRole; if(selectedRole === 'president') currentOperatorName = 'President'; else if(selectedRole === 'vice_president') currentOperatorName = 'Vice President'; else if(selectedRole === 'treasury') currentOperatorName = enteredName || 'Treasury'; } else { showMessage('Akses Ditolak', 'Kata Sandi Pengurus Salah!', 'error'); return; }
     } else { currentRole = 'tamu'; currentOperatorName = 'Tamu'; }
 
-    document.getElementById('login-screen').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden');
+    document.getElementById('login-screen').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden'); syncSidebarForViewport();
     setupRoleUI(); fetchInventory(); fetchLogs(); fetchTickerLogs(); fetchFundLogs(); fetchMembers(); fetchRules(); enableRealtimeSync();
 }
 
 function setupRoleUI() {
-    const adminElements = document.querySelectorAll('.admin-only'); const userName = document.getElementById('user-name'); const userRoleBadge = document.getElementById('user-role-badge'); const userIcon = document.getElementById('user-icon'); const isStaff = (currentRole !== 'tamu');
+    const adminElements = document.querySelectorAll('.admin-only');
+    const treasuryStaffControls = document.querySelectorAll('[data-staff-control="treasury"]');
+    const userName = document.getElementById('user-name');
+    const userRoleBadge = document.getElementById('user-role-badge');
+    const userIcon = document.getElementById('user-icon');
+    const isStaff = (currentRole !== 'tamu');
+
     if (isStaff) {
         adminElements.forEach(el => el.classList.remove('hidden'));
-        if (currentRole === 'president') { userName.innerText = currentOperatorName; userRoleBadge.innerText = "PRESIDENT"; userIcon.className = "fa-solid fa-crown text-lg"; } else if (currentRole === 'vice_president') { userName.innerText = currentOperatorName; userRoleBadge.innerText = "V.PRESIDENT"; userIcon.className = "fa-solid fa-user-shield text-lg"; } else if (currentRole === 'treasury') { userName.innerText = currentOperatorName; userRoleBadge.innerText = "TREASURY"; userIcon.className = "fa-solid fa-sack-dollar text-lg"; }
+        treasuryStaffControls.forEach(el => {
+            el.classList.remove('hidden');
+            el.style.removeProperty('display');
+        });
+
+        if (currentRole === 'president') {
+            userName.innerText = currentOperatorName;
+            userRoleBadge.innerText = "PRESIDENT";
+            userIcon.className = "fa-solid fa-crown text-lg";
+        } else if (currentRole === 'vice_president') {
+            userName.innerText = currentOperatorName;
+            userRoleBadge.innerText = "V.PRESIDENT";
+            userIcon.className = "fa-solid fa-user-shield text-lg";
+        } else if (currentRole === 'treasury') {
+            userName.innerText = currentOperatorName;
+            userRoleBadge.innerText = "TREASURY";
+            userIcon.className = "fa-solid fa-sack-dollar text-lg";
+        }
     } else {
-        adminElements.forEach(el => el.classList.add('hidden')); userName.innerText = currentOperatorName; userRoleBadge.innerText = "Tamu"; userIcon.className = "fa-solid fa-eye text-base"; switchTab('dashboard');
+        adminElements.forEach(el => el.classList.add('hidden'));
+        treasuryStaffControls.forEach(el => {
+            el.classList.add('hidden');
+            el.style.setProperty('display', 'none', 'important');
+        });
+        userName.innerText = currentOperatorName;
+        userRoleBadge.innerText = "Tamu";
+        userIcon.className = "fa-solid fa-eye text-base";
+        switchTab('dashboard');
     }
 }
 function getOperatorName() { if (currentRole === 'tamu') return `Tamu`; if (currentRole === 'president') return "President"; if (currentRole === 'vice_president') return "Vice President"; return `Treasury | ${currentOperatorName}`; }
@@ -86,27 +117,186 @@ function showIDCard() {
 // ==========================================
 // 📱 NAVIGASI & UI
 // ==========================================
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar'); const backdrop = document.getElementById('sidebar-backdrop');
-    if (sidebar.classList.contains('-translate-x-full')) { sidebar.classList.remove('-translate-x-full'); backdrop.classList.remove('hidden'); } else { sidebar.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); }
+function isDesktopSidebarMode() {
+    return window.matchMedia('(min-width: 768px)').matches;
 }
+
+function updateSidebarToggleUI() {
+    const sidebar = document.getElementById('sidebar');
+    const button = document.getElementById('sidebar-toggle-btn');
+    const icon = document.getElementById('sidebar-toggle-icon');
+
+    if (!sidebar || !button || !icon) return;
+
+    const isDesktop = isDesktopSidebarMode();
+    const isOpen = isDesktop
+        ? !sidebar.classList.contains('sidebar-hidden')
+        : sidebar.classList.contains('mobile-open');
+
+    button.setAttribute('aria-expanded', String(isOpen));
+    button.title = isOpen ? 'Sembunyikan sidebar' : 'Tampilkan sidebar';
+    button.setAttribute('aria-label', button.title);
+
+    // Ikon dibuat kecil dan sederhana.
+    icon.className = isDesktop
+        ? 'fa-solid fa-ellipsis-vertical'
+        : `fa-solid ${isOpen ? 'fa-xmark' : 'fa-bars'}`;
+}
+
+function openSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+
+    if (!sidebar || !backdrop) return;
+
+    if (isDesktopSidebarMode()) {
+        sidebar.classList.remove('sidebar-hidden');
+        sidebar.classList.remove('mobile-open');
+        backdrop.classList.add('hidden');
+    } else {
+        sidebar.classList.remove('sidebar-hidden');
+        sidebar.classList.add('mobile-open');
+        backdrop.classList.remove('hidden');
+    }
+
+    updateSidebarToggleUI();
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+
+    if (!sidebar || !backdrop) return;
+
+    if (isDesktopSidebarMode()) {
+        sidebar.classList.add('sidebar-hidden');
+        sidebar.classList.remove('mobile-open');
+        backdrop.classList.add('hidden');
+    } else {
+        sidebar.classList.remove('mobile-open');
+        sidebar.classList.remove('sidebar-hidden');
+        backdrop.classList.add('hidden');
+    }
+
+    updateSidebarToggleUI();
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+
+    if (isDesktopSidebarMode()) {
+        if (sidebar.classList.contains('sidebar-hidden')) {
+            openSidebar();
+        } else {
+            closeSidebar();
+        }
+    } else {
+        if (sidebar.classList.contains('mobile-open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    }
+}
+
+function syncSidebarForViewport() {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+
+    if (!sidebar || !backdrop) return;
+
+    // Saat berpindah ukuran layar, reset hanya state visual sidebar.
+    // Tidak menyentuh role, data, transaksi, atau logika bisnis.
+    if (isDesktopSidebarMode()) {
+        sidebar.classList.remove('mobile-open');
+        sidebar.classList.remove('sidebar-hidden');
+        backdrop.classList.add('hidden');
+    } else {
+        sidebar.classList.remove('sidebar-hidden');
+        sidebar.classList.remove('mobile-open');
+        backdrop.classList.add('hidden');
+    }
+
+    updateSidebarToggleUI();
+}
+
+window.addEventListener('resize', syncSidebarForViewport);
 
 function switchTab(tabId) {
     const isStaff = (currentRole !== 'tamu');
     if (!isStaff && tabId !== 'dashboard' && tabId !== 'roster' && tabId !== 'map' && tabId !== 'rules') tabId = 'dashboard';
 
-    document.querySelectorAll('.tab-content').forEach(tab => { tab.classList.add('hidden'); tab.classList.remove('flex'); tab.classList.remove('block'); });
-    if(tabId === 'map') { document.getElementById(`tab-${tabId}`).classList.remove('hidden'); document.getElementById(`tab-${tabId}`).classList.add('flex'); } 
-    else { document.getElementById(`tab-${tabId}`).classList.remove('hidden'); document.getElementById(`tab-${tabId}`).classList.add('block'); }
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+        tab.classList.remove('flex');
+        tab.classList.remove('block');
+    });
 
-    const titleMap = { 'dashboard': 'DASHBOARD STOCK', 'bisnis': 'EKSEKUSI TRANSAKSI BISNIS', 'logistik': 'MUTASI LOGISTIK INTERNAL', 'tambah': 'DAFTARKAN JENIS BARANG BARU', 'logs': 'LEDGER AUDIT KEUANGAN', 'rekap': 'EKSPOR LAPORAN AUDIT', 'roster': 'ROSTER ANGGOTA BLMC', 'map': 'PETA OPERASIONAL & TURF', 'rules': 'VAULT PANDUAN & SOP FAKSI' };
-    document.getElementById('page-title').innerText = titleMap[tabId];
+    if(tabId === 'map') {
+        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+        document.getElementById(`tab-${tabId}`).classList.add('flex');
+    } else {
+        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+        document.getElementById(`tab-${tabId}`).classList.add('block');
+    }
 
-    if (tabId === 'logs' && isStaff) { renderLogsTable(); fetchFundLogs(); }
-    if (tabId === 'dashboard') { renderAnalyticsChart(); }
-    if (tabId === 'rekap' && isStaff) { const d = new Date(); document.getElementById('rekap-bulan').value = String(d.getMonth() + 1).padStart(2, '0'); document.getElementById('rekap-tahun').value = String(d.getFullYear()); }
-    if (tabId === 'map') { if (!factionMap) { setTimeout(() => { initLeafletMap(); }, 200); } else { setTimeout(() => { factionMap.invalidateSize(); updateMapPopups(); }, 200); } }
-    if (window.innerWidth < 768) toggleSidebar();
+    const titleMap = {
+        'dashboard': 'DASHBOARD STOCK',
+        'bisnis': 'EKSEKUSI TRANSAKSI BISNIS',
+        'logistik': 'MUTASI LOGISTIK INTERNAL',
+        'tambah': 'DAFTARKAN JENIS BARANG BARU',
+        'logs': 'LEDGER AUDIT KEUANGAN',
+        'rekap': 'EKSPOR LAPORAN AUDIT',
+        'roster': 'ROSTER ANGGOTA BLMC',
+        'map': 'PETA OPERASIONAL & TURF',
+        'rules': 'VAULT PANDUAN & SOP FAKSI'
+    };
+
+    const pageTitle = document.getElementById('page-title');
+    if (pageTitle) {
+        pageTitle.classList.add('ui-title-swap');
+        pageTitle.innerText = titleMap[tabId];
+        requestAnimationFrame(() => pageTitle.classList.remove('ui-title-swap'));
+    }
+
+    animateActiveTab(tabId);
+
+    document.querySelectorAll('#sidebar .nav-btn').forEach(btn => {
+        btn.classList.remove('is-active', 'bg-orange-600', 'text-white');
+    });
+
+    const activeNav = document.getElementById(`btn-${tabId}`);
+    if (activeNav) activeNav.classList.add('is-active');
+
+    if (tabId === 'logs' && isStaff) {
+        renderLogsTable();
+        fetchFundLogs();
+    }
+
+    if (tabId === 'dashboard') {
+        renderAnalyticsChart();
+    }
+
+    if (tabId === 'rekap' && isStaff) {
+        const d = new Date();
+        document.getElementById('rekap-bulan').value = String(d.getMonth() + 1).padStart(2, '0');
+        document.getElementById('rekap-tahun').value = String(d.getFullYear());
+    }
+
+    if (tabId === 'map') {
+        if (!factionMap) {
+            setTimeout(() => { initLeafletMap(); }, 200);
+        } else {
+            setTimeout(() => {
+                factionMap.invalidateSize();
+                updateMapPopups();
+            }, 200);
+        }
+    }
+
+    // Mobile: setelah memilih menu, drawer otomatis ditutup.
+    if (!isDesktopSidebarMode()) closeSidebar();
 }
 
 // ==========================================
@@ -165,6 +355,84 @@ async function adjustCriticalLimit() {
     if (currentRole === 'tamu') return; const { value: input } = await Swal.fire({ title: 'Atur Batas Stok Kritis', input: 'number', inputLabel: `Batas saat ini: ${currentCriticalLimit}`, showCancelButton: true, confirmButtonColor: '#ea580c', background: isHackerMode ? '#000' : '#18181b', color: isHackerMode ? '#0f0' : '#f4f4f5' }); if (!input) return; const newLimit = parseInt(input); if (isNaN(newLimit) || newLimit < 0) return showMessage("Gagal", "Angka tidak valid!", "error");
     const { error } = await db.from('faction_funds').upsert({ id: 3, balance: newLimit }); if (!error) { currentCriticalLimit = newLimit; document.getElementById('critical-limit-display').innerText = newLimit; showToast('Batas diperbarui', 'success'); renderTable(); renderAnalyticsChart(); updateQuickStats(); }
 }
+async function changeTreasuryBalance(account, action) {
+    if (currentRole === 'tamu') return;
+
+    const isDirty = account === 'dirty';
+    const isDeposit = action === 'deposit';
+    const currentBalance = isDirty ? currentDirtyFunds : currentFunds;
+    const accountName = isDirty ? 'Uang Kotor' : 'Kas Tersedia';
+    const actionName = isDeposit ? 'Deposit' : 'Tarik';
+
+    const { value: input } = await Swal.fire({
+        title: `${actionName} ${accountName}`,
+        input: 'number',
+        inputLabel: `Saldo saat ini: ${formatMoney(currentBalance)}`,
+        inputPlaceholder: 'Masukkan nominal...',
+        inputAttributes: {
+            min: '1',
+            step: '1'
+        },
+        showCancelButton: true,
+        confirmButtonText: isDeposit ? 'Deposit' : 'Tarik',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: isDeposit ? '#10b981' : '#ef4444',
+        background: isHackerMode ? '#000' : '#18181b',
+        color: isHackerMode ? '#0f0' : '#f4f4f5',
+        preConfirm: (value) => {
+            const amount = Number(value);
+            if (!Number.isFinite(amount) || amount <= 0) {
+                Swal.showValidationMessage('Masukkan nominal lebih dari 0.');
+                return false;
+            }
+            return amount;
+        }
+    });
+
+    if (input === undefined) return;
+
+    const amount = Number(input);
+    const signedAmount = isDeposit ? amount : -amount;
+    const newBalance = currentBalance + signedAmount;
+    const fundId = isDirty ? 2 : 1;
+
+    const { error } = await db
+        .from('faction_funds')
+        .update({ balance: newBalance })
+        .eq('id', fundId);
+
+    if (error) {
+        showMessage('Gagal', error.message, 'error');
+        return;
+    }
+
+    const logType = isDirty
+        ? (isDeposit ? 'Deposit Kotor' : 'Tarik Kotor')
+        : (isDeposit ? 'Deposit' : 'Tarik');
+
+    await db.from('vault_logs').insert([{
+        type: logType,
+        amount: amount,
+        operator: getOperatorName() + ' (Quick Action)'
+    }]);
+
+    await sendToDiscord(
+        isDirty ? `💸 Log Brankas: ${logType}` : `💰 Log Brankas: ${logType}`,
+        `Operator **${getOperatorName()}** ${isDeposit ? 'melakukan deposit ke' : 'menarik saldo dari'} ${accountName}.`,
+        isDirty
+            ? (isDeposit ? 15105570 : 10038562)
+            : (isDeposit ? 3066993 : 15158332),
+        [
+            { name: 'Nominal', value: formatMoney(amount), inline: true },
+            { name: `Total ${isDirty ? 'Kotor' : 'Kas'}`, value: formatMoney(newBalance), inline: true }
+        ]
+    );
+
+    showToast(`${actionName} ${accountName} berhasil`, 'success');
+    await fetchFunds();
+    fetchTickerLogs();
+}
+
 async function adjustFunds() {
     if (currentRole === 'tamu') return; const { value: input } = await Swal.fire({ title: 'Penyesuaian Kas Brankas', input: 'text', inputLabel: `Saldo Bersih: ${formatMoney(currentFunds)}\n(Gunakan minus (-) untuk menarik)`, showCancelButton: true, confirmButtonColor: '#10b981', background: isHackerMode ? '#000' : '#18181b', color: isHackerMode ? '#0f0' : '#f4f4f5' }); if (!input) return; const amount = parseFloat(input); if (isNaN(amount)) return showMessage("Gagal", "Nominal tidak valid!", "error");
     const newBalance = currentFunds + amount; const { error } = await db.from('faction_funds').update({ balance: newBalance }).eq('id', 1); if (!error) { const type = amount >= 0 ? 'Deposit' : 'Tarik'; await db.from('vault_logs').insert([{ type: type, amount: Math.abs(amount), operator: getOperatorName() + " (Manual)" }]); await sendToDiscord(`💰 Log Brankas: ${type}`, `Operator **${getOperatorName()}** menyesuaikan kas.`, amount >= 0 ? 3066993 : 15158332, [{ name: "Nominal", value: formatMoney(Math.abs(amount)), inline: true }, { name: "Total Kas", value: formatMoney(newBalance), inline: true }]); showToast('Kas Bersih disesuaikan', 'success'); await fetchFunds(); fetchTickerLogs(); }
@@ -183,13 +451,13 @@ async function fetchFundLogs() {
 // ==========================================
 async function fetchInventory() {
     const statusBadge = document.getElementById('db-status'); const locFilter = document.getElementById('filter-lokasi') ? document.getElementById('filter-lokasi').value : 'Semua';
-    try { let query = db.from('inventory').select('*'); if (locFilter !== 'Semua') query = query.eq('location', locFilter); const { data, error } = await query.order('id', { ascending: true }); if (error) throw error; inventoryData = data; if(statusBadge) statusBadge.innerText = "Terkoneksi"; await fetchFunds(); renderTable(); renderAnalyticsChart(); renderSelectOptions(); updateQuickStats(); await fetchBundles(); if(document.getElementById('tab-map').classList.contains('flex')) { updateMapPopups(); } } catch (err) { if(statusBadge) statusBadge.innerText = "Error Koneksi"; }
+    try { let query = db.from('inventory').select('*'); if (locFilter !== 'Semua') query = query.eq('location', locFilter); const { data, error } = await query.order('id', { ascending: true }); if (error) throw error; inventoryData = data; if(statusBadge) statusBadge.innerText = "Terkoneksi"; await fetchFunds(); renderTable(); renderAnalyticsChart(); renderSelectOptions(); updateQuickStats(); await fetchBundles(); markSyncTime(); if(document.getElementById('tab-map').classList.contains('flex')) { updateMapPopups(); } } catch (err) { if(statusBadge) statusBadge.innerText = "Error Koneksi"; }
 }
 function updateQuickStats() { const statJenis = document.getElementById('stat-jenis-barang'); if(statJenis) statJenis.innerText = inventoryData.length; const statKritis = document.getElementById('stat-barang-kritis'); if(statKritis) statKritis.innerText = `${inventoryData.filter(i => i.stock <= currentCriticalLimit).length} Item`; }
 function buildInventoryHTML(dataList, isStaff, tipeTabel) {
     if(dataList.length === 0) return `<div class="p-6 text-center text-zinc-600 text-xs italic bg-zinc-900/20 rounded">Tidak ada data ${tipeTabel}.</div>`;
     let html = '<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">';
-    dataList.forEach(item => { const pct = Math.min(100, (item.stock / (currentCriticalLimit * 2)) * 100); const color = item.stock <= currentCriticalLimit ? 'bg-rose-500' : (item.stock <= currentCriticalLimit*1.5 ? 'bg-yellow-500' : 'bg-emerald-500'); const textAlert = item.stock <= currentCriticalLimit ? 'text-rose-500 animate-pulse' : (tipeTabel === 'Senjata' ? 'text-rose-400' : 'text-emerald-400'); const actionBtn = isStaff ? `<div class="flex gap-2 mt-3"><button onclick="handleEditItem(${item.id})" class="flex-1 text-blue-400 hover:text-white border border-blue-900/50 px-2 py-1.5 rounded text-xs hover:bg-blue-600"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="handleDeleteItem(${item.id})" class="flex-1 text-red-500 hover:text-white border border-red-900/50 px-2 py-1.5 rounded text-xs hover:bg-red-600"><i class="fa-solid fa-trash"></i></button></div>` : ''; html += `<div class="bg-zinc-900/80 border border-zinc-800 p-4 rounded-xl shadow-lg flex flex-col justify-between"><div><div class="flex justify-between items-start mb-2"><h4 class="font-bold text-zinc-200 text-sm">${item.name}</h4><span class="text-[9px] bg-zinc-950 px-2 py-1 rounded text-zinc-400">${item.location}</span></div><div class="text-3xl font-mono font-bold ${textAlert} my-2">${item.stock} <span class="text-[10px] text-zinc-500 font-sans tracking-widest uppercase">Unit</span></div><div class="stock-progress-bg"><div class="stock-progress-fill ${color}" style="width: ${pct}%"></div></div></div>${actionBtn}</div>`; }); return html + '</div>';
+    dataList.forEach(item => { const pct = Math.min(100, (item.stock / (currentCriticalLimit * 2)) * 100); const color = item.stock <= currentCriticalLimit ? 'bg-rose-500' : (item.stock <= currentCriticalLimit*1.5 ? 'bg-yellow-500' : 'bg-emerald-500'); const textAlert = item.stock <= currentCriticalLimit ? 'text-rose-500 animate-pulse' : (tipeTabel === 'Senjata' ? 'text-rose-400' : 'text-emerald-400'); const actionBtn = isStaff ? `<div class="flex gap-2 mt-3"><button onclick="handleEditItem(${item.id})" class="flex-1 text-blue-400 hover:text-white border border-blue-900/50 px-2 py-1.5 rounded text-xs hover:bg-blue-600"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="handleDeleteItem(${item.id})" class="flex-1 text-red-500 hover:text-white border border-red-900/50 px-2 py-1.5 rounded text-xs hover:bg-red-600"><i class="fa-solid fa-trash"></i></button></div>` : ''; html += `<div class="inventory-item-card bg-zinc-900/80 border border-zinc-800 p-4 rounded-xl shadow-lg flex flex-col justify-between"><div><div class="flex justify-between items-start mb-2"><h4 class="font-bold text-zinc-200 text-sm">${item.name}</h4><span class="text-[9px] bg-zinc-950 px-2 py-1 rounded text-zinc-400">${item.location}</span></div><div class="text-3xl font-mono font-bold ${textAlert} my-2">${item.stock} <span class="text-[10px] text-zinc-500 font-sans tracking-widest uppercase">Unit</span></div><div class="stock-progress-bg"><div class="stock-progress-fill ${color}" style="width: ${pct}%"></div></div></div>${actionBtn}</div>`; }); return html + '</div>';
 }
 function renderTable() { const searchQ = document.getElementById('search-inventory') ? document.getElementById('search-inventory').value.toLowerCase() : ''; let fData = searchQ ? inventoryData.filter(i => i.name.toLowerCase().includes(searchQ)) : inventoryData; const isStaff = currentRole !== 'tamu'; const cS = document.getElementById('inventory-senjata-container'); const cR = document.getElementById('inventory-resource-container'); if(cS) cS.innerHTML = buildInventoryHTML(fData.filter(i => i.category === 'Senjata'), isStaff, 'Senjata'); if(cR) cR.innerHTML = buildInventoryHTML(fData.filter(i => i.category !== 'Senjata'), isStaff, 'Resource'); }
 function renderSelectOptions() { const opts = `<option value="">-- Kosong --</option>` + inventoryData.map(i => `<option value="${i.id}">[${i.category === 'Senjata'?'🔫':'📦'}] ${i.name} (Stok: ${i.stock})</option>`).join(''); ['satuan-item', 'mutasi-item', 'bundle-item1', 'bundle-item2', 'bundle-item3'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = opts; }); }
@@ -329,6 +597,246 @@ async function handleDeleteRule(id) {
 }
 
 // ==========================================
+// ✨ INTERACTIVE UI LAYER
+// Hanya mengatur tampilan dan interaksi antarmuka.
+// Tidak mengubah logika transaksi/database.
+// ==========================================
+function animateActiveTab(tabId) {
+    const tab = document.getElementById(`tab-${tabId}`);
+    if (!tab) return;
+    tab.classList.remove('ui-tab-enter');
+    void tab.offsetWidth;
+    tab.classList.add('ui-tab-enter');
+    setTimeout(() => tab.classList.remove('ui-tab-enter'), 380);
+}
+
+function markSyncTime() {
+    const el = document.getElementById('last-sync-time');
+    if (!el) return;
+    const now = new Date();
+    el.innerText = `Sync ${now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}`;
+    const pill = el.closest('.sync-pill');
+    if (pill) {
+        pill.classList.remove('sync-flash');
+        void pill.offsetWidth;
+        pill.classList.add('sync-flash');
+        setTimeout(() => pill.classList.remove('sync-flash'), 650);
+    }
+}
+
+function pulseValue(el) {
+    if (!el) return;
+    el.classList.remove('ui-value-pop');
+    void el.offsetWidth;
+    el.classList.add('ui-value-pop');
+    setTimeout(() => el.classList.remove('ui-value-pop'), 380);
+}
+
+function setupValueObservers() {
+    const ids = [
+        'stat-kas-bersih',
+        'stat-kas-kotor',
+        'stat-jenis-barang',
+        'stat-barang-kritis',
+        'display-faction-funds',
+        'display-dirty-funds'
+    ];
+
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el || el.dataset.uiObserved === 'true') return;
+        el.dataset.uiObserved = 'true';
+        let lastText = el.textContent;
+        const observer = new MutationObserver(() => {
+            const nextText = el.textContent;
+            if (nextText === lastText) return;
+            lastText = nextText;
+            pulseValue(el);
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+    });
+}
+
+function setupKpiInteraction() {
+    document.querySelectorAll('.kpi-card').forEach(card => {
+        if (card.dataset.interactiveReady === 'true') return;
+        card.dataset.interactiveReady = 'true';
+
+        card.addEventListener('pointermove', event => {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            if (event.pointerType && event.pointerType !== 'mouse') return;
+            const rect = card.getBoundingClientRect();
+            const x = ((event.clientX - rect.left) / rect.width) * 100;
+            const y = ((event.clientY - rect.top) / rect.height) * 100;
+            card.style.setProperty('--mouse-x', `${x}%`);
+            card.style.setProperty('--mouse-y', `${y}%`);
+
+            const rx = ((event.clientY - rect.top) / rect.height - 0.5) * -2.4;
+            const ry = ((event.clientX - rect.left) / rect.width - 0.5) * 2.8;
+            card.style.transform = `perspective(700px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-2px)`;
+        });
+
+        card.addEventListener('pointerleave', () => {
+            card.style.transform = '';
+        });
+    });
+}
+
+function createRipple(event) {
+    const button = event.target.closest('button');
+    if (!button || button.disabled || button.closest('.swal2-container')) return;
+
+    const rect = button.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    ripple.className = 'ui-ripple';
+    ripple.style.left = `${event.clientX - rect.left}px`;
+    ripple.style.top = `${event.clientY - rect.top}px`;
+    button.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 520);
+}
+
+function setRefreshFeedback() {
+    const btn = document.getElementById('refresh-dashboard-btn');
+    if (!btn || btn.dataset.feedbackReady === 'true') return;
+    btn.dataset.feedbackReady = 'true';
+    btn.addEventListener('click', () => {
+        btn.classList.add('ui-refreshing');
+        setTimeout(() => btn.classList.remove('ui-refreshing'), 850);
+    });
+}
+
+function getVisibleCommandItems() {
+    return Array.from(document.querySelectorAll('#command-list .command-item'))
+        .filter(item => !item.classList.contains('hidden') && item.style.display !== 'none');
+}
+
+function selectCommandItem(index) {
+    const items = getVisibleCommandItems();
+    items.forEach(item => item.classList.remove('command-selected'));
+    if (!items.length) return;
+    const safeIndex = ((index % items.length) + items.length) % items.length;
+    items[safeIndex].classList.add('command-selected');
+    items[safeIndex].scrollIntoView({ block: 'nearest' });
+}
+
+function openCommandPalette() {
+    const palette = document.getElementById('command-palette');
+    const input = document.getElementById('command-search');
+    if (!palette || !input) return;
+
+    palette.classList.remove('hidden');
+    palette.setAttribute('aria-hidden', 'false');
+    input.value = '';
+    filterCommandPalette('');
+    document.body.classList.add('command-open');
+    setTimeout(() => {
+        input.focus();
+        selectCommandItem(0);
+    }, 30);
+}
+
+function closeCommandPalette() {
+    const palette = document.getElementById('command-palette');
+    if (!palette) return;
+    palette.classList.add('hidden');
+    palette.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('command-open');
+}
+
+function filterCommandPalette(query) {
+    const q = String(query || '').trim().toLowerCase();
+    let visibleCount = 0;
+
+    document.querySelectorAll('#command-list .command-item').forEach(item => {
+        // Tetap hormati .admin-only yang disembunyikan oleh setupRoleUI().
+        if (item.classList.contains('admin-only') && currentRole === 'tamu') {
+            item.style.display = 'none';
+            return;
+        }
+        const label = (item.dataset.label || item.textContent || '').toLowerCase();
+        const match = !q || label.includes(q);
+        item.style.display = match ? '' : 'none';
+        if (match) visibleCount++;
+    });
+
+    const empty = document.getElementById('command-empty');
+    if (empty) empty.classList.toggle('hidden', visibleCount > 0);
+    selectCommandItem(0);
+}
+
+function setupCommandPalette() {
+    const openBtn = document.getElementById('command-menu-btn');
+    const palette = document.getElementById('command-palette');
+    const input = document.getElementById('command-search');
+    if (!openBtn || !palette || !input || palette.dataset.ready === 'true') return;
+    palette.dataset.ready = 'true';
+
+    openBtn.addEventListener('click', openCommandPalette);
+    palette.querySelectorAll('[data-command-close]').forEach(el => el.addEventListener('click', closeCommandPalette));
+
+    input.addEventListener('input', () => filterCommandPalette(input.value));
+
+    document.querySelectorAll('#command-list .command-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const tab = item.dataset.tab;
+            if (tab) switchTab(tab);
+            closeCommandPalette();
+        });
+    });
+
+    document.addEventListener('keydown', event => {
+        const isShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k';
+        if (isShortcut) {
+            event.preventDefault();
+            if (palette.classList.contains('hidden')) openCommandPalette();
+            else closeCommandPalette();
+            return;
+        }
+
+        if (palette.classList.contains('hidden')) return;
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            closeCommandPalette();
+            return;
+        }
+
+        const items = getVisibleCommandItems();
+        if (!items.length) return;
+        let index = items.findIndex(item => item.classList.contains('command-selected'));
+        if (index < 0) index = 0;
+
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            selectCommandItem(index + 1);
+        } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            selectCommandItem(index - 1);
+        } else if (event.key === 'Enter') {
+            const selected = items[index] || items[0];
+            if (selected) {
+                event.preventDefault();
+                selected.click();
+            }
+        }
+    });
+}
+
+function setupInteractiveUI() {
+    setupKpiInteraction();
+    setupValueObservers();
+    setRefreshFeedback();
+    setupCommandPalette();
+    document.addEventListener('pointerdown', createRipple);
+
+    const inventoryRoot = document.getElementById('tab-dashboard');
+    if (inventoryRoot) {
+        const observer = new MutationObserver(() => setupKpiInteraction());
+        observer.observe(inventoryRoot, { childList: true, subtree: true });
+    }
+}
+
+// ==========================================
 // 🔄 SUPABASE REALTIME (LIVE SYNC)
 // ==========================================
 function enableRealtimeSync() {
@@ -343,3 +851,6 @@ function enableRealtimeSync() {
             if (status === 'SUBSCRIBED') { const sb = document.getElementById('db-status'); if(sb) { sb.innerHTML = `<i class="fa-solid fa-satellite-dish animate-pulse mr-1"></i> LIVE SYNC`; sb.className = "hidden md:inline-block text-[10px] bg-blue-900/40 text-blue-400 px-2 py-1 rounded border border-blue-700/50"; } }
         });
 }
+
+setupInteractiveUI();
+syncSidebarForViewport();
